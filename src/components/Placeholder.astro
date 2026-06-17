@@ -1,0 +1,16 @@
+---
+interface Props {
+  note?: string;
+}
+const {
+  note = 'Esta sección está lista para recibir su contenido desde Sanity Studio.',
+} = Astro.props;
+---
+
+<div class="rounded-2xl border border-dashed border-celeste-200 bg-celeste-50/60 p-8 text-center">
+  <p class="mx-auto max-w-xl text-base text-celeste-700">
+    <span class="mr-1" aria-hidden="true">✦</span>
+    {note}
+  </p>
+  <slot />
+</div>

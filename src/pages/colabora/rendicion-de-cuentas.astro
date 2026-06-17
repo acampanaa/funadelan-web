@@ -1,0 +1,14 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import Placeholder from '@/components/Placeholder.astro';
+
+const breadcrumbs = [{"label":"Colabora","href":"/colabora"}];
+---
+
+<PageLayout
+  title="Rendición de cuentas"
+  lead="Transparencia en el uso de los recursos. Consulta y descarga nuestros informes."
+  breadcrumbs={breadcrumbs}
+>
+  <Placeholder note="Los informes descargables se subirán desde Sanity (esquema «informe»)." />
+</PageLayout>

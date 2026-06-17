@@ -1,0 +1,14 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import Placeholder from '@/components/Placeholder.astro';
+
+const breadcrumbs = [{"label":"Programas","href":"/programas"},{"label":"Universidad del Adulto Mayor","href":"/programas/universidad-adulto-mayor"}];
+---
+
+<PageLayout
+  title="Ingeniería (planimetría)"
+  lead="Planimetría y desarrollo técnico del proyecto."
+  breadcrumbs={breadcrumbs}
+>
+  <Placeholder />
+</PageLayout>

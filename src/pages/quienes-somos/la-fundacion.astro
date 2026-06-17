@@ -1,0 +1,14 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import Placeholder from '@/components/Placeholder.astro';
+
+const breadcrumbs = [{"label":"Quiénes somos","href":"/quienes-somos"}];
+---
+
+<PageLayout
+  title="La fundación"
+  lead="Qué somos y qué nos mueve."
+  breadcrumbs={breadcrumbs}
+>
+  <Placeholder />
+</PageLayout>

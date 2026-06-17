@@ -1,0 +1,33 @@
+{
+  "name": "funadelan-web",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Sitio web de la Fundación Amigos de los Ángeles (FUNADELÁN)",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "studio": "sanity dev",
+    "studio:deploy": "sanity deploy"
+  },
+  "dependencies": {
+    "@astrojs/netlify": "^6.0.0",
+    "@sanity/astro": "^3.1.6",
+    "@sanity/client": "^7.6.0",
+    "@sanity/image-url": "^1.1.0",
+    "astro": "^5.1.0",
+    "astro-portabletext": "^0.11.0"
+  },
+  "devDependencies": {
+    "@sanity/vision": "^3.66.0",
+    "@tailwindcss/vite": "^4.0.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "sanity": "^3.66.0",
+    "styled-components": "^6.1.13",
+    "tailwindcss": "^4.0.0"
+  }
+}

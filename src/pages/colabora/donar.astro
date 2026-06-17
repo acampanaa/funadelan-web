@@ -1,0 +1,65 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+
+const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
+
+const montos = [10, 25, 50, 100];
+---
+
+<PageLayout
+  title="Donar"
+  lead="Tu donación sostiene el acompañamiento diario a las personas mayores. Cada aporte cuenta."
+  breadcrumbs={breadcrumbs}
+>
+  <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
+    <div>
+      <h2 class="text-2xl">Elige un monto</h2>
+      <div class="mt-5 flex flex-wrap gap-3">
+        {
+          montos.map((m) => (
+            <button
+              type="button"
+              class="rounded-full border-2 border-celeste-200 px-7 py-3 text-lg font-semibold text-celeste-700 transition hover:border-dorado-400 hover:bg-dorado-50"
+            >
+              ${m}
+            </button>
+          ))
+        }
+        <button type="button"
+          class="rounded-full border-2 border-celeste-200 px-7 py-3 text-lg font-semibold text-celeste-700 transition hover:border-dorado-400 hover:bg-dorado-50">
+          Otro
+        </button>
+      </div>
+
+      <h2 class="mt-10 text-2xl">Método de pago</h2>
+      <p class="mt-2 text-base text-tinta/75">
+        Aceptamos donaciones internacionales por Stripe y PayPal. La transacción se procesa
+        de forma segura en la pasarela; el sitio no almacena datos de tarjetas.
+      </p>
+      <div class="mt-5 flex flex-col gap-4 sm:flex-row">
+        <!-- TODO: integrar Stripe Checkout (PUBLIC_STRIPE_PUBLISHABLE_KEY) -->
+        <a href="#"
+          class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#635bff] px-6 py-4 text-lg font-semibold text-white transition hover:opacity-90">
+          Donar con tarjeta (Stripe)
+        </a>
+        <!-- TODO: integrar botón de PayPal (PUBLIC_PAYPAL_CLIENT_ID) -->
+        <a href="#"
+          class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#ffc439] px-6 py-4 text-lg font-semibold text-[#003087] transition hover:opacity-90">
+          Donar con PayPal
+        </a>
+      </div>
+    </div>
+
+    <aside class="rounded-2xl bg-celeste-50/70 p-7">
+      <h2 class="text-xl">Transparencia</h2>
+      <p class="mt-3 text-base text-tinta/80">
+        Creemos en la rendición de cuentas. Consulta cómo usamos cada aporte en nuestros
+        informes públicos.
+      </p>
+      <a href="/colabora/rendicion-de-cuentas"
+        class="mt-5 inline-flex rounded-full border border-celeste-300 px-5 py-2.5 text-base font-semibold text-celeste-700 transition hover:bg-white">
+        Ver rendición de cuentas
+      </a>
+    </aside>
+  </div>
+</PageLayout>

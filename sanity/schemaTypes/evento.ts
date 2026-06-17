@@ -1,0 +1,32 @@
+import { defineField, defineType } from 'sanity';
+
+// Cubre el hueco #4 del documento: eventos destacados con fecha
+// (Chocolate para el Alma, Bazar de los Ángeles, Novena de octubre).
+export const evento = defineType({
+  name: 'evento',
+  title: 'Evento',
+  type: 'document',
+  fields: [
+    defineField({ name: 'titulo', title: 'Título', type: 'string', validation: (r) => r.required() }),
+    defineField({ name: 'slug', title: 'Slug (URL)', type: 'slug', options: { source: 'titulo' } }),
+    defineField({ name: 'fechaInicio', title: 'Fecha de inicio', type: 'datetime', validation: (r) => r.required() }),
+    defineField({ name: 'fechaFin', title: 'Fecha de fin', type: 'datetime' }),
+    defineField({ name: 'lugar', title: 'Lugar', type: 'string' }),
+    defineField({
+      name: 'tipo',
+      title: 'Tipo',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Evento social', value: 'social' },
+          { title: 'Evento espiritual', value: 'espiritual' },
+        ],
+      },
+    }),
+    defineField({ name: 'resumen', title: 'Resumen', type: 'text', rows: 3 }),
+    defineField({ name: 'imagen', title: 'Imagen', type: 'image', options: { hotspot: true } }),
+    defineField({ name: 'destacado', title: 'Destacado', type: 'boolean', initialValue: false }),
+  ],
+  orderings: [{ title: 'Próximos', name: 'fechaAsc', by: [{ field: 'fechaInicio', direction: 'asc' }] }],
+  preview: { select: { title: 'titulo', subtitle: 'fechaInicio', media: 'imagen' } },
+});

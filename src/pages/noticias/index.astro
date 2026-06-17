@@ -1,0 +1,14 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import Placeholder from '@/components/Placeholder.astro';
+
+const breadcrumbs = [];
+---
+
+<PageLayout
+  title="Noticias"
+  lead="Todas las novedades de la fundación."
+  breadcrumbs={breadcrumbs}
+>
+  <Placeholder note="El listado de noticias se generará desde Sanity (esquema «noticia»)." />
+</PageLayout>
