@@ -1,14 +1,39 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
-import Placeholder from '@/components/Placeholder.astro';
+import ContenidoEditable from '@/components/ContenidoEditable.astro';
+import { getPaginaEstatica } from '@/lib/sanity';
 
-const breadcrumbs = [{"label":"Quiénes somos","href":"/quienes-somos"}];
+const breadcrumbs = [{ label: 'Quiénes somos', href: '/quienes-somos' }];
+
+// Contenido editable desde Sanity (clave "la-fundacion"); si no existe,
+// se usa el texto por defecto del <slot>.
+const pagina = await getPaginaEstatica('la-fundacion');
+const lead = pagina?.lead || 'Qué somos y qué nos mueve.';
 ---
 
-<PageLayout
-  title="La fundación"
-  lead="Qué somos y qué nos mueve."
-  breadcrumbs={breadcrumbs}
->
-  <Placeholder />
+<PageLayout title="La fundación" lead={lead} breadcrumbs={breadcrumbs}>
+  <ContenidoEditable cuerpo={pagina?.cuerpo}>
+    <div class="max-w-3xl space-y-5 text-lg text-tinta/85">
+      <p>
+        La <strong>Fundación Amigos de los Ángeles (FUNADELÁN)</strong> es una
+        institución sin fines de lucro con sede en Portoviejo, Manabí, Ecuador,
+        dedicada al servicio de las personas adultas mayores y de quienes se
+        encuentran en situación de vulnerabilidad.
+      </p>
+      <p>
+        Nuestra labor une dos vocaciones: una profundamente espiritual —promover
+        la fe en los Ángeles y su labor como mensajeros de Dios— y una
+        marcadamente social —brindar ayuda concreta y digna a todos quienes lo
+        necesitan, siempre con autogestión y el desprendimiento de socios,
+        amigos y aliados.
+      </p>
+      <p>
+        Nuestro proyecto emblema es el <strong>Centro Diurno de Atención al
+        Adulto Mayor «Ángeluz»</strong>, un espacio pensado para acompañar a las
+        personas mayores en lo físico, emocional, espiritual y social. Junto a
+        él proyectamos iniciativas futuras como la Universidad del Adulto Mayor
+        y la Red Mundial del Adulto Mayor.
+      </p>
+    </div>
+  </ContenidoEditable>
 </PageLayout>

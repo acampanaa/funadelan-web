@@ -8,8 +8,10 @@ import { schemaTypes } from './sanity/schemaTypes';
 export default defineConfig({
   name: 'funadelan',
   title: 'FUNADELÁN — Panel de contenido',
-  projectId: process.env.PUBLIC_SANITY_PROJECT_ID || 'your-project-id',
-  dataset: process.env.PUBLIC_SANITY_DATASET || 'production',
+  // El projectId es público (no es un secreto). La CLI de Sanity no inyecta
+  // variables PUBLIC_*, por eso va directo aquí.
+  projectId: 'r3bjzif4',
+  dataset: 'production',
   plugins: [structureTool(), visionTool()],
   schema: { types: schemaTypes },
 });

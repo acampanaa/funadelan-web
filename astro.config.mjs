@@ -3,9 +3,9 @@ import sanity from '@sanity/astro';
 import netlify from '@astrojs/netlify';
 import tailwindcss from '@tailwindcss/vite';
 
-// Las variables de Sanity se leen desde el entorno (.env).
-// Reemplaza los valores en .env — ver .env.example.
-const projectId = process.env.PUBLIC_SANITY_PROJECT_ID || 'your-project-id';
+// El projectId es público (no es un secreto). Se deja directo para evitar
+// que la config no lo lea desde .env; se puede sobrescribir por entorno.
+const projectId = process.env.PUBLIC_SANITY_PROJECT_ID || 'r3bjzif4';
 const dataset = process.env.PUBLIC_SANITY_DATASET || 'production';
 
 // https://astro.build/config

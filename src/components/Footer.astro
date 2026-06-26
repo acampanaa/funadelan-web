@@ -1,5 +1,6 @@
 ---
 import { mainNav } from '@/config/navigation';
+import SuscripcionForm from '@/components/SuscripcionForm.astro';
 
 const year = new Date().getFullYear();
 const columns = mainNav.filter((item) => item.children);
@@ -35,6 +36,8 @@ const columns = mainNav.filter((item) => item.children);
           </nav>
         ))
       }
+
+      <SuscripcionForm />
     </div>
 
     <div class="mt-12 flex flex-col items-start justify-between gap-4 border-t border-celeste-700 pt-6 text-sm text-celeste-300 sm:flex-row sm:items-center">

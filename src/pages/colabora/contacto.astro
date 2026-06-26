@@ -10,18 +10,10 @@ const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
   breadcrumbs={breadcrumbs}
 >
   <div class="grid gap-12 lg:grid-cols-[1.2fr_1fr]">
-    <!-- Formulario (Netlify Forms) -->
-    <form
-      name="contacto"
-      method="POST"
-      data-netlify="true"
-      netlify-honeypot="bot-field"
-      action="/colabora/contacto?enviado=1"
-      class="space-y-5"
-    >
-      <input type="hidden" name="form-name" value="contacto" />
-      <p class="hidden">
-        <label>No llenar: <input name="bot-field" /></label>
+    <!-- Formulario (envía a /api/contacto) -->
+    <form id="form-contacto" method="POST" action="/api/contacto" class="space-y-5">
+      <p class="hidden" aria-hidden="true">
+        <label>No llenar: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
       </p>
 
       <div>
@@ -56,9 +48,11 @@ const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
       </div>
 
       <button type="submit"
-        class="rounded-full bg-dorado-400 px-8 py-3.5 text-lg font-semibold text-celeste-900 transition hover:bg-dorado-300">
+        class="rounded-full bg-dorado-400 px-8 py-3.5 text-lg font-semibold text-celeste-900 transition hover:bg-dorado-300 disabled:opacity-60">
         Enviar mensaje
       </button>
+
+      <p id="contacto-mensaje" role="status" aria-live="polite" class="text-base"></p>
     </form>
 
     <!-- Datos de contacto -->
@@ -77,4 +71,41 @@ const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
       </div>
     </aside>
   </div>
+
+  <script>
+    const form = document.getElementById('form-contacto') as HTMLFormElement | null;
+    const msg = document.getElementById('contacto-mensaje');
+    const boton = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!msg || !boton) return;
+
+      boton.disabled = true;
+      msg.textContent = 'Enviando…';
+      msg.style.color = '#234f8a';
+
+      try {
+        const res = await fetch('/api/contacto', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(form))),
+        });
+        const data = await res.json();
+        if (data.ok) {
+          msg.textContent = data.mensaje || '¡Mensaje enviado!';
+          msg.style.color = '#15803d';
+          form.reset();
+        } else {
+          msg.textContent = data.error || 'Ocurrió un error. Intenta de nuevo.';
+          msg.style.color = '#b91c1c';
+        }
+      } catch {
+        msg.textContent = 'No se pudo conectar. Intenta más tarde.';
+        msg.style.color = '#b91c1c';
+      } finally {
+        boton.disabled = false;
+      }
+    });
+  </script>
 </PageLayout>

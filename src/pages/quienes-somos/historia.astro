@@ -1,14 +1,49 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
-import Placeholder from '@/components/Placeholder.astro';
+import ContenidoEditable from '@/components/ContenidoEditable.astro';
+import { getPaginaEstatica } from '@/lib/sanity';
 
-const breadcrumbs = [{"label":"Quiénes somos","href":"/quienes-somos"}];
+const breadcrumbs = [{ label: 'Quiénes somos', href: '/quienes-somos' }];
+
+const pagina = await getPaginaEstatica('historia');
+const lead = pagina?.lead || 'El camino recorrido al servicio de los adultos mayores.';
 ---
 
-<PageLayout
-  title="Historia"
-  lead="El camino recorrido al servicio de los adultos mayores."
-  breadcrumbs={breadcrumbs}
->
-  <Placeholder />
+<PageLayout title="Historia" lead={lead} breadcrumbs={breadcrumbs}>
+  <ContenidoEditable cuerpo={pagina?.cuerpo}>
+    <div class="max-w-3xl space-y-5 text-lg text-tinta/85">
+      <p>
+        Desde su creación en 2002, la Fundación Amigos de los Ángeles ha
+        caminado junto a las personas mayores y a las familias más vulnerables
+        de Portoviejo, uniendo la fe y el servicio en un mismo propósito.
+      </p>
+      <p>A lo largo de estos años hemos desarrollado acciones de impacto como:</p>
+      <ul class="list-disc space-y-2 pl-6">
+        <li>
+          <strong>Entrega de ayudas técnicas</strong> —sillas de ruedas,
+          caminadores, muletas y bastones— a personas con discapacidad o
+          movilidad reducida, en zonas urbanas y rurales.
+        </li>
+        <li>
+          <strong>Campañas de salud</strong> comunitarias con atención médica,
+          valoración por especialistas, vacunación y entrega de medicamentos.
+        </li>
+        <li>
+          <strong>Donaciones en emergencias</strong>: alimentos, kits de
+          higiene, ropa y abrigo para familias afectadas por desastres.
+        </li>
+        <li>
+          <strong>Fomento de la espiritualidad</strong> a través de novenas,
+          misas y celebraciones que fortalecen la fe y el sentido de comunidad.
+        </li>
+      </ul>
+      <p>
+        Cada año nos reunimos en torno a <strong>«Chocolate para el Alma»</strong>,
+        nuestro gran evento solidario y la principal fuente de recaudación de la
+        fundación. Hoy avanzamos en la construcción del <strong>Centro Diurno
+        «Ángeluz»</strong>, el sueño que nos mantiene «juntando nuestras alas»
+        para seguir sirviendo con dignidad.
+      </p>
+    </div>
+  </ContenidoEditable>
 </PageLayout>

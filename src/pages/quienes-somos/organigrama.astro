@@ -1,8 +1,17 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import { getOrganigrama } from '@/lib/sanity';
 
-const breadcrumbs = [{"label":"Quiénes somos","href":"/quienes-somos"}];
+const breadcrumbs = [{ label: 'Quiénes somos', href: '/quienes-somos' }];
+
+// Contenido en vivo desde Sanity (tipo "Cargo (Organigrama)").
+const cargos = await getOrganigrama();
+
+// Agrupar por nivel jerárquico para mostrarlo en filas (1 = más alto).
+const niveles = [...new Set(cargos.map((c: any) => c.nivel))].sort(
+  (a: any, b: any) => a - b,
+);
 ---
 
 <PageLayout
@@ -10,5 +19,27 @@ const breadcrumbs = [{"label":"Quiénes somos","href":"/quienes-somos"}];
   lead="Estructura organizativa de la fundación."
   breadcrumbs={breadcrumbs}
 >
-  <Placeholder />
+  {
+    cargos.length === 0 ? (
+      <Placeholder note="Aún no hay cargos publicados. Agrégalos en Sanity Studio (tipo «Cargo (Organigrama)») y aparecerán aquí." />
+    ) : (
+      <div class="space-y-10">
+        {niveles.map((nivel) => (
+          <div class="flex flex-wrap justify-center gap-6">
+            {cargos
+              .filter((c: any) => c.nivel === nivel)
+              .map((c: any) => (
+                <div class="min-w-[16rem] max-w-xs flex-1 rounded-2xl border border-celeste-100 bg-white p-6 text-center shadow-sm">
+                  <h2 class="text-xl font-semibold text-celeste-800">{c.cargo}</h2>
+                  {c.area && <p class="mt-1 text-base text-tinta/70">{c.area}</p>}
+                  {c.reportaA && (
+                    <p class="mt-3 text-sm text-tinta/55">Reporta a: {c.reportaA}</p>
+                  )}
+                </div>
+              ))}
+          </div>
+        ))}
+      </div>
+    )
+  }
 </PageLayout>

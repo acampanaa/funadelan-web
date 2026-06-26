@@ -32,6 +32,26 @@ export async function getNoticias() {
   );
 }
 
+/** Contenido editable de una página informativa, por su clave única. */
+export async function getPaginaEstatica(clave: string) {
+  return sanityClient.fetch(
+    `*[_type == "paginaEstatica" && clave == $clave][0]{
+      titulo, clave, lead, imagen, cuerpo
+    }`,
+    { clave },
+  );
+}
+
+/** Cargos del organigrama, ordenados por jerarquía (nivel 1 = más alto). */
+export async function getOrganigrama() {
+  return sanityClient.fetch(
+    `*[_type == "miembroOrganigrama"] | order(nivel asc, orden asc){
+      _id, cargo, area, nivel, orden,
+      "reportaA": reportaA->cargo
+    }`,
+  );
+}
+
 /** Una noticia por slug (para la página de detalle). */
 export async function getNoticia(slug: string) {
   return sanityClient.fetch(

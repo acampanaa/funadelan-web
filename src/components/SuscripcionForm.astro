@@ -1,0 +1,72 @@
+---
+// Formulario de suscripción al boletín (RF-17).
+// Envía el correo al endpoint /api/suscribir y muestra el resultado sin
+// recargar la página.
+---
+
+<div class="rounded-2xl bg-celeste-700/60 p-6 lg:col-span-2">
+  <h2 class="font-display text-lg font-semibold text-dorado-200">
+    Recibe nuestras noticias
+  </h2>
+  <p class="mt-2 text-base text-celeste-200">
+    Suscríbete y te avisaremos de las actividades y mensajes de la fundación.
+  </p>
+
+  <form id="form-suscripcion" class="mt-4 flex flex-col gap-3 sm:flex-row">
+    <label for="susc-email" class="sr-only">Correo electrónico</label>
+    <input
+      id="susc-email"
+      name="email"
+      type="email"
+      required
+      placeholder="tucorreo@ejemplo.com"
+      class="w-full flex-1 rounded-full border border-celeste-500 bg-white px-5 py-3 text-base text-tinta placeholder:text-tinta/50 focus:border-dorado-400"
+    />
+    <button
+      type="submit"
+      class="rounded-full bg-dorado-400 px-6 py-3 text-base font-semibold text-celeste-900 transition hover:bg-dorado-300 disabled:opacity-60"
+    >
+      Suscribirme
+    </button>
+  </form>
+
+  <p id="susc-mensaje" role="status" aria-live="polite" class="mt-3 text-base"></p>
+</div>
+
+<script>
+  const form = document.getElementById('form-suscripcion') as HTMLFormElement | null;
+  const msg = document.getElementById('susc-mensaje');
+  const boton = form?.querySelector('button');
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!msg || !boton) return;
+
+    const email = (form.elements.namedItem('email') as HTMLInputElement).value;
+    boton.disabled = true;
+    msg.textContent = 'Enviando…';
+    msg.style.color = '#d6e4f5';
+
+    try {
+      const res = await fetch('/api/suscribir', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        msg.textContent = data.mensaje || '¡Listo! Revisa tu correo.';
+        msg.style.color = '#f1d792';
+        form.reset();
+      } else {
+        msg.textContent = data.error || 'Ocurrió un error. Intenta de nuevo.';
+        msg.style.color = '#fca5a5';
+      }
+    } catch {
+      msg.textContent = 'No se pudo conectar. Intenta más tarde.';
+      msg.style.color = '#fca5a5';
+    } finally {
+      boton.disabled = false;
+    }
+  });
+</script>
