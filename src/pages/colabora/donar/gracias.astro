@@ -1,0 +1,77 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import Stripe from 'stripe';
+
+// Se renderiza en el servidor para poder consultar la sesión de Stripe y
+// mostrar el monto donado. No requiere configuración: si falta la clave o
+// el id de sesión, muestra igualmente el agradecimiento.
+export const prerender = false;
+
+const breadcrumbs = [
+  { label: 'Colabora', href: '/colabora' },
+  { label: 'Donar', href: '/colabora/donar' },
+];
+
+const url = new URL(Astro.request.url);
+const sessionId = url.searchParams.get('session_id');
+const esPaypal = url.searchParams.has('paypal');
+
+let montoDonado: string | null = null;
+const secret = import.meta.env.STRIPE_SECRET_KEY ?? process.env.STRIPE_SECRET_KEY;
+
+if (sessionId && secret) {
+  try {
+    const stripe = new Stripe(secret);
+    const sesion = await stripe.checkout.sessions.retrieve(sessionId);
+    if (sesion.amount_total) {
+      montoDonado = (sesion.amount_total / 100).toLocaleString('es-EC', {
+        style: 'currency',
+        currency: sesion.currency?.toUpperCase() || 'USD',
+      });
+    }
+  } catch {
+    // Si no se puede recuperar la sesión, mostramos el agradecimiento genérico.
+  }
+}
+---
+
+<PageLayout
+  title="¡Gracias por tu donación!"
+  lead="Tu generosidad sostiene el acompañamiento diario a las personas mayores."
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mx-auto max-w-2xl text-center">
+    <div class="grid place-items-center">
+      <span class="grid h-24 w-24 place-items-center rounded-full bg-dorado-100 text-5xl" aria-hidden="true">💛</span>
+    </div>
+
+    <p class="mt-8 text-lg text-tinta/85">
+      {montoDonado
+        ? `Hemos recibido tu donación de ${montoDonado}.`
+        : esPaypal
+          ? 'Hemos recibido tu donación a través de PayPal.'
+          : 'Hemos recibido tu donación.'}
+      En nombre de toda la Fundación Amigos de los Ángeles y de quienes acompañamos,
+      <strong> ¡muchas gracias!</strong>
+    </p>
+
+    <p class="mt-4 text-base text-tinta/70">
+      «La vida solo tiene sentido cuando se la entrega, se la dona.»
+    </p>
+
+    <div class="mt-10 flex flex-wrap justify-center gap-4">
+      <a
+        href="/"
+        class="rounded-full bg-celeste-700 px-7 py-3.5 text-lg font-semibold text-white transition hover:bg-celeste-600"
+      >
+        Volver al inicio
+      </a>
+      <a
+        href="/colabora/rendicion-de-cuentas"
+        class="rounded-full border border-celeste-300 px-7 py-3.5 text-lg font-semibold text-celeste-700 transition hover:bg-celeste-50"
+      >
+        Ver rendición de cuentas
+      </a>
+    </div>
+  </div>
+</PageLayout>

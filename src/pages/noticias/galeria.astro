@@ -1,8 +1,11 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import { getGaleria, urlForImage, formatearFecha } from '@/lib/sanity';
 
-const breadcrumbs = [{"label":"Noticias","href":"/noticias"}];
+const breadcrumbs = [{ label: 'Noticias', href: '/noticias' }];
+
+const items = await getGaleria();
 ---
 
 <PageLayout
@@ -10,5 +13,44 @@ const breadcrumbs = [{"label":"Noticias","href":"/noticias"}];
   lead="Fotos y videos de nuestras actividades."
   breadcrumbs={breadcrumbs}
 >
-  <Placeholder />
+  {
+    !items || items.length === 0 ? (
+      <Placeholder note="Aún no hay fotos ni videos. Súbelos en Sanity Studio (tipo «Elemento de galería»)." />
+    ) : (
+      <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+        {items.map((item: any) =>
+          item.tipo === 'video' && item.videoUrl ? (
+            <a
+              href={item.videoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="group relative grid aspect-square place-items-center overflow-hidden rounded-xl bg-celeste-800 text-white"
+            >
+              <span class="text-4xl transition group-hover:scale-110" aria-hidden="true">▶</span>
+              {item.titulo && (
+                <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-sm">
+                  {item.titulo}
+                </span>
+              )}
+            </a>
+          ) : item.imagen ? (
+            <figure class="group relative aspect-square overflow-hidden rounded-xl bg-celeste-50">
+              <img
+                src={urlForImage(item.imagen).width(600).height(600).fit('crop').url()}
+                alt={item.titulo || 'Foto de la galería'}
+                class="h-full w-full object-cover transition group-hover:scale-105"
+                loading="lazy"
+              />
+              {item.titulo && (
+                <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-sm text-white">
+                  {item.titulo}
+                  {item.fecha && <span class="block text-xs text-white/70">{formatearFecha(item.fecha)}</span>}
+                </figcaption>
+              )}
+            </figure>
+          ) : null,
+        )}
+      </div>
+    )
+  }
 </PageLayout>

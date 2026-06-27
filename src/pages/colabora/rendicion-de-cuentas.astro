@@ -1,8 +1,11 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import { getInformes } from '@/lib/sanity';
 
-const breadcrumbs = [{"label":"Colabora","href":"/colabora"}];
+const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
+
+const informes = await getInformes();
 ---
 
 <PageLayout
@@ -10,5 +13,30 @@ const breadcrumbs = [{"label":"Colabora","href":"/colabora"}];
   lead="Transparencia en el uso de los recursos. Consulta y descarga nuestros informes."
   breadcrumbs={breadcrumbs}
 >
-  <Placeholder note="Los informes descargables se subirán desde Sanity (esquema «informe»)." />
+  {
+    !informes || informes.length === 0 ? (
+      <Placeholder note="Aún no hay informes publicados. Súbelos en Sanity Studio (tipo «Informe (Rendición de cuentas)»)." />
+    ) : (
+      <ul class="mx-auto max-w-3xl space-y-4">
+        {informes.map((inf: any) => (
+          <li>
+            <a
+              href={inf.archivoUrl ? `${inf.archivoUrl}?dl=` : '#'}
+              class="group flex items-center gap-4 rounded-2xl border border-celeste-100 bg-white p-5 shadow-sm transition hover:border-celeste-200 hover:shadow-lg"
+            >
+              <span class="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-celeste-50 text-2xl" aria-hidden="true">📄</span>
+              <div class="flex-1">
+                <h2 class="text-lg font-semibold text-celeste-800">{inf.titulo}</h2>
+                <p class="text-sm text-tinta/60">
+                  {inf.anio}
+                  {inf.descripcion && ` · ${inf.descripcion}`}
+                </p>
+              </div>
+              <span class="font-semibold text-celeste-600 group-hover:text-celeste-700">Descargar PDF ↓</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    )
+  }
 </PageLayout>

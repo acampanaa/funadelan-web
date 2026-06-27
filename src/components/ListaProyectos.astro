@@ -1,0 +1,40 @@
+---
+// Grid reutilizable de proyectos/programas. Si no hay ninguno, muestra
+// el respaldo pasado por <slot> (normalmente un <Placeholder>).
+import { urlForImage } from '@/lib/sanity';
+
+interface Props {
+  proyectos?: any[];
+}
+const { proyectos } = Astro.props;
+const tiene = Array.isArray(proyectos) && proyectos.length > 0;
+---
+
+{
+  tiene ? (
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {proyectos!.map((p: any) => (
+        <article class="flex flex-col overflow-hidden rounded-2xl border border-celeste-100 bg-white shadow-sm">
+          {p.imagen ? (
+            <img
+              src={urlForImage(p.imagen).width(800).height(440).fit('crop').url()}
+              alt={p.nombre}
+              class="h-44 w-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <div class="grid h-44 place-items-center bg-gradient-to-br from-celeste-100 to-dorado-100 text-5xl" aria-hidden="true">
+              ✦
+            </div>
+          )}
+          <div class="flex flex-1 flex-col p-6">
+            <h2 class="text-xl">{p.nombre}</h2>
+            {p.resumen && <p class="mt-2 flex-1 text-base text-tinta/75">{p.resumen}</p>}
+          </div>
+        </article>
+      ))}
+    </div>
+  ) : (
+    <slot />
+  )
+}

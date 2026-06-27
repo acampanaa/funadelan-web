@@ -1,8 +1,12 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import ListaProyectos from '@/components/ListaProyectos.astro';
+import { getProyectos } from '@/lib/sanity';
 
-const breadcrumbs = [{"label":"Programas","href":"/programas"}];
+const breadcrumbs = [{ label: 'Programas', href: '/programas' }];
+
+const proyectos = await getProyectos('actividades');
 ---
 
 <PageLayout
@@ -10,5 +14,7 @@ const breadcrumbs = [{"label":"Programas","href":"/programas"}];
   lead="Acciones de ayuda y acompañamiento en comunidad."
   breadcrumbs={breadcrumbs}
 >
-  <Placeholder />
+  <ListaProyectos proyectos={proyectos}>
+    <Placeholder note="Aún no hay actividades publicadas. Agrégalas en Sanity Studio (tipo «Proyecto / Programa», categoría «Actividades sociales»)." />
+  </ListaProyectos>
 </PageLayout>

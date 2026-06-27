@@ -1,8 +1,11 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import { getAlianzas, urlForImage } from '@/lib/sanity';
 
-const breadcrumbs = [{"label":"Quiénes somos","href":"/quienes-somos"}];
+const breadcrumbs = [{ label: 'Quiénes somos', href: '/quienes-somos' }];
+
+const alianzas = await getAlianzas();
 ---
 
 <PageLayout
@@ -10,5 +13,38 @@ const breadcrumbs = [{"label":"Quiénes somos","href":"/quienes-somos"}];
   lead="Aliados estratégicos que fortalecen nuestra labor."
   breadcrumbs={breadcrumbs}
 >
-  <Placeholder />
+  {
+    !alianzas || alianzas.length === 0 ? (
+      <Placeholder note="Aún no hay alianzas publicadas. Agrégalas en Sanity Studio (tipo «Alianza»)." />
+    ) : (
+      <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {alianzas.map((a: any) => {
+          const Tag = a.sitioWeb ? 'a' : 'div';
+          return (
+            <Tag
+              href={a.sitioWeb}
+              target={a.sitioWeb ? '_blank' : undefined}
+              rel={a.sitioWeb ? 'noopener noreferrer' : undefined}
+              class="flex flex-col items-center gap-4 rounded-2xl border border-celeste-100 bg-white p-7 text-center shadow-sm transition hover:shadow-lg"
+            >
+              {a.logo ? (
+                <img
+                  src={urlForImage(a.logo).width(320).height(160).fit('max').url()}
+                  alt={a.nombre}
+                  class="h-20 w-auto object-contain"
+                  loading="lazy"
+                />
+              ) : (
+                <span class="grid h-20 place-items-center text-2xl font-display text-celeste-700">{a.nombre}</span>
+              )}
+              <div>
+                <h2 class="text-lg font-semibold text-celeste-800">{a.nombre}</h2>
+                {a.descripcion && <p class="mt-1 text-base text-tinta/70">{a.descripcion}</p>}
+              </div>
+            </Tag>
+          );
+        })}
+      </div>
+    )
+  }
 </PageLayout>

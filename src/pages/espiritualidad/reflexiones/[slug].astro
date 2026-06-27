@@ -1,0 +1,42 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import ContenidoEditable from '@/components/ContenidoEditable.astro';
+import { sanityClient, getReflexion, formatearFecha } from '@/lib/sanity';
+
+// Una página estática por cada reflexión con slug.
+export async function getStaticPaths() {
+  const reflexiones = await sanityClient.fetch(
+    `*[_type == "reflexion" && defined(slug.current)]{ "slug": slug.current }`,
+  );
+  return (reflexiones || []).map((r: any) => ({ params: { slug: r.slug } }));
+}
+
+const { slug } = Astro.params;
+const reflexion = await getReflexion(slug!);
+
+if (!reflexion) {
+  return Astro.redirect('/espiritualidad/reflexiones');
+}
+
+const breadcrumbs = [
+  { label: 'Espiritualidad', href: '/espiritualidad' },
+  { label: 'Reflexiones y mensajes', href: '/espiritualidad/reflexiones' },
+];
+
+const lead = [reflexion.autor, formatearFecha(reflexion.fecha)].filter(Boolean).join(' · ');
+---
+
+<PageLayout title={reflexion.titulo} lead={lead} breadcrumbs={breadcrumbs}>
+  <ContenidoEditable cuerpo={reflexion.cuerpo}>
+    <p class="max-w-3xl text-lg text-tinta/85">Esta reflexión aún no tiene contenido.</p>
+  </ContenidoEditable>
+
+  <div class="mt-12">
+    <a
+      href="/espiritualidad/reflexiones"
+      class="inline-flex rounded-full border border-celeste-300 px-5 py-2.5 text-base font-semibold text-celeste-700 transition hover:bg-celeste-50"
+    >
+      ← Volver a reflexiones
+    </a>
+  </div>
+</PageLayout>

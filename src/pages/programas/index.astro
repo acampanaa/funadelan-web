@@ -1,8 +1,18 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import { getProyectos, urlForImage } from '@/lib/sanity';
 
 const breadcrumbs = [];
+
+const proyectos = await getProyectos();
+
+const etiquetaCategoria: Record<string, string> = {
+  uam: 'Universidad del Adulto Mayor',
+  'red-mundial': 'Red Mundial del Adulto Mayor',
+  actividades: 'Actividades sociales',
+  angeluz: 'Centro Diurno «Ángeluz»',
+};
 ---
 
 <PageLayout
@@ -10,5 +20,37 @@ const breadcrumbs = [];
   lead="Iniciativas que transforman la vida de las personas mayores."
   breadcrumbs={breadcrumbs}
 >
-  <Placeholder />
+  {
+    !proyectos || proyectos.length === 0 ? (
+      <Placeholder note="Aún no hay programas publicados. Agrégalos en Sanity Studio (tipo «Proyecto / Programa»)." />
+    ) : (
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {proyectos.map((p: any) => (
+          <article class="flex flex-col overflow-hidden rounded-2xl border border-celeste-100 bg-white shadow-sm">
+            {p.imagen ? (
+              <img
+                src={urlForImage(p.imagen).width(800).height(440).fit('crop').url()}
+                alt={p.nombre}
+                class="h-44 w-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div class="grid h-44 place-items-center bg-gradient-to-br from-celeste-100 to-dorado-100 text-5xl" aria-hidden="true">
+                ✦
+              </div>
+            )}
+            <div class="flex flex-1 flex-col p-6">
+              {p.categoria && (
+                <span class="text-sm font-semibold uppercase tracking-wide text-dorado-600">
+                  {etiquetaCategoria[p.categoria] || p.categoria}
+                </span>
+              )}
+              <h2 class="mt-1 text-xl">{p.nombre}</h2>
+              {p.resumen && <p class="mt-2 flex-1 text-base text-tinta/75">{p.resumen}</p>}
+            </div>
+          </article>
+        ))}
+      </div>
+    )
+  }
 </PageLayout>

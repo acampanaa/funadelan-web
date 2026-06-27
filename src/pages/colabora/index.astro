@@ -1,14 +1,42 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
-import Placeholder from '@/components/Placeholder.astro';
+import ContenidoEditable from '@/components/ContenidoEditable.astro';
+import { getPaginaEstatica } from '@/lib/sanity';
 
 const breadcrumbs = [];
+
+const pagina = await getPaginaEstatica('colabora');
+const lead = pagina?.lead || 'Hay muchas formas de sumarte a la misión.';
+
+const formas = [
+  { titulo: 'Donar', descripcion: 'Tu aporte sostiene el acompañamiento diario a las personas mayores.', href: '/colabora/donar', emoji: '💛' },
+  { titulo: 'Voluntariado', descripcion: 'Comparte tu tiempo y talento con quienes más lo necesitan.', href: '/colabora/voluntariado', emoji: '🤝' },
+  { titulo: 'Rendición de cuentas', descripcion: 'Conoce con transparencia cómo usamos cada recurso.', href: '/colabora/rendicion-de-cuentas', emoji: '📄' },
+  { titulo: 'Contacto', descripcion: 'Escríbenos para conocer otras formas de colaborar.', href: '/colabora/contacto', emoji: '✉️' },
+];
 ---
 
-<PageLayout
-  title="Colabora"
-  lead="Hay muchas formas de sumarte a la misión."
-  breadcrumbs={breadcrumbs}
->
-  <Placeholder />
+<PageLayout title="Colabora" lead={lead} breadcrumbs={breadcrumbs}>
+  <ContenidoEditable cuerpo={pagina?.cuerpo}>
+    <p class="max-w-3xl text-lg text-tinta/85">
+      Cada gesto cuenta. Como donante, voluntario o aliado, tu apoyo hace
+      posible que sigamos sirviendo con amor y dignidad a las personas mayores.
+    </p>
+  </ContenidoEditable>
+
+  <div class="mt-10 grid gap-6 sm:grid-cols-2">
+    {
+      formas.map((f) => (
+        <a
+          href={f.href}
+          class="group flex flex-col rounded-2xl border border-celeste-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+        >
+          <span class="text-4xl" aria-hidden="true">{f.emoji}</span>
+          <h2 class="mt-4 text-2xl">{f.titulo}</h2>
+          <p class="mt-2 flex-1 text-base text-tinta/75">{f.descripcion}</p>
+          <span class="mt-4 font-semibold text-celeste-600 group-hover:text-celeste-700">Ver más →</span>
+        </a>
+      ))
+    }
+  </div>
 </PageLayout>

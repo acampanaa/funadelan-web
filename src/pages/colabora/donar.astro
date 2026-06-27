@@ -4,6 +4,10 @@ import PageLayout from '@/layouts/PageLayout.astro';
 const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
 
 const montos = [10, 25, 50, 100];
+
+// El client-id de PayPal es público; si no está configurado, ocultamos PayPal.
+const paypalClientId =
+  import.meta.env.PUBLIC_PAYPAL_CLIENT_ID ?? process.env.PUBLIC_PAYPAL_CLIENT_ID ?? '';
 ---
 
 <PageLayout
@@ -13,22 +17,43 @@ const montos = [10, 25, 50, 100];
 >
   <div class="grid gap-10 lg:grid-cols-[1.3fr_1fr]">
     <div>
+      <!-- Aviso si el usuario canceló un pago de Stripe -->
+      <p
+        id="aviso-cancelado"
+        hidden
+        class="mb-6 rounded-xl border border-dorado-300 bg-dorado-50 px-5 py-4 text-base text-tinta/80"
+      >
+        Cancelaste el proceso de donación. Cuando quieras, puedes intentarlo de nuevo. 💛
+      </p>
+
       <h2 class="text-2xl">Elige un monto</h2>
-      <div class="mt-5 flex flex-wrap gap-3">
+      <div id="montos" class="mt-5 flex flex-wrap gap-3">
         {
-          montos.map((m) => (
+          montos.map((m, i) => (
             <button
               type="button"
-              class="rounded-full border-2 border-celeste-200 px-7 py-3 text-lg font-semibold text-celeste-700 transition hover:border-dorado-400 hover:bg-dorado-50"
+              data-monto={m}
+              class="boton-monto rounded-full border-2 border-celeste-200 px-7 py-3 text-lg font-semibold text-celeste-700 transition hover:border-dorado-400 hover:bg-dorado-50 aria-pressed:border-dorado-400 aria-pressed:bg-dorado-100"
+              aria-pressed={i === 1 ? 'true' : 'false'}
             >
               ${m}
             </button>
           ))
         }
-        <button type="button"
-          class="rounded-full border-2 border-celeste-200 px-7 py-3 text-lg font-semibold text-celeste-700 transition hover:border-dorado-400 hover:bg-dorado-50">
-          Otro
-        </button>
+        <div class="flex items-center gap-2">
+          <span class="text-lg font-semibold text-celeste-700">$</span>
+          <label for="monto-otro" class="sr-only">Otro monto</label>
+          <input
+            id="monto-otro"
+            type="number"
+            min="1"
+            max="10000"
+            step="1"
+            inputmode="decimal"
+            placeholder="Otro"
+            class="w-28 rounded-full border-2 border-celeste-200 px-4 py-3 text-lg font-semibold text-celeste-700 focus:border-dorado-400"
+          />
+        </div>
       </div>
 
       <h2 class="mt-10 text-2xl">Método de pago</h2>
@@ -36,18 +61,34 @@ const montos = [10, 25, 50, 100];
         Aceptamos donaciones internacionales por Stripe y PayPal. La transacción se procesa
         de forma segura en la pasarela; el sitio no almacena datos de tarjetas.
       </p>
-      <div class="mt-5 flex flex-col gap-4 sm:flex-row">
-        <!-- TODO: integrar Stripe Checkout (PUBLIC_STRIPE_PUBLISHABLE_KEY) -->
-        <a href="#"
-          class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#635bff] px-6 py-4 text-lg font-semibold text-white transition hover:opacity-90">
+
+      <div class="mt-5 flex flex-col gap-4">
+        <button
+          id="btn-stripe"
+          type="button"
+          class="flex items-center justify-center gap-2 rounded-xl bg-[#635bff] px-6 py-4 text-lg font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+        >
           Donar con tarjeta (Stripe)
-        </a>
-        <!-- TODO: integrar botón de PayPal (PUBLIC_PAYPAL_CLIENT_ID) -->
-        <a href="#"
-          class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#ffc439] px-6 py-4 text-lg font-semibold text-[#003087] transition hover:opacity-90">
-          Donar con PayPal
-        </a>
+        </button>
+
+        {
+          paypalClientId ? (
+            <div id="paypal-buttons" data-client-id={paypalClientId} class="min-h-[3rem]" />
+          ) : (
+            <p class="rounded-xl border border-dashed border-celeste-200 bg-celeste-50/60 px-5 py-4 text-base text-celeste-700">
+              PayPal estará disponible próximamente (falta configurar
+              <code class="mx-1">PUBLIC_PAYPAL_CLIENT_ID</code>).
+            </p>
+          )
+        }
       </div>
+
+      <p
+        id="mensaje-donacion"
+        role="status"
+        aria-live="polite"
+        class="mt-4 text-base"
+      ></p>
     </div>
 
     <aside class="rounded-2xl bg-celeste-50/70 p-7">
@@ -56,10 +97,130 @@ const montos = [10, 25, 50, 100];
         Creemos en la rendición de cuentas. Consulta cómo usamos cada aporte en nuestros
         informes públicos.
       </p>
-      <a href="/colabora/rendicion-de-cuentas"
-        class="mt-5 inline-flex rounded-full border border-celeste-300 px-5 py-2.5 text-base font-semibold text-celeste-700 transition hover:bg-white">
+      <a
+        href="/colabora/rendicion-de-cuentas"
+        class="mt-5 inline-flex rounded-full border border-celeste-300 px-5 py-2.5 text-base font-semibold text-celeste-700 transition hover:bg-white"
+      >
         Ver rendición de cuentas
       </a>
     </aside>
   </div>
 </PageLayout>
+
+<script>
+  // --- Estado del monto seleccionado ---
+  let monto = 25; // coincide con el botón preseleccionado ($25)
+
+  const botonesMonto = Array.from(
+    document.querySelectorAll<HTMLButtonElement>('.boton-monto'),
+  );
+  const inputOtro = document.getElementById('monto-otro') as HTMLInputElement | null;
+  const mensaje = document.getElementById('mensaje-donacion');
+  const btnStripe = document.getElementById('btn-stripe') as HTMLButtonElement | null;
+
+  function mostrarMensaje(texto: string, color = '#b91c1c') {
+    if (!mensaje) return;
+    mensaje.textContent = texto;
+    mensaje.style.color = color;
+  }
+
+  function marcarBoton(activo: HTMLButtonElement | null) {
+    botonesMonto.forEach((b) =>
+      b.setAttribute('aria-pressed', b === activo ? 'true' : 'false'),
+    );
+  }
+
+  botonesMonto.forEach((b) => {
+    b.addEventListener('click', () => {
+      monto = Number(b.dataset.monto);
+      if (inputOtro) inputOtro.value = '';
+      marcarBoton(b);
+      mostrarMensaje('');
+    });
+  });
+
+  inputOtro?.addEventListener('input', () => {
+    const valor = Number(inputOtro.value);
+    if (Number.isFinite(valor) && valor > 0) {
+      monto = valor;
+      marcarBoton(null);
+      mostrarMensaje('');
+    }
+  });
+
+  // --- Aviso de pago cancelado (?cancelado=1) ---
+  if (new URLSearchParams(location.search).has('cancelado')) {
+    const aviso = document.getElementById('aviso-cancelado');
+    if (aviso) aviso.hidden = false;
+  }
+
+  // --- Stripe Checkout ---
+  btnStripe?.addEventListener('click', async () => {
+    if (!(monto > 0)) {
+      mostrarMensaje('Elige o escribe un monto para donar.');
+      return;
+    }
+    btnStripe.disabled = true;
+    mostrarMensaje('Redirigiendo a la pasarela segura…', '#475569');
+    try {
+      const res = await fetch('/api/crear-donacion', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ monto }),
+      });
+      const data = await res.json();
+      if (data.ok && data.url) {
+        location.href = data.url;
+      } else {
+        mostrarMensaje(data.error || 'No se pudo iniciar el pago.');
+        btnStripe.disabled = false;
+      }
+    } catch {
+      mostrarMensaje('No se pudo conectar. Intenta más tarde.');
+      btnStripe.disabled = false;
+    }
+  });
+
+  // --- PayPal (botones del SDK, si está configurado) ---
+  const contenedorPaypal = document.getElementById('paypal-buttons');
+  const clientId = contenedorPaypal?.dataset.clientId;
+
+  if (contenedorPaypal && clientId) {
+    const script = document.createElement('script');
+    script.src = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(
+      clientId,
+    )}&currency=USD&intent=capture`;
+    script.onload = () => {
+      const paypal = (window as any).paypal;
+      if (!paypal) return;
+      paypal
+        .Buttons({
+          style: { color: 'gold', shape: 'pill', label: 'donate', height: 48 },
+          createOrder: (_data: unknown, actions: any) => {
+            if (!(monto > 0)) {
+              mostrarMensaje('Elige o escribe un monto para donar.');
+              return Promise.reject(new Error('monto-invalido'));
+            }
+            return actions.order.create({
+              intent: 'CAPTURE',
+              purchase_units: [
+                {
+                  description: 'Donación a FUNADELÁN',
+                  amount: { value: monto.toFixed(2), currency_code: 'USD' },
+                },
+              ],
+            });
+          },
+          onApprove: async (_data: unknown, actions: any) => {
+            await actions.order.capture();
+            location.href = '/colabora/donar/gracias?paypal=1';
+          },
+          onError: () => {
+            mostrarMensaje('Hubo un problema con PayPal. Intenta de nuevo.');
+          },
+        })
+        .render('#paypal-buttons');
+    };
+    document.head.appendChild(script);
+  }
+</script>

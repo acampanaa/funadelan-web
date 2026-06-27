@@ -1,8 +1,11 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import { getNoticias, urlForImage, formatearFecha } from '@/lib/sanity';
 
 const breadcrumbs = [];
+
+const noticias = await getNoticias();
 ---
 
 <PageLayout
@@ -10,5 +13,41 @@ const breadcrumbs = [];
   lead="Todas las novedades de la fundación."
   breadcrumbs={breadcrumbs}
 >
-  <Placeholder note="El listado de noticias se generará desde Sanity (esquema «noticia»)." />
+  {
+    !noticias || noticias.length === 0 ? (
+      <Placeholder note="Aún no hay noticias publicadas. Agrégalas en Sanity Studio (tipo «Noticia») y aparecerán aquí." />
+    ) : (
+      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {noticias.map((n: any) => (
+          <a
+            href={`/noticias/${n.slug}`}
+            class="group flex flex-col overflow-hidden rounded-2xl border border-celeste-100 bg-white shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          >
+            {n.imagen ? (
+              <img
+                src={urlForImage(n.imagen).width(800).height(440).fit('crop').url()}
+                alt={n.titulo}
+                class="h-44 w-full object-cover"
+                loading="lazy"
+              />
+            ) : (
+              <div class="grid h-44 place-items-center bg-gradient-to-br from-celeste-100 to-dorado-100 text-5xl" aria-hidden="true">
+                ✦
+              </div>
+            )}
+            <div class="flex flex-1 flex-col p-6">
+              <span class="text-sm font-semibold uppercase tracking-wide text-dorado-600">
+                {formatearFecha(n.fecha)}
+              </span>
+              <h2 class="mt-2 text-xl">{n.titulo}</h2>
+              <p class="mt-2 flex-1 text-base text-tinta/75">{n.resumen}</p>
+              <span class="mt-4 font-semibold text-celeste-600 group-hover:text-celeste-700">
+                Leer →
+              </span>
+            </div>
+          </a>
+        ))}
+      </div>
+    )
+  }
 </PageLayout>

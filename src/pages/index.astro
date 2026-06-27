@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getUltimasNoticias, urlForImage, formatearFecha } from '@/lib/sanity';
 
-// Datos de ejemplo — se reemplazarán por consultas a Sanity.
 const programas = [
   {
     titulo: 'Centro Diurno "Ángeluz"',
@@ -33,12 +33,26 @@ const cifras = [
   { valor: '1', etiqueta: 'misión: servir con amor' },
 ];
 
-// Marcador de últimas noticias (3 posts) — vendrá de Sanity.
-const noticias = [
-  { titulo: 'Próximamente: Chocolate para el Alma', resumen: 'Nuestro evento anual regresa el 15 de noviembre.', fecha: '15 nov', href: '/noticias' },
-  { titulo: 'Novena de octubre', resumen: 'Acompáñanos en la novena hasta el 2 de octubre.', fecha: '02 oct', href: '/noticias' },
-  { titulo: 'Bazar de los Ángeles', resumen: 'Un espacio de encuentro solidario para toda la comunidad.', fecha: 'Pronto', href: '/noticias' },
+// Últimas 3 noticias desde Sanity. Si aún no hay contenido publicado,
+// se muestran ejemplos para no dejar la sección vacía.
+const noticiasSanity = await getUltimasNoticias(3);
+const noticiasEjemplo = [
+  { _id: 'ej-1', titulo: 'Próximamente: Chocolate para el Alma', resumen: 'Nuestro evento anual regresa el 15 de noviembre.', fechaLabel: '15 nov', href: '/noticias', imagen: null },
+  { _id: 'ej-2', titulo: 'Novena de octubre', resumen: 'Acompáñanos en la novena hasta el 2 de octubre.', fechaLabel: '02 oct', href: '/noticias', imagen: null },
+  { _id: 'ej-3', titulo: 'Bazar de los Ángeles', resumen: 'Un espacio de encuentro solidario para toda la comunidad.', fechaLabel: 'Pronto', href: '/noticias', imagen: null },
 ];
+
+const noticias =
+  Array.isArray(noticiasSanity) && noticiasSanity.length > 0
+    ? noticiasSanity.map((n: any) => ({
+        _id: n._id,
+        titulo: n.titulo,
+        resumen: n.resumen,
+        fechaLabel: formatearFecha(n.fecha, { day: '2-digit', month: 'short' }),
+        href: `/noticias/${n.slug}`,
+        imagen: n.imagen,
+      }))
+    : noticiasEjemplo;
 ---
 
 <BaseLayout>
@@ -136,9 +150,18 @@ const noticias = [
         {
           noticias.map((n) => (
             <a href={n.href} class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition hover:shadow-lg">
-              <div class="grid h-44 place-items-center bg-gradient-to-br from-celeste-100 to-dorado-100 text-5xl" aria-hidden="true">✦</div>
+              {n.imagen ? (
+                <img
+                  src={urlForImage(n.imagen).width(800).height(440).fit('crop').url()}
+                  alt={n.titulo}
+                  class="h-44 w-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <div class="grid h-44 place-items-center bg-gradient-to-br from-celeste-100 to-dorado-100 text-5xl" aria-hidden="true">✦</div>
+              )}
               <div class="flex flex-1 flex-col p-6">
-                <span class="text-sm font-semibold uppercase tracking-wide text-dorado-600">{n.fecha}</span>
+                <span class="text-sm font-semibold uppercase tracking-wide text-dorado-600">{n.fechaLabel}</span>
                 <h3 class="mt-2 text-xl">{n.titulo}</h3>
                 <p class="mt-2 flex-1 text-base text-tinta/75">{n.resumen}</p>
                 <span class="mt-4 font-semibold text-celeste-600 group-hover:text-celeste-700">Leer →</span>

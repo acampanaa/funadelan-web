@@ -1,14 +1,44 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
-import Placeholder from '@/components/Placeholder.astro';
+import ContenidoEditable from '@/components/ContenidoEditable.astro';
+import { getPaginaEstatica } from '@/lib/sanity';
 
 const breadcrumbs = [];
+
+const pagina = await getPaginaEstatica('quienes-somos');
+const lead = pagina?.lead || 'Conoce la fundación, su historia y las personas que la hacen posible.';
+
+const secciones = [
+  { titulo: 'La fundación', descripcion: 'Qué somos y qué nos mueve.', href: '/quienes-somos/la-fundacion' },
+  { titulo: 'Historia', descripcion: 'El camino recorrido al servicio de los adultos mayores.', href: '/quienes-somos/historia' },
+  { titulo: 'Misión / Visión', descripcion: 'Nuestro propósito y hacia dónde vamos.', href: '/quienes-somos/mision-vision' },
+  { titulo: 'Organigrama', descripcion: 'La estructura que sostiene nuestra labor.', href: '/quienes-somos/organigrama' },
+  { titulo: 'Testimonios', descripcion: 'Voces de quienes han sido parte de la misión.', href: '/quienes-somos/testimonios' },
+  { titulo: 'Alianzas', descripcion: 'Aliados que fortalecen nuestro trabajo.', href: '/quienes-somos/alianzas' },
+];
 ---
 
-<PageLayout
-  title="Quiénes somos"
-  lead="Conoce la fundación, su historia y las personas que la hacen posible."
-  breadcrumbs={breadcrumbs}
->
-  <Placeholder />
+<PageLayout title="Quiénes somos" lead={lead} breadcrumbs={breadcrumbs}>
+  <ContenidoEditable cuerpo={pagina?.cuerpo}>
+    <p class="max-w-3xl text-lg text-tinta/85">
+      La Fundación Amigos de los Ángeles (FUNADELÁN) une fe y servicio para
+      acompañar con dignidad a las personas mayores de Portoviejo. Explora
+      nuestra historia, nuestra misión y las personas que hacen posible esta labor.
+    </p>
+  </ContenidoEditable>
+
+  <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    {
+      secciones.map((s) => (
+        <a
+          href={s.href}
+          class="group flex flex-col rounded-2xl border border-celeste-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+        >
+          <h2 class="text-xl text-celeste-800">{s.titulo}</h2>
+          <p class="mt-2 flex-1 text-base text-tinta/75">{s.descripcion}</p>
+          <span class="mt-4 font-semibold text-celeste-600 group-hover:text-celeste-700">Ver más →</span>
+        </a>
+      ))
+    }
+  </div>
 </PageLayout>

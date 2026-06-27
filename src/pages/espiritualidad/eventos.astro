@@ -1,8 +1,11 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import { getEventos, urlForImage, formatearFecha } from '@/lib/sanity';
 
-const breadcrumbs = [{"label":"Espiritualidad","href":"/espiritualidad"}];
+const breadcrumbs = [{ label: 'Espiritualidad', href: '/espiritualidad' }];
+
+const eventos = await getEventos('espiritual');
 ---
 
 <PageLayout
@@ -10,5 +13,33 @@ const breadcrumbs = [{"label":"Espiritualidad","href":"/espiritualidad"}];
   lead="Novenas, celebraciones y encuentros de fe."
   breadcrumbs={breadcrumbs}
 >
-  <Placeholder />
+  {
+    !eventos || eventos.length === 0 ? (
+      <Placeholder note="Aún no hay eventos espirituales publicados. Agrégalos en Sanity Studio (tipo «Evento»)." />
+    ) : (
+      <div class="space-y-6">
+        {eventos.map((e: any) => (
+          <article class="flex flex-col gap-5 rounded-2xl border border-celeste-100 bg-white p-6 shadow-sm sm:flex-row">
+            {e.imagen && (
+              <img
+                src={urlForImage(e.imagen).width(480).height(360).fit('crop').url()}
+                alt={e.titulo}
+                class="h-44 w-full rounded-xl object-cover sm:h-32 sm:w-48"
+                loading="lazy"
+              />
+            )}
+            <div class="flex-1">
+              <p class="text-sm font-semibold uppercase tracking-wide text-dorado-600">
+                {formatearFecha(e.fechaInicio)}
+                {e.fechaFin && ` — ${formatearFecha(e.fechaFin)}`}
+              </p>
+              <h2 class="mt-1 text-2xl">{e.titulo}</h2>
+              {e.lugar && <p class="mt-1 text-base text-tinta/60">📍 {e.lugar}</p>}
+              {e.resumen && <p class="mt-3 text-base text-tinta/75">{e.resumen}</p>}
+            </div>
+          </article>
+        ))}
+      </div>
+    )
+  }
 </PageLayout>

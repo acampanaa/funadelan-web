@@ -1,0 +1,52 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import ContenidoEditable from '@/components/ContenidoEditable.astro';
+import { sanityClient, getNoticia, urlForImage, formatearFecha } from '@/lib/sanity';
+
+// Genera una página estática por cada noticia publicada en Sanity.
+export async function getStaticPaths() {
+  const noticias = await sanityClient.fetch(
+    `*[_type == "noticia" && defined(slug.current)]{ "slug": slug.current }`,
+  );
+  return (noticias || []).map((n: any) => ({ params: { slug: n.slug } }));
+}
+
+const { slug } = Astro.params;
+const noticia = await getNoticia(slug!);
+
+if (!noticia) {
+  return Astro.redirect('/noticias');
+}
+
+const breadcrumbs = [{ label: 'Noticias', href: '/noticias' }];
+---
+
+<PageLayout
+  title={noticia.titulo}
+  description={noticia.resumen}
+  lead={formatearFecha(noticia.fecha)}
+  breadcrumbs={breadcrumbs}
+>
+  {
+    noticia.imagen && (
+      <img
+        src={urlForImage(noticia.imagen).width(1200).height(600).fit('crop').url()}
+        alt={noticia.titulo}
+        class="mb-10 aspect-[2/1] w-full rounded-2xl object-cover"
+      />
+    )
+  }
+
+  <ContenidoEditable cuerpo={noticia.cuerpo}>
+    <p class="max-w-3xl text-lg text-tinta/85">{noticia.resumen}</p>
+  </ContenidoEditable>
+
+  <div class="mt-12">
+    <a
+      href="/noticias"
+      class="inline-flex rounded-full border border-celeste-300 px-5 py-2.5 text-base font-semibold text-celeste-700 transition hover:bg-celeste-50"
+    >
+      ← Volver a noticias
+    </a>
+  </div>
+</PageLayout>

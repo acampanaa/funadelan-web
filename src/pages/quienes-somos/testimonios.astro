@@ -1,8 +1,11 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import { getTestimonios, urlForImage } from '@/lib/sanity';
 
-const breadcrumbs = [{"label":"Quiénes somos","href":"/quienes-somos"}];
+const breadcrumbs = [{ label: 'Quiénes somos', href: '/quienes-somos' }];
+
+const testimonios = await getTestimonios();
 ---
 
 <PageLayout
@@ -10,5 +13,38 @@ const breadcrumbs = [{"label":"Quiénes somos","href":"/quienes-somos"}];
   lead="Voces de quienes han sido parte de nuestra misión y de los logros alcanzados."
   breadcrumbs={breadcrumbs}
 >
-  <Placeholder />
+  {
+    !testimonios || testimonios.length === 0 ? (
+      <Placeholder note="Aún no hay testimonios publicados. Agrégalos en Sanity Studio (tipo «Testimonio»)." />
+    ) : (
+      <div class="grid gap-6 md:grid-cols-2">
+        {testimonios.map((t: any) => (
+          <figure class="flex flex-col rounded-2xl border border-celeste-100 bg-white p-7 shadow-sm">
+            <blockquote class="flex-1 text-lg italic text-tinta/85">
+              <span class="mr-1 font-display text-3xl text-dorado-400" aria-hidden="true">“</span>
+              {t.cita}
+            </blockquote>
+            <figcaption class="mt-5 flex items-center gap-4">
+              {t.foto ? (
+                <img
+                  src={urlForImage(t.foto).width(96).height(96).fit('crop').url()}
+                  alt={t.autor}
+                  class="h-12 w-12 rounded-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <span class="grid h-12 w-12 place-items-center rounded-full bg-celeste-100 text-lg font-semibold text-celeste-700" aria-hidden="true">
+                  {t.autor?.charAt(0)}
+                </span>
+              )}
+              <div>
+                <p class="font-semibold text-celeste-800">{t.autor}</p>
+                {t.rol && <p class="text-sm text-tinta/60">{t.rol}</p>}
+              </div>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    )
+  }
 </PageLayout>
