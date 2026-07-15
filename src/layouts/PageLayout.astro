@@ -19,11 +19,18 @@ const { title, description, lead, breadcrumbs = [] } = Astro.props;
 
 <BaseLayout title={title} description={description}>
   <!-- Cabecera de página interior -->
-  <section class="bg-celeste-800 text-white">
-    <div class="mx-auto max-w-6xl px-4 py-12">
+  <section class="relative overflow-hidden bg-celeste-800 text-white">
+    <div class="cielo-estrellado pointer-events-none absolute inset-0 opacity-40" aria-hidden="true"></div>
+    <div class="halo-dorado pointer-events-none absolute -right-16 -top-16 h-64 w-64" aria-hidden="true"></div>
+    <div class="relative mx-auto max-w-6xl px-4 py-14">
       {breadcrumbs.length > 0 && <Breadcrumbs items={[...breadcrumbs, { label: title }]} />}
       <h1 class="mt-4 font-display text-4xl font-semibold text-white sm:text-5xl">{title}</h1>
       {lead && <p class="mt-4 max-w-2xl text-lg text-celeste-100">{lead}</p>}
+    </div>
+    <div class="relative" aria-hidden="true">
+      <svg class="block h-8 w-full text-crema sm:h-10" viewBox="0 0 1440 60" preserveAspectRatio="none">
+        <path d="M0 60 C 360 6, 1080 6, 1440 60 Z" fill="currentColor" />
+      </svg>
     </div>
   </section>
 

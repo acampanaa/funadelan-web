@@ -28,6 +28,11 @@
   --color-dorado-600: #a86c16;
   --color-dorado-700: #855316;
 
+  /* Neutro cálido (arena) para dar humanidad y separar superficies */
+  --color-arena-50: #faf6ee;
+  --color-arena-100: #f3ebdc;
+  --color-arena-200: #e7dabf;
+
   --color-crema: #fdfbf6;
   --color-tinta: #1f2733;
 
@@ -42,6 +47,10 @@
   /* Radios y sombras suaves */
   --radius-xl: 1rem;
   --radius-2xl: 1.5rem;
+  --radius-arco: 2.5rem; /* forma de arco/santuario, motivo de marca */
+
+  /* Sombra suave y cálida (no gris azulado corporativo) */
+  --shadow-suave: 0 1px 2px rgba(31, 39, 51, 0.04), 0 12px 28px -12px rgba(29, 63, 110, 0.18);
 }
 
 html {
@@ -92,4 +101,64 @@ h1, h2, h3, h4 {
 
 .animate-fade-up {
   animation: fade-up 0.7s ease-out both;
+}
+
+/* ─────────────────────────────────────────────────────────
+   Sistema de marca "estrella guardiana"
+   Motivos reutilizables: halo de luz, arco de santuario,
+   campo de estrellas y latido suave del halo.
+   ───────────────────────────────────────────────────────── */
+
+/* Halo: resplandor dorado radial detrás de un elemento. */
+.halo-dorado {
+  background-image: radial-gradient(
+    closest-side,
+    rgba(233, 191, 90, 0.35),
+    rgba(233, 191, 90, 0) 70%
+  );
+}
+
+/* Arco de santuario: esquinas superiores muy redondeadas. */
+.arco {
+  border-top-left-radius: var(--radius-arco);
+  border-top-right-radius: var(--radius-arco);
+}
+
+/* Campo de estrellas tenue para fondos oscuros (celeste-800/900). */
+.cielo-estrellado {
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, rgba(241, 215, 146, 0.9), transparent),
+    radial-gradient(1.5px 1.5px at 70% 20%, rgba(255, 255, 255, 0.7), transparent),
+    radial-gradient(1px 1px at 40% 70%, rgba(241, 215, 146, 0.7), transparent),
+    radial-gradient(1.5px 1.5px at 85% 60%, rgba(255, 255, 255, 0.55), transparent),
+    radial-gradient(1px 1px at 55% 45%, rgba(241, 215, 146, 0.6), transparent),
+    radial-gradient(1px 1px at 10% 80%, rgba(255, 255, 255, 0.5), transparent);
+}
+
+/* Latido lento del halo (respeta reduce-motion vía la regla global). */
+@keyframes latido-halo {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(1.05); }
+}
+.animate-halo {
+  animation: latido-halo 6s ease-in-out infinite;
+}
+
+/* Antetítulo con destello: pequeño rótulo de sección de la marca. */
+.antetitulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  color: var(--color-dorado-600);
+}
+.antetitulo::before {
+  content: '';
+  width: 1.75rem;
+  height: 2px;
+  background: var(--color-dorado-400);
+  border-radius: 2px;
 }

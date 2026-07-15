@@ -1,21 +1,16 @@
 ---
 import { mainNav } from '@/config/navigation';
+import Logo from '@/components/Logo.astro';
+import Icono from '@/components/Icono.astro';
 
 const path = Astro.url.pathname;
 const isActive = (href: string) =>
   href === '/' ? path === '/' : path.startsWith(href);
 ---
 
-<header class="sticky top-0 z-50 border-b border-celeste-100 bg-crema/95 backdrop-blur">
+<header class="sticky top-0 z-50 border-b border-arena-200/70 bg-crema/90 backdrop-blur">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-    <a href="/" class="flex items-center gap-3" aria-label="FUNADELÁN — Inicio">
-      <span
-        class="grid h-11 w-11 place-items-center rounded-full bg-celeste-700 text-2xl text-dorado-300"
-        aria-hidden="true">✦</span>
-      <span class="font-display text-2xl font-semibold tracking-tight text-celeste-800">
-        FUNADELÁN
-      </span>
-    </a>
+    <Logo />
 
     <!-- Navegación de escritorio -->
     <nav class="hidden lg:block" aria-label="Navegación principal">
@@ -53,8 +48,9 @@ const isActive = (href: string) =>
         <li>
           <a
             href="/colabora/donar"
-            class="ml-2 inline-flex items-center rounded-full bg-dorado-400 px-5 py-2.5 text-base font-semibold text-celeste-900 shadow-sm transition hover:bg-dorado-300"
+            class="ml-2 inline-flex items-center gap-2 rounded-full bg-dorado-400 px-5 py-2.5 text-base font-semibold text-celeste-900 shadow-sm transition hover:bg-dorado-300 hover:shadow-md"
           >
+            <Icono name="corazon" class="h-5 w-5" />
             Donar
           </a>
         </li>
@@ -64,11 +60,11 @@ const isActive = (href: string) =>
     <!-- Botón móvil -->
     <button
       id="menu-toggle"
-      class="inline-flex items-center gap-2 rounded-lg border border-celeste-200 px-3 py-2 text-base font-medium text-celeste-700 lg:hidden"
+      class="inline-flex items-center gap-2 rounded-lg border border-celeste-200 px-3 py-2 text-base font-medium text-celeste-700 transition hover:bg-celeste-50 lg:hidden"
       aria-expanded="false"
       aria-controls="mobile-nav"
     >
-      <span aria-hidden="true">☰</span> Menú
+      <Icono name="menu" class="h-5 w-5" /> Menú
     </button>
   </div>
 

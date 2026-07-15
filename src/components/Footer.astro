@@ -1,19 +1,19 @@
 ---
 import { mainNav } from '@/config/navigation';
 import SuscripcionForm from '@/components/SuscripcionForm.astro';
+import Logo from '@/components/Logo.astro';
 
 const year = new Date().getFullYear();
 const columns = mainNav.filter((item) => item.children);
 ---
 
-<footer class="mt-24 border-t border-celeste-100 bg-celeste-800 text-celeste-100">
-  <div class="mx-auto max-w-6xl px-4 py-14">
+<footer class="relative mt-24 overflow-hidden bg-celeste-800 text-celeste-100">
+  <div class="cielo-estrellado pointer-events-none absolute inset-0 opacity-40" aria-hidden="true"></div>
+  <div class="halo-dorado pointer-events-none absolute -top-24 right-0 h-72 w-72" aria-hidden="true"></div>
+  <div class="relative mx-auto max-w-6xl px-4 py-14">
     <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
       <div class="lg:col-span-1">
-        <div class="flex items-center gap-3">
-          <span class="grid h-11 w-11 place-items-center rounded-full bg-celeste-700 text-2xl text-dorado-300" aria-hidden="true">✦</span>
-          <span class="font-display text-2xl font-semibold text-white">FUNADELÁN</span>
-        </div>
+        <Logo tone="onDark" />
         <p class="mt-4 text-base leading-relaxed text-celeste-200">
           Fundación Amigos de los Ángeles. Promovemos la fe en los Ángeles y la
           ayuda social a personas mayores en Portoviejo, Manabí, Ecuador.
