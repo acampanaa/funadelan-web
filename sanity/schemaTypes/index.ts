@@ -5,6 +5,8 @@ import { miembroOrganigrama } from './miembroOrganigrama';
 import { alianza } from './alianza';
 import { evento } from './evento';
 import { reflexion } from './reflexion';
+import { oracion } from './oracion';
+import { post } from './post';
 import { informe } from './informe';
 import { galeriaItem } from './galeriaItem';
 import { paginaEstatica } from './paginaEstatica';
@@ -13,8 +15,10 @@ export const schemaTypes = [
   // Páginas e informativos
   paginaEstatica,
   // Contenido recurrente
+  post,
   noticia,
   reflexion,
+  oracion,
   evento,
   // Programas y organización
   proyecto,

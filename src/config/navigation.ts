@@ -26,6 +26,7 @@ export const mainNav: NavLink[] = [
     href: '/espiritualidad',
     children: [
       { label: 'Reflexiones y mensajes', href: '/espiritualidad/reflexiones' },
+      { label: 'Oraciones', href: '/oraciones' },
       { label: 'Eventos', href: '/espiritualidad/eventos' },
     ],
   },
@@ -44,6 +45,7 @@ export const mainNav: NavLink[] = [
     label: 'Noticias',
     href: '/noticias',
     children: [
+      { label: 'Publicaciones', href: '/posts' },
       { label: 'Todas las noticias', href: '/noticias' },
       { label: 'Galería', href: '/noticias/galeria' },
       { label: 'Redes sociales', href: '/noticias/redes-sociales' },

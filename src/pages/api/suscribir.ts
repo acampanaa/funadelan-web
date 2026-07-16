@@ -86,13 +86,13 @@ export const POST: APIRoute = async ({ request }) => {
   // 2. Enviar el correo de bienvenida / confirmación de suscripción.
   const html = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto">
-      <h1 style="font-family:Georgia,serif;color:#18335a">¡Bienvenido/a a FUNADELÁN! ✦</h1>
-      <p style="font-size:16px;line-height:1.7;color:#1f2733">
+      <h1 style="font-family:Georgia,serif;color:#5c2e1c">¡Bienvenido/a a FUNADELÁN! ✦</h1>
+      <p style="font-size:16px;line-height:1.7;color:#2a2018">
         Gracias por suscribirte a las notificaciones de la <strong>Fundación Amigos
         de los Ángeles</strong>. A partir de ahora recibirás nuestras noticias,
         actividades y mensajes de esperanza.
       </p>
-      <p style="font-size:16px;line-height:1.7;color:#1f2733">
+      <p style="font-size:16px;line-height:1.7;color:#2a2018">
         «La vida solo tiene sentido cuando se la entrega, se la dona.»
       </p>
       <p style="font-size:14px;color:#6b7280">

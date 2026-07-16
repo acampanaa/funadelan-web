@@ -5,7 +5,7 @@
 ---
 
 <div class="rounded-2xl bg-celeste-700/60 p-6 lg:col-span-2">
-  <h2 class="font-display text-lg font-semibold text-dorado-200">
+  <h2 class="font-display text-lg font-semibold text-white">
     Recibe nuestras noticias
   </h2>
   <p class="mt-2 text-base text-celeste-200">
@@ -45,7 +45,7 @@
     const email = (form.elements.namedItem('email') as HTMLInputElement).value;
     boton.disabled = true;
     msg.textContent = 'Enviando…';
-    msg.style.color = '#d6e4f5';
+    msg.style.color = '#f6e5d6';
 
     try {
       const res = await fetch('/api/suscribir', {

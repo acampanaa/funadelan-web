@@ -1,0 +1,239 @@
+---
+// Visor de imágenes (lightbox) con zoom, sin dependencias externas.
+// Uso: envuelve cada miniatura en un enlace con data-lightbox:
+//   <a href="URL_GRANDE" data-lightbox data-alt="descripción"><img .../></a>
+// El visor recoge automáticamente todos los [data-lightbox] de la página,
+// permite navegar entre ellos y hacer zoom (rueda, pellizco, doble clic, +/−).
+import Icono from '@/components/Icono.astro';
+---
+
+<div
+  id="lightbox"
+  class="fixed inset-0 z-[100] hidden bg-black/85 backdrop-blur-sm"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Visor de imágenes"
+>
+  <button
+    type="button"
+    data-lb="close"
+    class="absolute right-4 top-4 z-20 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+    aria-label="Cerrar (Esc)"
+  >
+    <span class="text-3xl leading-none">×</span>
+  </button>
+
+  <button
+    type="button"
+    data-lb="prev"
+    class="absolute left-3 top-1/2 z-20 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+    aria-label="Anterior (flecha izquierda)"
+  >
+    <Icono name="flecha" class="h-6 w-6 rotate-180" />
+  </button>
+  <button
+    type="button"
+    data-lb="next"
+    class="absolute right-3 top-1/2 z-20 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+    aria-label="Siguiente (flecha derecha)"
+  >
+    <Icono name="flecha" class="h-6 w-6" />
+  </button>
+
+  <div id="lb-stage" class="relative h-full w-full touch-none overflow-hidden">
+    <img
+      id="lb-img"
+      src=""
+      alt=""
+      class="absolute left-1/2 top-1/2 max-h-[90vh] max-w-[92vw] cursor-grab select-none will-change-transform"
+      draggable="false"
+    />
+  </div>
+
+  <div
+    class="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1 rounded-full bg-white/10 px-2 py-1.5 text-white backdrop-blur"
+  >
+    <button type="button" data-lb="zoomout" class="grid h-9 w-9 place-items-center rounded-full text-2xl leading-none hover:bg-white/20" aria-label="Alejar">−</button>
+    <span id="lb-count" class="min-w-[3.5rem] text-center text-sm tabular-nums"></span>
+    <button type="button" data-lb="zoomin" class="grid h-9 w-9 place-items-center rounded-full text-2xl leading-none hover:bg-white/20" aria-label="Acercar">+</button>
+  </div>
+</div>
+
+<script>
+  const MIN = 1;
+  const MAX = 5;
+
+  const box = document.getElementById('lightbox');
+  const stage = document.getElementById('lb-stage');
+  const img = document.getElementById('lb-img') as HTMLImageElement | null;
+  const count = document.getElementById('lb-count');
+
+  if (box && stage && img && count) {
+    const enlaces = Array.from(
+      document.querySelectorAll<HTMLAnchorElement>('a[data-lightbox]'),
+    );
+
+    let index = 0;
+    let scale = 1;
+    let tx = 0;
+    let ty = 0;
+
+    // Punteros activos (para arrastrar y pellizcar)
+    const pointers = new Map<number, { x: number; y: number }>();
+    let pinchDist = 0;
+
+    const clamp = (v: number, min: number, max: number) => Math.min(max, Math.max(min, v));
+
+    function limitarPan() {
+      if (!img || !stage) return;
+      const maxX = Math.max(0, (img.clientWidth * scale - stage.clientWidth) / 2);
+      const maxY = Math.max(0, (img.clientHeight * scale - stage.clientHeight) / 2);
+      tx = clamp(tx, -maxX, maxX);
+      ty = clamp(ty, -maxY, maxY);
+    }
+
+    function aplicar() {
+      if (!img) return;
+      limitarPan();
+      img.style.transform = `translate(calc(-50% + ${tx}px), calc(-50% + ${ty}px)) scale(${scale})`;
+      img.style.cursor = scale > 1 ? 'grab' : 'zoom-in';
+    }
+
+    function resetZoom() {
+      scale = 1;
+      tx = 0;
+      ty = 0;
+      aplicar();
+    }
+
+    function mostrar(i: number) {
+      if (!img || enlaces.length === 0) return;
+      index = (i + enlaces.length) % enlaces.length;
+      const a = enlaces[index];
+      img.src = a.getAttribute('href') || '';
+      img.alt = a.getAttribute('data-alt') || '';
+      count.textContent = `${index + 1} / ${enlaces.length}`;
+      resetZoom();
+    }
+
+    function abrir(i: number) {
+      mostrar(i);
+      box!.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function cerrar() {
+      box!.classList.add('hidden');
+      document.body.style.overflow = '';
+      pointers.clear();
+    }
+
+    // Zoom centrado en un punto (coordenadas relativas al centro del escenario)
+    function zoomEn(nuevo: number, cx: number, cy: number) {
+      const s = clamp(nuevo, MIN, MAX);
+      const ratio = s / scale;
+      tx = cx * (1 - ratio) + tx * ratio;
+      ty = cy * (1 - ratio) + ty * ratio;
+      scale = s;
+      aplicar();
+    }
+
+    function puntoCentro(clientX: number, clientY: number) {
+      const r = stage!.getBoundingClientRect();
+      return { x: clientX - r.left - r.width / 2, y: clientY - r.top - r.height / 2 };
+    }
+
+    // Abrir desde las miniaturas
+    enlaces.forEach((a, i) => {
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        abrir(i);
+      });
+    });
+
+    // Controles
+    box.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest('[data-lb]') as HTMLElement | null;
+      if (t) {
+        const accion = t.dataset.lb;
+        if (accion === 'close') cerrar();
+        else if (accion === 'prev') mostrar(index - 1);
+        else if (accion === 'next') mostrar(index + 1);
+        else if (accion === 'zoomin') zoomEn(scale + 0.5, 0, 0);
+        else if (accion === 'zoomout') zoomEn(scale - 0.5, 0, 0);
+        return;
+      }
+      // Clic en el fondo (fuera de la imagen) cierra
+      if (e.target === stage || e.target === box) cerrar();
+    });
+
+    // Doble clic: alterna zoom
+    img.addEventListener('dblclick', (e) => {
+      const p = puntoCentro(e.clientX, e.clientY);
+      zoomEn(scale > 1 ? 1 : 2.5, p.x, p.y);
+    });
+
+    // Rueda: zoom hacia el cursor
+    stage.addEventListener(
+      'wheel',
+      (e) => {
+        if (box.classList.contains('hidden')) return;
+        e.preventDefault();
+        const p = puntoCentro(e.clientX, e.clientY);
+        zoomEn(scale * (e.deltaY < 0 ? 1.15 : 1 / 1.15), p.x, p.y);
+      },
+      { passive: false },
+    );
+
+    // Arrastrar (pan) y pellizcar (pinch) con Pointer Events
+    stage.addEventListener('pointerdown', (e) => {
+      stage.setPointerCapture(e.pointerId);
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        pinchDist = Math.hypot(a.x - b.x, a.y - b.y);
+      }
+    });
+
+    stage.addEventListener('pointermove', (e) => {
+      if (!pointers.has(e.pointerId)) return;
+      const prev = pointers.get(e.pointerId)!;
+      const dx = e.clientX - prev.x;
+      const dy = e.clientY - prev.y;
+      pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (pointers.size === 2) {
+        const [a, b] = [...pointers.values()];
+        const dist = Math.hypot(a.x - b.x, a.y - b.y);
+        if (pinchDist > 0) {
+          const midX = (a.x + b.x) / 2;
+          const midY = (a.y + b.y) / 2;
+          const p = puntoCentro(midX, midY);
+          zoomEn(scale * (dist / pinchDist), p.x, p.y);
+        }
+        pinchDist = dist;
+      } else if (scale > 1) {
+        tx += dx;
+        ty += dy;
+        aplicar();
+      }
+    });
+
+    const soltar = (e: PointerEvent) => {
+      pointers.delete(e.pointerId);
+      if (pointers.size < 2) pinchDist = 0;
+    };
+    stage.addEventListener('pointerup', soltar);
+    stage.addEventListener('pointercancel', soltar);
+
+    // Teclado
+    document.addEventListener('keydown', (e) => {
+      if (box.classList.contains('hidden')) return;
+      if (e.key === 'Escape') cerrar();
+      else if (e.key === 'ArrowLeft') mostrar(index - 1);
+      else if (e.key === 'ArrowRight') mostrar(index + 1);
+      else if (e.key === '+' || e.key === '=') zoomEn(scale + 0.5, 0, 0);
+      else if (e.key === '-') zoomEn(scale - 0.5, 0, 0);
+    });
+  }
+</script>

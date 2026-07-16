@@ -2,22 +2,25 @@
 
 /*
   Sistema de diseño FUNADELÁN.
-  Paleta celestial (azul profundo) + dorado angélico sobre fondo cálido.
+  Paleta CÁLIDA: terracota/sepia + dorado angélico sobre marfil cálido,
+  en armonía con los tonos del logo (querubines, alas doradas, caligrafía sepia).
+  Nota: los tokens conservan el nombre histórico "celeste-*" por compatibilidad,
+  pero sus valores son ahora una rampa cálida (terracota → sepia → espresso).
   Prioridad RNF-12: legibilidad para adultos mayores -> base 18px,
   alto contraste, interlineado generoso, áreas de toque amplias.
 */
 @theme {
-  /* Marca */
-  --color-celeste-50: #eef4fb;
-  --color-celeste-100: #d6e4f5;
-  --color-celeste-200: #aecaeb;
-  --color-celeste-300: #7da9dc;
-  --color-celeste-400: #4f86c9;
-  --color-celeste-500: #2f66ad;
-  --color-celeste-600: #234f8a;
-  --color-celeste-700: #1d3f6e;
-  --color-celeste-800: #18335a;
-  --color-celeste-900: #142a4a;
+  /* Marca — rampa cálida (terracota/sepia) */
+  --color-celeste-50: #fbf3ec;
+  --color-celeste-100: #f6e5d6;
+  --color-celeste-200: #ecc9ac;
+  --color-celeste-300: #dda574;
+  --color-celeste-400: #cd8148;
+  --color-celeste-500: #b6602c;
+  --color-celeste-600: #984922;
+  --color-celeste-700: #7a3b20;
+  --color-celeste-800: #5c2e1c;
+  --color-celeste-900: #442218;
 
   --color-dorado-50: #fdf8ed;
   --color-dorado-100: #f8ecca;
@@ -33,12 +36,12 @@
   --color-arena-100: #f3ebdc;
   --color-arena-200: #e7dabf;
 
-  --color-crema: #fdfbf6;
-  --color-tinta: #1f2733;
+  --color-crema: #fdf8f1; /* marfil cálido */
+  --color-tinta: #2a2018; /* café muy oscuro (texto), más cálido que el gris azulado */
 
   /* Tipografía: cuerpo legible + títulos con carácter */
-  --font-sans: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Fraunces', 'Source Sans 3', Georgia, serif;
+  --font-sans: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'Lora', Georgia, 'Times New Roman', serif;
 
   /* Base más grande para lectura cómoda */
   --text-base: 1.125rem; /* 18px */
@@ -67,11 +70,15 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3, h4 {
-  font-family: var(--font-display);
-  line-height: 1.15;
-  color: var(--color-celeste-800);
-  text-wrap: balance;
+/* En @layer base para que las utilidades de color de Tailwind (text-white,
+   text-dorado-200…) puedan sobreescribir el color por defecto en fondos oscuros. */
+@layer base {
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    line-height: 1.15;
+    color: var(--color-celeste-800);
+    text-wrap: balance;
+  }
 }
 
 /* Foco visible y amplio para accesibilidad */
@@ -153,7 +160,7 @@ h1, h2, h3, h4 {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   font-size: 0.8rem;
-  color: var(--color-dorado-600);
+  color: var(--color-dorado-700); /* WCAG AA sobre crema (6.3:1) */
 }
 .antetitulo::before {
   content: '';

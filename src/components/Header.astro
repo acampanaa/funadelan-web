@@ -12,6 +12,18 @@ const isActive = (href: string) =>
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
     <Logo />
 
+    <div id="nav-cluster" class="flex items-center gap-2">
+    <!-- Botón de búsqueda (siempre visible) -->
+    <button
+      id="search-toggle"
+      class="inline-flex h-11 w-11 items-center justify-center rounded-full text-celeste-700 transition hover:bg-celeste-50"
+      aria-label="Buscar"
+      aria-expanded="false"
+      aria-controls="search-inline"
+    >
+      <Icono name="lupa" class="h-6 w-6" />
+    </button>
+
     <!-- Navegación de escritorio -->
     <nav class="hidden lg:block" aria-label="Navegación principal">
       <ul class="flex items-center gap-1">
@@ -66,6 +78,41 @@ const isActive = (href: string) =>
     >
       <Icono name="menu" class="h-5 w-5" /> Menú
     </button>
+    </div>
+
+    <!-- Barra de búsqueda en línea: reemplaza los botones al abrirse -->
+    <form
+      id="search-inline"
+      action="/buscar"
+      method="get"
+      role="search"
+      class="hidden flex flex-1 items-center gap-2"
+    >
+      <Icono name="lupa" class="h-6 w-6 shrink-0 text-celeste-600" />
+      <label for="search-input" class="sr-only">Buscar en el sitio</label>
+      <input
+        id="search-input"
+        type="search"
+        name="q"
+        placeholder="Buscar publicaciones, noticias, oraciones…"
+        autocomplete="off"
+        class="w-full rounded-full border border-arena-200 bg-white px-5 py-2.5 text-base text-tinta placeholder:text-tinta/50 focus:border-dorado-400"
+      />
+      <button
+        type="submit"
+        class="shrink-0 rounded-full bg-celeste-700 px-5 py-2.5 text-base font-semibold text-white transition hover:bg-celeste-600"
+      >
+        Buscar
+      </button>
+      <button
+        type="button"
+        id="search-close"
+        class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-tinta/60 transition hover:bg-celeste-50"
+        aria-label="Cerrar búsqueda"
+      >
+        <span aria-hidden="true" class="text-2xl leading-none">×</span>
+      </button>
+    </form>
   </div>
 
   <!-- Navegación móvil -->
@@ -105,5 +152,25 @@ const isActive = (href: string) =>
   toggle?.addEventListener('click', () => {
     const open = nav?.classList.toggle('hidden') === false;
     toggle.setAttribute('aria-expanded', String(open));
+  });
+
+  // Búsqueda en línea: la barra reemplaza los botones del header y viceversa.
+  const searchToggle = document.getElementById('search-toggle');
+  const navCluster = document.getElementById('nav-cluster');
+  const searchInline = document.getElementById('search-inline');
+  const searchInput = document.getElementById('search-input') as HTMLInputElement | null;
+  const searchClose = document.getElementById('search-close');
+
+  function abrirBusqueda(abrir: boolean) {
+    navCluster?.classList.toggle('hidden', abrir);
+    searchInline?.classList.toggle('hidden', !abrir);
+    searchToggle?.setAttribute('aria-expanded', String(abrir));
+    if (abrir) searchInput?.focus();
+  }
+
+  searchToggle?.addEventListener('click', () => abrirBusqueda(true));
+  searchClose?.addEventListener('click', () => abrirBusqueda(false));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && !searchInline?.classList.contains('hidden')) abrirBusqueda(false);
   });
 </script>
