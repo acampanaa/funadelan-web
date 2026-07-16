@@ -1,55 +1,38 @@
 ---
-// Marca de FUNADELÁN — "estrella guardiana": una estrella de cuatro puntas
-// (continuidad con el ✦ histórico) envuelta en un halo dorado, con destellos.
-// Reemplaza el emoji anterior por un vector nítido, escalable y con temática.
+// Logo oficial de FUNADELÁN (Fundación Amigos de los Ángeles).
+// PNG con fondo transparente y lockup completo (marca + nombre + lema),
+// por eso no lleva un wordmark de texto aparte.
+// El arte tiene texto oscuro (pensado para fondo claro): en fondos oscuros
+// (tone="onDark") se coloca sobre una tarjeta cálida para mantener legibilidad.
 interface Props {
   class?: string;
-  showText?: boolean;
+  imgClass?: string;
   tone?: 'onLight' | 'onDark';
   href?: string | null;
 }
 
 const {
   class: className = '',
-  showText = true,
+  imgClass = 'h-14 w-auto',
   tone = 'onLight',
   href = '/',
 } = Astro.props;
 
-const estrella = tone === 'onDark' ? '#f1d792' : '#1d3f6e';
-const halo = tone === 'onDark' ? 'rgba(233,191,90,.85)' : '#e0a730';
-const destello = tone === 'onDark' ? 'rgba(241,215,146,.9)' : '#e9bf5a';
-const textoClase = tone === 'onDark' ? 'text-white' : 'text-celeste-800';
-
 const Tag = href ? 'a' : 'div';
+const alt = 'FUNADELÁN — Fundación Amigos de los Ángeles';
 ---
 
 <Tag
-  {...href ? { href, 'aria-label': 'FUNADELÁN — Inicio' } : {}}
-  class:list={['group inline-flex items-center gap-3', className]}
+  {...href ? { href, 'aria-label': `${alt} — Inicio` } : {}}
+  class:list={['inline-flex items-center transition-opacity hover:opacity-90', className]}
 >
-  <span class="relative grid place-items-center">
-    <svg
-      viewBox="0 0 64 64"
-      class="h-11 w-11 transition-transform duration-500 group-hover:rotate-45"
-      role="img"
-      aria-hidden={showText ? 'true' : undefined}
-      aria-label={showText ? undefined : 'FUNADELÁN'}
-    >
-      <circle cx="32" cy="32" r="29" fill="none" stroke={halo} stroke-width="2" opacity="0.9" />
-      <path
-        d="M32 7 C33.6 24 40 30.4 57 32 C40 33.6 33.6 40 32 57 C30.4 40 24 33.6 7 32 C24 30.4 30.4 24 32 7 Z"
-        fill={estrella}
-      />
-      <circle cx="51.5" cy="14.5" r="2.1" fill={destello} />
-      <circle cx="13" cy="47" r="1.6" fill={destello} />
-    </svg>
-  </span>
   {
-    showText && (
-      <span class:list={['font-display text-2xl font-semibold tracking-tight', textoClase]}>
-        FUNADEL<span class="text-dorado-400">Á</span>N
+    tone === 'onDark' ? (
+      <span class="inline-flex rounded-2xl bg-crema p-2.5 shadow-md ring-1 ring-white/10">
+        <img src="/logo.png" alt={alt} class:list={[imgClass]} width="500" height="500" />
       </span>
+    ) : (
+      <img src="/logo.png" alt={alt} class:list={[imgClass]} width="500" height="500" />
     )
   }
 </Tag>

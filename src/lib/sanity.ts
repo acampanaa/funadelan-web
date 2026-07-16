@@ -41,6 +41,54 @@ export async function getNoticias() {
   );
 }
 
+/** Publicaciones (posts), de la más reciente a la más antigua. */
+export async function getPosts() {
+  return sanityClient.fetch(
+    `*[_type == "post"] | order(fecha desc){
+      _id, titulo, "slug": slug.current, fecha, autor, resumen, imagenes
+    }`,
+  );
+}
+
+/** Últimas N publicaciones para la página principal. */
+export async function getUltimosPosts(limite = 3) {
+  return sanityClient.fetch(
+    `*[_type == "post"] | order(fecha desc)[0...$limite]{
+      _id, titulo, "slug": slug.current, fecha, autor, resumen, imagenes
+    }`,
+    { limite },
+  );
+}
+
+/** Una publicación por slug (para la página de detalle). */
+export async function getPost(slug: string) {
+  return sanityClient.fetch(
+    `*[_type == "post" && slug.current == $slug][0]{
+      _id, titulo, fecha, autor, resumen, contenido, imagenes
+    }`,
+    { slug },
+  );
+}
+
+/** Búsqueda en vivo sobre el contenido publicado (publicaciones, noticias,
+ *  reflexiones y oraciones). Coincide en título, resumen, autor y texto. */
+export async function buscar(termino: string) {
+  const q = `*${termino}*`;
+  return sanityClient.fetch(
+    `*[_type in ["post", "noticia", "reflexion", "oracion"] && (
+      titulo match $q ||
+      resumen match $q ||
+      autor match $q ||
+      (defined(contenido) && pt::text(contenido) match $q) ||
+      (defined(cuerpo) && pt::text(cuerpo) match $q) ||
+      (defined(texto) && pt::text(texto) match $q)
+    )] | order(_type asc){
+      _id, _type, titulo, "slug": slug.current, resumen, fecha
+    }`,
+    { q },
+  );
+}
+
 /** Contenido editable de una página informativa, por su clave única. */
 export async function getPaginaEstatica(clave: string) {
   return sanityClient.fetch(
@@ -87,6 +135,15 @@ export async function getReflexion(slug: string) {
       _id, titulo, fecha, autor, cuerpo
     }`,
     { slug },
+  );
+}
+
+/** Oraciones, ordenadas por el campo "orden". */
+export async function getOraciones() {
+  return sanityClient.fetch(
+    `*[_type == "oracion"] | order(orden asc, titulo asc){
+      _id, titulo, texto, fuente, orden, imagen
+    }`,
   );
 }
 

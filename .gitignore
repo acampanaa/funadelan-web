@@ -3,6 +3,11 @@ dist/
 .netlify/
 .astro/
 
+# material de origen (imágenes/textos ya subidos a Sanity o a public/)
+imgs/
+oraciones/
+posts/
+
 # dependencies
 node_modules/
 

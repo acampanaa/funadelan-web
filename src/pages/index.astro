@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Icono from '@/components/Icono.astro';
-import { getUltimasNoticias, urlForImage, formatearFecha } from '@/lib/sanity';
+import { getUltimasNoticias, getUltimosPosts, urlForImage, formatearFecha } from '@/lib/sanity';
 
 const programas = [
   {
@@ -60,6 +60,9 @@ const noticias =
         imagen: n.imagen,
       }))
     : noticiasEjemplo;
+
+// Últimas publicaciones desde Sanity (si las hay, se muestran en la home).
+const posts = (await getUltimosPosts(3)) || [];
 ---
 
 <BaseLayout>
@@ -71,7 +74,7 @@ const noticias =
     <div
       class="pointer-events-none absolute inset-0 opacity-40"
       aria-hidden="true"
-      style="background-image: radial-gradient(circle at 15% 85%, rgba(47,102,173,.55) 0, transparent 40%);"
+      style="background-image: radial-gradient(circle at 15% 85%, rgba(182,96,44,.6) 0, transparent 40%);"
     >
     </div>
 
@@ -89,7 +92,8 @@ const noticias =
           Promovemos la fe en los Ángeles y acompañamos con dignidad a las personas
           mayores de Portoviejo. Tu apoyo hace posible nuestra misión.
         </p>
-        <div class="mt-9 flex flex-wrap gap-4">
+        <p class="mt-5 font-display text-xl italic text-dorado-300">«Vivir para servir»</p>
+        <div class="mt-8 flex flex-wrap gap-4">
           <a href="/colabora/donar"
             class="inline-flex items-center gap-2 rounded-full bg-dorado-400 px-7 py-3.5 text-lg font-semibold text-celeste-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-dorado-300">
             <Icono name="corazon" class="h-5 w-5" />
@@ -103,22 +107,22 @@ const noticias =
         </div>
       </div>
 
-      <!-- Emblema: estrella guardiana con halos concéntricos -->
-      <div class="relative hidden justify-center lg:flex" aria-hidden="true">
-        <div class="relative grid h-96 w-96 place-items-center">
-          <div class="absolute inset-0 rounded-full border border-dorado-300/25"></div>
-          <div class="absolute inset-8 rounded-full border border-dorado-300/30"></div>
-          <div class="absolute inset-16 rounded-full border border-dorado-300/40"></div>
-          <div class="halo-dorado animate-halo absolute inset-10 rounded-full"></div>
-          <svg viewBox="0 0 64 64" class="relative h-44 w-44 drop-shadow-[0_8px_24px_rgba(233,191,90,.35)]">
-            <path
-              d="M32 4 C34 26 38 30 60 32 C38 34 34 38 32 60 C30 38 26 34 4 32 C26 30 30 26 32 4 Z"
-              fill="#f1d792"
+      <!-- Emblema: logo oficial enmarcado, envuelto en halo de luz -->
+      <div class="relative hidden justify-center lg:flex">
+        <div class="relative">
+          <div class="halo-dorado animate-halo pointer-events-none absolute -inset-10 rounded-full" aria-hidden="true"></div>
+          <div class="absolute -inset-3 rounded-[2.5rem] border border-dorado-300/25" aria-hidden="true"></div>
+          <div class="relative overflow-hidden rounded-[2rem] bg-white p-3 shadow-2xl ring-1 ring-white/50">
+            <img
+              src="/logo.jpg"
+              alt="FUNADELÁN — Fundación Amigos de los Ángeles. «Vivir para servir»"
+              class="h-80 w-80 rounded-[1.25rem] object-contain"
+              width="2045"
+              height="2045"
             />
-          </svg>
-          <span class="absolute left-6 top-10 h-2 w-2 rounded-full bg-white/80"></span>
-          <span class="absolute bottom-12 right-8 h-1.5 w-1.5 rounded-full bg-dorado-200"></span>
-          <span class="absolute right-16 top-6 h-1 w-1 rounded-full bg-white/70"></span>
+          </div>
+          <span class="pointer-events-none absolute -right-3 top-8 h-2 w-2 rounded-full bg-dorado-200" aria-hidden="true"></span>
+          <span class="pointer-events-none absolute -left-4 bottom-16 h-1.5 w-1.5 rounded-full bg-white/80" aria-hidden="true"></span>
         </div>
       </div>
     </div>
@@ -196,6 +200,65 @@ const noticias =
     </div>
   </section>
 
+  <!-- ══════════ PUBLICACIONES RECIENTES ══════════ -->
+  {
+    posts.length > 0 && (
+      <section class="mx-auto max-w-6xl px-4 py-16">
+        <div class="mb-12 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <span class="antetitulo">Nuestra comunidad</span>
+            <h2 class="mt-4 font-display text-3xl font-semibold sm:text-4xl">Publicaciones recientes</h2>
+            <p class="mt-3 text-lg text-tinta/75">Momentos y novedades de la fundación.</p>
+          </div>
+          <a
+            href="/posts"
+            class="inline-flex items-center gap-2 rounded-full border border-celeste-300 px-6 py-3 text-base font-semibold text-celeste-700 transition hover:bg-celeste-50"
+          >
+            Ver todas
+            <Icono name="flecha" class="h-5 w-5" />
+          </a>
+        </div>
+        <div class="grid gap-6 md:grid-cols-3">
+          {posts.map((p: any) => (
+            <a
+              href={`/posts/${p.slug}`}
+              class="group flex flex-col overflow-hidden rounded-2xl border border-arena-200/70 bg-white shadow-[var(--shadow-suave)] transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              {p.imagenes && p.imagenes.length > 0 ? (
+                <img
+                  src={urlForImage(p.imagenes[0]).width(800).height(600).fit('crop').url()}
+                  alt={p.titulo}
+                  class="h-52 w-full object-cover"
+                  loading="lazy"
+                />
+              ) : (
+                <div class="relative grid h-52 place-items-center overflow-hidden bg-celeste-800" aria-hidden="true">
+                  <div class="cielo-estrellado absolute inset-0 opacity-60" />
+                  <div class="halo-dorado absolute inset-0" />
+                  <svg viewBox="0 0 64 64" class="relative h-16 w-16">
+                    <path d="M32 7 C33.6 24 40 30.4 57 32 C40 33.6 33.6 40 32 57 C30.4 40 24 33.6 7 32 C24 30.4 30.4 24 32 7 Z" fill="#f1d792" />
+                  </svg>
+                </div>
+              )}
+              <div class="flex flex-1 flex-col p-6">
+                <span class="inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-dorado-700">
+                  <Icono name="estrella" class="h-3.5 w-3.5" />
+                  {formatearFecha(p.fecha, { day: '2-digit', month: 'short', year: 'numeric' })}
+                </span>
+                <h3 class="mt-2 text-xl leading-snug">{p.titulo}</h3>
+                {p.resumen && <p class="mt-2 flex-1 text-base text-tinta/75">{p.resumen}</p>}
+                <span class="mt-4 inline-flex items-center gap-1.5 font-semibold text-celeste-600 transition group-hover:gap-2.5 group-hover:text-celeste-700">
+                  Ver publicación
+                  <Icono name="flecha" class="h-5 w-5" />
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
   <!-- ══════════ ÚLTIMAS NOTICIAS ══════════ -->
   <section class="relative overflow-hidden bg-celeste-50/60">
     <div class="mx-auto max-w-6xl px-4 py-20">
@@ -232,7 +295,7 @@ const noticias =
                 </div>
               )}
               <div class="flex flex-1 flex-col p-6">
-                <span class="inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-dorado-600">
+                <span class="inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-dorado-700">
                   <Icono name="estrella" class="h-3.5 w-3.5" />
                   {n.fechaLabel}
                 </span>
