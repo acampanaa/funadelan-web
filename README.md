@@ -7,7 +7,7 @@ un administrador no técnico. Pensado para presentarse en el evento **"Chocolate
 el Alma"** (15 de noviembre).
 
 ## Stack (Jamstack)
-
+V
 | Capa | Tecnología |
 |---|---|
 | Front-end | [Astro](https://astro.build) 5 |
@@ -15,7 +15,7 @@ el Alma"** (15 de noviembre).
 | CMS | [Sanity.io](https://www.sanity.io) |
 | Hosting + builds + forms + functions | [Netlify](https://www.netlify.com) |
 | Boletín por correo | [Brevo](https://www.brevo.com) |
-| Donaciones | Stripe + PayPal |
+| Donaciones | Enlace de pago Kushki + código QR |
 
 ## Requisitos
 
@@ -83,7 +83,8 @@ a los suscriptores. Configurar en Netlify: `SANITY_WEBHOOK_SECRET`, `BREVO_API_K
 - [ ] Conectar las páginas a Sanity (reemplazar datos de ejemplo en `index.astro`).
 - [ ] Página de detalle de noticia (`/noticias/[slug]`).
 - [ ] Formulario de suscripción al boletín → Brevo.
-- [ ] Integrar Stripe Checkout y botón de PayPal en `/colabora/donar`.
+- [ ] Crear la cuenta de FUNADELÁN en Kushki y configurar `PUBLIC_KUSHKI_PAYMENT_URL`.
+- [ ] Subir el QR de donación a `public/` y configurar `PUBLIC_DONATION_QR_URL`.
 - [ ] Resolver los 13 huecos de requisitos (ver documento de contexto, sección 4).
 
 ## Accesibilidad
