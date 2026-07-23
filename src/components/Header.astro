@@ -8,76 +8,91 @@ const isActive = (href: string) =>
   href === '/' ? path === '/' : path.startsWith(href);
 ---
 
-<header class="sticky top-0 z-50 border-b border-arena-200/70 bg-crema/90 backdrop-blur">
+<!-- Barra utilitaria: contacto rápido, discreta, como en sitios de ONG de referencia -->
+<div class="hidden border-b border-arena-200 bg-arena-50 text-sm text-tinta/70 lg:block">
+  <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
+    <a href="/colabora/contacto" class="inline-flex items-center gap-1.5 transition hover:text-celeste-700">
+      <Icono name="ubicacion" class="h-4 w-4" />
+      Portoviejo, Manabí, Ecuador
+    </a>
+    <a href="mailto:contacto@funadelan.org" class="inline-flex items-center gap-1.5 transition hover:text-celeste-700">
+      <Icono name="correo" class="h-4 w-4" />
+      contacto@funadelan.org
+    </a>
+  </div>
+</div>
+
+<header class="sticky top-0 z-50 border-b border-arena-200/70 bg-white/95 backdrop-blur">
   <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-    <Logo />
+    <Logo imgClass="h-12 w-auto lg:h-14" />
 
-    <div id="nav-cluster" class="flex items-center gap-2">
-    <!-- Botón de búsqueda (siempre visible) -->
-    <button
-      id="search-toggle"
-      class="inline-flex h-11 w-11 items-center justify-center rounded-full text-celeste-700 transition hover:bg-celeste-50"
-      aria-label="Buscar"
-      aria-expanded="false"
-      aria-controls="search-inline"
-    >
-      <Icono name="lupa" class="h-6 w-6" />
-    </button>
+    <div id="nav-cluster" class="flex flex-1 items-center justify-end gap-1">
+      <!-- Navegación de escritorio -->
+      <nav class="hidden lg:block" aria-label="Navegación principal">
+        <ul class="flex items-center">
+          {
+            mainNav.slice(1).map((item) => (
+              <li class="group relative">
+                <a
+                  href={item.href}
+                  class:list={[
+                    'inline-flex items-center gap-1 px-3.5 py-2 text-base font-medium transition-colors hover:text-celeste-700',
+                    isActive(item.href) ? 'text-celeste-700' : 'text-tinta',
+                  ]}
+                  aria-current={isActive(item.href) ? 'page' : undefined}
+                >
+                  {item.label}
+                  {item.children && <Icono name="chevron" class="h-4 w-4 text-tinta/50 transition group-hover:text-celeste-600" />}
+                </a>
+                <span class="absolute inset-x-3 -bottom-px h-0.5 scale-x-0 bg-dorado-400 transition-transform group-hover:scale-x-100" aria-hidden="true" />
+                {item.children && (
+                  <ul class="invisible absolute left-0 top-full min-w-56 -translate-y-1 rounded-xl border border-arena-200 bg-white p-2 opacity-0 shadow-lg transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                    {item.children.map((child) => (
+                      <li>
+                        <a
+                          href={child.href}
+                          class="block rounded-lg px-3 py-2 text-base text-tinta hover:bg-arena-50 hover:text-celeste-700"
+                        >
+                          {child.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
 
-    <!-- Navegación de escritorio -->
-    <nav class="hidden lg:block" aria-label="Navegación principal">
-      <ul class="flex items-center gap-1">
-        {
-          mainNav.slice(1).map((item) => (
-            <li class="group relative">
-              <a
-                href={item.href}
-                class:list={[
-                  'inline-flex items-center rounded-lg px-3 py-2 text-base font-medium transition-colors hover:bg-celeste-50 hover:text-celeste-700',
-                  isActive(item.href) ? 'text-celeste-700' : 'text-tinta',
-                ]}
-                aria-current={isActive(item.href) ? 'page' : undefined}
-              >
-                {item.label}
-              </a>
-              {item.children && (
-                <ul class="invisible absolute left-0 top-full min-w-60 rounded-xl border border-celeste-100 bg-white p-2 opacity-0 shadow-lg transition group-hover:visible group-hover:opacity-100">
-                  {item.children.map((child) => (
-                    <li>
-                      <a
-                        href={child.href}
-                        class="block rounded-lg px-3 py-2 text-base text-tinta hover:bg-celeste-50 hover:text-celeste-700"
-                      >
-                        {child.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))
-        }
-        <li>
-          <a
-            href="/colabora/donar"
-            class="ml-2 inline-flex items-center gap-2 rounded-full bg-dorado-400 px-5 py-2.5 text-base font-semibold text-celeste-900 shadow-sm transition hover:bg-dorado-300 hover:shadow-md"
-          >
-            <Icono name="corazon" class="h-5 w-5" />
-            Donar
-          </a>
-        </li>
-      </ul>
-    </nav>
+      <!-- Botón de búsqueda -->
+      <button
+        id="search-toggle"
+        class="ml-1 inline-flex h-11 w-11 items-center justify-center rounded-full text-tinta/70 transition hover:bg-arena-50 hover:text-celeste-700"
+        aria-label="Buscar"
+        aria-expanded="false"
+        aria-controls="search-inline"
+      >
+        <Icono name="lupa" class="h-5 w-5" />
+      </button>
 
-    <!-- Botón móvil -->
-    <button
-      id="menu-toggle"
-      class="inline-flex items-center gap-2 rounded-lg border border-celeste-200 px-3 py-2 text-base font-medium text-celeste-700 transition hover:bg-celeste-50 lg:hidden"
-      aria-expanded="false"
-      aria-controls="mobile-nav"
-    >
-      <Icono name="menu" class="h-5 w-5" /> Menú
-    </button>
+      <a
+        href="/colabora/donar"
+        class="ml-1 hidden items-center gap-2 rounded-full bg-dorado-400 px-5 py-2.5 text-base font-semibold text-celeste-900 shadow-sm transition hover:-translate-y-0.5 hover:bg-dorado-300 hover:shadow-md lg:inline-flex"
+      >
+        <Icono name="corazon" class="h-5 w-5" />
+        Donar
+      </a>
+
+      <!-- Botón móvil -->
+      <button
+        id="menu-toggle"
+        class="inline-flex items-center gap-2 rounded-lg border border-arena-200 px-3 py-2 text-base font-medium text-celeste-700 transition hover:bg-arena-50 lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+      >
+        <Icono name="menu" class="h-5 w-5" /> Menú
+      </button>
     </div>
 
     <!-- Barra de búsqueda en línea: reemplaza los botones al abrirse -->
@@ -107,7 +122,7 @@ const isActive = (href: string) =>
       <button
         type="button"
         id="search-close"
-        class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-tinta/60 transition hover:bg-celeste-50"
+        class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-tinta/60 transition hover:bg-arena-50"
         aria-label="Cerrar búsqueda"
       >
         <span aria-hidden="true" class="text-2xl leading-none">×</span>
@@ -118,35 +133,78 @@ const isActive = (href: string) =>
   <!-- Navegación móvil -->
   <nav
     id="mobile-nav"
-    class="hidden border-t border-celeste-100 bg-white px-4 py-3 lg:hidden"
+    class="hidden border-t border-arena-200 bg-white px-4 py-3 lg:hidden"
     aria-label="Navegación principal (móvil)"
   >
     <ul class="space-y-1">
       {
-        mainNav.slice(1).map((item) => (
+        mainNav.slice(1).map((item, i) => (
           <li>
-            <a href={item.href} class="block rounded-lg px-3 py-2.5 text-lg font-medium text-tinta hover:bg-celeste-50">
-              {item.label}
-            </a>
-            {item.children && (
-              <ul class="ml-3 border-l border-celeste-100 pl-3">
-                {item.children.map((child) => (
+            {item.children ? (
+              <>
+                {/* Botón acordeón para ítems con submenú */}
+                <button
+                  type="button"
+                  data-accordion={i}
+                  class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-lg font-medium text-tinta hover:bg-arena-50"
+                  aria-expanded="false"
+                >
+                  <a href={item.href} class="flex-1" tabindex="-1">{item.label}</a>
+                  <svg
+                    viewBox="0 0 24 24"
+                    class="h-5 w-5 shrink-0 text-tinta/50 transition-transform duration-200"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.75"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                    data-chevron={i}
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </button>
+                <ul
+                  id={`mobile-sub-${i}`}
+                  class="hidden ml-3 border-l border-arena-200 pl-3"
+                >
                   <li>
-                    <a href={child.href} class="block rounded-lg px-3 py-2 text-base text-tinta/80 hover:bg-celeste-50">
-                      {child.label}
+                    <a href={item.href} class="block rounded-lg px-3 py-2 text-base font-medium text-celeste-700 hover:bg-arena-50">
+                      Ver todo · {item.label}
                     </a>
                   </li>
-                ))}
-              </ul>
+                  {item.children.map((child) => (
+                    <li>
+                      <a href={child.href} class="block rounded-lg px-3 py-2 text-base text-tinta/80 hover:bg-arena-50">
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              <a href={item.href} class="block rounded-lg px-3 py-2.5 text-lg font-medium text-tinta hover:bg-arena-50">
+                {item.label}
+              </a>
             )}
           </li>
         ))
       }
+      <li class="pt-2">
+        <a
+          href="/colabora/donar"
+          class="inline-flex items-center gap-2 rounded-full bg-dorado-400 px-5 py-2.5 text-base font-semibold text-celeste-900 shadow-sm"
+        >
+          <Icono name="corazon" class="h-5 w-5" />
+          Donar
+        </a>
+      </li>
     </ul>
   </nav>
 </header>
 
 <script>
+  // --- Menú hamburguesa ---
   const toggle = document.getElementById('menu-toggle');
   const nav = document.getElementById('mobile-nav');
   toggle?.addEventListener('click', () => {
@@ -154,7 +212,7 @@ const isActive = (href: string) =>
     toggle.setAttribute('aria-expanded', String(open));
   });
 
-  // Búsqueda en línea: la barra reemplaza los botones del header y viceversa.
+  // --- Búsqueda en línea: la barra reemplaza los botones del header y viceversa. ---
   const searchToggle = document.getElementById('search-toggle');
   const navCluster = document.getElementById('nav-cluster');
   const searchInline = document.getElementById('search-inline');
@@ -172,5 +230,22 @@ const isActive = (href: string) =>
   searchClose?.addEventListener('click', () => abrirBusqueda(false));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && !searchInline?.classList.contains('hidden')) abrirBusqueda(false);
+  });
+
+  // --- Acordeón menú móvil ---
+  document.querySelectorAll<HTMLButtonElement>('[data-accordion]').forEach((btn) => {
+    const idx = btn.dataset.accordion!;
+    const submenu = document.getElementById(`mobile-sub-${idx}`);
+    const chevron = document.querySelector<SVGElement>(`[data-chevron="${idx}"]`);
+
+    btn.addEventListener('click', () => {
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      submenu?.classList.toggle('hidden', expanded);
+      // Rotar el chevron 180° cuando está abierto
+      if (chevron) {
+        chevron.style.transform = expanded ? '' : 'rotate(180deg)';
+      }
+    });
   });
 </script>

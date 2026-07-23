@@ -1,7 +1,15 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
+import Icono from '@/components/Icono.astro';
+
+// Esta página lee el search param ?enviado=1 en el servidor (SSR).
+export const prerender = false;
 
 const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
+
+// Netlify Forms redirige a ?enviado=1 tras un envío exitoso.
+// Astro 5 en modo híbrido permite leer search params en el servidor.
+const enviado = Astro.url.searchParams.get('enviado') === '1';
 
 // Campo "área de interés" — atiende el hueco #12 del documento de requisitos
 // para segmentar mejor el voluntariado.
@@ -21,6 +29,29 @@ const areas = [
   lead="Dona tu tiempo y talento. Cuéntanos cómo te gustaría ayudar y nos pondremos en contacto."
   breadcrumbs={breadcrumbs}
 >
+  {/* Banner de éxito: se muestra cuando Netlify Forms redirige con ?enviado=1 */}
+  {enviado && (
+    <div class="mb-10 flex items-start gap-4 rounded-2xl border border-dorado-300 bg-dorado-50 px-6 py-5">
+      <span class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-dorado-200 text-celeste-800" aria-hidden="true">
+        <Icono name="corazon" class="h-6 w-6" />
+      </span>
+      <div>
+        <p class="text-xl font-semibold text-celeste-800">¡Gracias por querer ser voluntario/a!</p>
+        <p class="mt-1 text-base text-tinta/80">
+          Recibimos tu solicitud. Nos pondremos en contacto contigo pronto para coordinar los próximos pasos.
+          Tu generosidad hace posible nuestra misión. 💛
+        </p>
+        <a
+          href="/"
+          class="mt-4 inline-flex items-center gap-2 rounded-full border border-celeste-300 px-5 py-2 text-base font-semibold text-celeste-700 transition hover:bg-white"
+        >
+          Volver al inicio
+        </a>
+      </div>
+    </div>
+  )}
+  {/* Formulario: se oculta si el formulario ya fue enviado */}
+  {!enviado && (
   <form
     name="voluntariado"
     method="POST"
@@ -71,4 +102,5 @@ const areas = [
       Quiero ser voluntario
     </button>
   </form>
+  )}
 </PageLayout>

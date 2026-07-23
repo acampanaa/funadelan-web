@@ -1,0 +1,170 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import Icono from '@/components/Icono.astro';
+
+const breadcrumbs = [{ label: 'Quiénes somos', href: '/quienes-somos' }];
+
+const derechos = [
+  {
+    numero: '01',
+    etiqueta: 'Dignidad',
+    titulo: 'Trato digno y preferente',
+    resaltado: 'digno',
+    texto:
+      'La dignidad es la base de todos los derechos. Toda persona mayor debe ser tratada con respeto, sin discriminación, con atención prioritaria y con derecho a conservar su autonomía siempre que sea posible.',
+    cita: 'El respeto no se otorga por edad, se sostiene por derecho.',
+  },
+  {
+    numero: '02',
+    etiqueta: 'Salud',
+    titulo: 'Cuidado integral de por vida',
+    resaltado: 'integral',
+    texto:
+      'El envejecimiento saludable requiere servicios adaptados: geriatría, rehabilitación, salud mental y medicamentos esenciales, con chequeos preventivos y cobertura de enfermedades crónicas sin barreras económicas.',
+    cita: 'Un cuerpo que envejece no deja de merecer cuidado.',
+  },
+  {
+    numero: '03',
+    etiqueta: 'Pensión',
+    titulo: 'Seguridad social merecida',
+    resaltado: 'social',
+    texto:
+      'Tras años de aporte laboral, la persona mayor tiene derecho a una pensión oportuna y suficiente, con pago puntual, acceso a bonos cuando corresponde, y protección frente a descuentos indebidos o fraudes.',
+    cita: 'Una vida de trabajo merece un descanso sostenido.',
+  },
+  {
+    numero: '04',
+    etiqueta: 'Protección',
+    titulo: 'Vida libre de violencia',
+    resaltado: 'libre',
+    texto:
+      'Ninguna persona mayor debe vivir maltrato físico, psicológico, económico o abandono. Existen líneas de atención especializadas, sanciones frente al abuso y acompañamiento en situaciones de vulnerabilidad.',
+    cita: 'El silencio nunca debería ser la única salida.',
+  },
+  {
+    numero: '05',
+    etiqueta: 'Vivienda',
+    titulo: 'Un hogar seguro y accesible',
+    resaltado: 'seguro',
+    texto:
+      'El derecho a una vivienda adecuada incluye accesibilidad física, seguridad y cercanía a servicios de salud: adaptaciones para prevenir caídas, subsidios de arriendo y protección frente a desalojos arbitrarios.',
+    cita: 'Las paredes también pueden acompañar o abandonar.',
+  },
+  {
+    numero: '06',
+    etiqueta: 'Voz',
+    titulo: 'Participar en la vida pública',
+    resaltado: 'pública',
+    texto:
+      'La voz de la persona mayor cuenta: puede votar, ser candidata, integrar juntas comunitarias y participar en consejos consultivos, con acceso facilitado en centros de votación.',
+    cita: 'La experiencia también vota, también decide.',
+  },
+  {
+    numero: '07',
+    etiqueta: 'Aprender',
+    titulo: 'Educación y recreación activa',
+    resaltado: 'activa',
+    texto:
+      'El derecho a la educación continua y a espacios recreativos promueve un envejecimiento activo: talleres, alfabetización digital y actividades físicas y culturales adaptadas.',
+    cita: 'Nunca es tarde para seguir aprendiendo del mundo.',
+  },
+  {
+    numero: '08',
+    etiqueta: 'Justicia',
+    titulo: 'Acceso pleno a la justicia',
+    resaltado: 'pleno',
+    texto:
+      'Frente a cualquier vulneración de derechos, la persona mayor puede acceder a asesoría legal gratuita, defensorías especializadas y procesos judiciales ágiles, con protección frente a fraudes patrimoniales.',
+    cita: 'La justicia también debe caminar más despacio, cuando hace falta.',
+  },
+];
+---
+
+<PageLayout
+  title="Derechos del Adulto Mayor"
+  description="Ocho derechos fundamentales de las personas mayores: dignidad, salud, pensión, protección, vivienda, participación, educación y justicia."
+  lead="Ocho derechos que sostienen una vejez digna. En FUNADELÁN los promovemos y acompañamos a quienes los necesitan defender."
+  breadcrumbs={breadcrumbs}
+>
+  <!-- Índice de navegación rápida -->
+  <nav aria-label="Índice de derechos" class="flex flex-wrap gap-2 border-b border-arena-200 pb-8">
+    {
+      derechos.map((d) => (
+        <a
+          href={`#${d.etiqueta.toLowerCase()}`}
+          class="inline-flex items-center gap-1.5 rounded-full border border-arena-200 px-4 py-2 text-sm font-medium text-tinta/70 transition hover:border-dorado-300 hover:text-celeste-700"
+        >
+          <span class="text-dorado-700">{d.numero}</span>
+          {d.etiqueta}
+        </a>
+      ))
+    }
+  </nav>
+
+  <div class="mt-16 space-y-24">
+    {
+      derechos.map((d, i) => (
+        <article id={d.etiqueta.toLowerCase()} class="scroll-mt-24">
+          <div class:list={['grid items-center gap-10 lg:grid-cols-2', i % 2 === 1 && 'lg:[&>*:first-child]:order-2']}>
+            <div>
+              <span class="antetitulo">
+                {d.numero} — {d.etiqueta}
+              </span>
+              <h2 class="mt-4 font-display text-3xl font-semibold text-celeste-900 sm:text-4xl">
+                {d.titulo.split(d.resaltado)[0]}
+                <span class="text-celeste-600">{d.resaltado}</span>
+                {d.titulo.split(d.resaltado)[1]}
+              </h2>
+              <p class="mt-5 text-lg leading-relaxed text-tinta/75">{d.texto}</p>
+              <p class="mt-6 border-l-2 border-dorado-400 pl-5 font-display text-xl italic text-celeste-700">
+                «{d.cita}»
+              </p>
+            </div>
+
+            <div class="relative">
+              <img
+                src={`/img/derechos-adulto-mayor/derecho-${d.numero}-principal.jpg`}
+                alt={`Personas mayores: ${d.etiqueta.toLowerCase()}`}
+                width="900"
+                height="700"
+                loading="lazy"
+                class="aspect-[4/3] w-full rounded-2xl object-cover shadow-[var(--shadow-suave)]"
+              />
+              <img
+                src={`/img/derechos-adulto-mayor/derecho-${d.numero}-detail-accent.jpg`}
+                alt=""
+                aria-hidden="true"
+                width="500"
+                height="600"
+                loading="lazy"
+                class="absolute -bottom-6 -right-6 hidden aspect-[4/5] w-2/5 rotate-3 rounded-xl border-4 border-crema object-cover shadow-lg sm:block"
+              />
+            </div>
+          </div>
+        </article>
+      ))
+    }
+  </div>
+
+  <!-- CTA final -->
+  <div class="relative mt-24 overflow-hidden rounded-[2.5rem] bg-celeste-800 px-8 py-14 text-center text-white">
+    <div class="cielo-estrellado pointer-events-none absolute inset-0 opacity-50" aria-hidden="true"></div>
+    <div class="halo-dorado animate-halo pointer-events-none absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 -translate-y-1/3" aria-hidden="true"></div>
+    <div class="relative">
+      <h2 class="font-display text-3xl font-semibold sm:text-4xl">Ayúdanos a defender estos derechos</h2>
+      <p class="mx-auto mt-4 max-w-2xl text-lg text-celeste-100">
+        Cada donación y cada hora de voluntariado sostienen el acompañamiento a las personas mayores de Portoviejo.
+      </p>
+      <div class="mt-8 flex flex-wrap justify-center gap-4">
+        <a href="/colabora/donar" class="inline-flex items-center gap-2 rounded-full bg-dorado-400 px-7 py-3.5 text-lg font-semibold text-celeste-900 transition hover:-translate-y-0.5 hover:bg-dorado-300">
+          <Icono name="corazon" class="h-5 w-5" />
+          Donar ahora
+        </a>
+        <a href="/colabora/voluntariado" class="inline-flex items-center gap-2 rounded-full border border-celeste-300/60 px-7 py-3.5 text-lg font-semibold text-white transition hover:bg-white/10">
+          <Icono name="personas" class="h-5 w-5" />
+          Ser voluntario
+        </a>
+      </div>
+    </div>
+  </div>
+</PageLayout>

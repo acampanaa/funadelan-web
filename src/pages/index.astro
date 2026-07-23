@@ -67,40 +67,33 @@ const posts = (await getUltimosPosts(3)) || [];
 
 <BaseLayout>
   <!-- ══════════ HERO ══════════ -->
-  <section class="relative overflow-hidden bg-celeste-900 text-white">
-    <!-- Cielo estrellado + halos de luz -->
-    <div class="cielo-estrellado pointer-events-none absolute inset-0 opacity-60" aria-hidden="true"></div>
-    <div class="halo-dorado animate-halo pointer-events-none absolute -right-20 -top-20 h-[28rem] w-[28rem]" aria-hidden="true"></div>
-    <div
-      class="pointer-events-none absolute inset-0 opacity-40"
-      aria-hidden="true"
-      style="background-image: radial-gradient(circle at 15% 85%, rgba(182,96,44,.6) 0, transparent 40%);"
-    >
-    </div>
+  <!-- Ligero y aireado: el motivo "estrella guardiana" queda como acento puntual (halo), no como fondo completo. -->
+  <section class="relative overflow-hidden bg-crema">
+    <div class="halo-dorado animate-halo pointer-events-none absolute -right-32 -top-32 h-[32rem] w-[32rem]" aria-hidden="true"></div>
 
-    <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-28 pt-20 lg:grid-cols-[1.05fr_.95fr] lg:pt-24">
+    <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 pb-20 pt-16 lg:grid-cols-[1.05fr_.95fr] lg:pt-20">
       <div class="animate-fade-up">
-        <p class="mb-5 inline-flex items-center gap-2 rounded-full border border-dorado-300/30 bg-celeste-800/60 px-4 py-1.5 text-sm font-medium text-dorado-200">
-          <Icono name="estrella" class="h-4 w-4" />
+        <span class="antetitulo">
+          <Icono name="estrella" class="h-3.5 w-3.5" />
           Fundación Amigos de los Ángeles
-        </p>
-        <h1 class="font-display text-4xl font-semibold leading-[1.1] text-white sm:text-5xl lg:text-6xl">
+        </span>
+        <h1 class="mt-5 font-display text-4xl font-semibold leading-[1.1] text-celeste-900 sm:text-5xl lg:text-6xl">
           Mensajeros de fe,<br />
-          <span class="text-dorado-300">manos que sirven</span>
+          <span class="text-celeste-600">manos que sirven</span>
         </h1>
-        <p class="mt-6 max-w-xl text-lg text-celeste-100">
+        <p class="mt-6 max-w-xl text-lg text-tinta/75">
           Promovemos la fe en los Ángeles y acompañamos con dignidad a las personas
           mayores de Portoviejo. Tu apoyo hace posible nuestra misión.
         </p>
-        <p class="mt-5 font-display text-xl italic text-dorado-300">«Vivir para servir»</p>
+        <p class="mt-5 font-display text-xl italic text-celeste-700">«Vivir para servir»</p>
         <div class="mt-8 flex flex-wrap gap-4">
           <a href="/colabora/donar"
-            class="inline-flex items-center gap-2 rounded-full bg-dorado-400 px-7 py-3.5 text-lg font-semibold text-celeste-900 shadow-lg transition hover:-translate-y-0.5 hover:bg-dorado-300">
+            class="inline-flex items-center gap-2 rounded-full bg-dorado-400 px-7 py-3.5 text-lg font-semibold text-celeste-900 shadow-sm transition hover:-translate-y-0.5 hover:bg-dorado-300 hover:shadow-md">
             <Icono name="corazon" class="h-5 w-5" />
             Quiero donar
           </a>
           <a href="/quienes-somos"
-            class="inline-flex items-center gap-2 rounded-full border border-celeste-300/60 px-7 py-3.5 text-lg font-semibold text-white transition hover:bg-white/10">
+            class="inline-flex items-center gap-2 rounded-full border border-celeste-300 px-7 py-3.5 text-lg font-semibold text-celeste-800 transition hover:bg-celeste-50">
             Conócenos
             <Icono name="flecha" class="h-5 w-5" />
           </a>
@@ -111,8 +104,8 @@ const posts = (await getUltimosPosts(3)) || [];
       <div class="relative hidden justify-center lg:flex">
         <div class="relative">
           <div class="halo-dorado animate-halo pointer-events-none absolute -inset-10 rounded-full" aria-hidden="true"></div>
-          <div class="absolute -inset-3 rounded-[2.5rem] border border-dorado-300/25" aria-hidden="true"></div>
-          <div class="relative overflow-hidden rounded-[2rem] bg-white p-3 shadow-2xl ring-1 ring-white/50">
+          <div class="absolute -inset-3 rounded-[2.5rem] border border-dorado-300/40" aria-hidden="true"></div>
+          <div class="relative overflow-hidden rounded-[2rem] bg-white p-3 shadow-xl ring-1 ring-arena-200">
             <img
               src="/logo.jpg"
               alt="FUNADELÁN — Fundación Amigos de los Ángeles. «Vivir para servir»"
@@ -121,27 +114,34 @@ const posts = (await getUltimosPosts(3)) || [];
               height="2045"
             />
           </div>
-          <span class="pointer-events-none absolute -right-3 top-8 h-2 w-2 rounded-full bg-dorado-200" aria-hidden="true"></span>
-          <span class="pointer-events-none absolute -left-4 bottom-16 h-1.5 w-1.5 rounded-full bg-white/80" aria-hidden="true"></span>
+          <span class="pointer-events-none absolute -right-3 top-8 h-2 w-2 rounded-full bg-dorado-300" aria-hidden="true"></span>
+          <span class="pointer-events-none absolute -left-4 bottom-16 h-1.5 w-1.5 rounded-full bg-celeste-300" aria-hidden="true"></span>
         </div>
       </div>
     </div>
-
-    <!-- Divisor en arco hacia la sección clara -->
-    <div class="relative" aria-hidden="true">
-      <svg class="block h-12 w-full text-crema sm:h-16" viewBox="0 0 1440 80" preserveAspectRatio="none">
-        <path d="M0 80 C 360 0, 1080 0, 1440 80 Z" fill="currentColor" />
-      </svg>
-    </div>
   </section>
 
-  <!-- ══════════ CIFRAS DE IMPACTO ══════════ -->
-  <section class="bg-crema">
-    <div class="mx-auto grid max-w-6xl grid-cols-2 gap-y-10 px-4 pb-16 lg:grid-cols-4">
+  <!-- ══════════ ¿QUÉ ES FUNADELÁN? + CIFRAS ══════════ -->
+  <section class="border-t border-arena-200 bg-white">
+    <div class="mx-auto max-w-3xl px-4 py-20 text-center">
+      <h2 class="font-display text-3xl font-semibold text-celeste-900 sm:text-4xl">¿Qué es FUNADELÁN?</h2>
+      <p class="mt-6 text-lg leading-relaxed text-tinta/75">
+        Con más de <strong class="text-tinta">15 años</strong> de trayectoria, somos una fundación que
+        promueve la <strong class="text-tinta">fe en los Ángeles</strong> y acompaña con dignidad a las
+        personas mayores de Portoviejo, siendo su bienestar el centro de nuestro trabajo.
+      </p>
+      <p class="mt-4 text-lg leading-relaxed text-tinta/75">
+        Ofrecemos salud, recreación, formación y compañía, construyendo comunidad junto a
+        voluntarios, familias y aliados para que cada persona mayor viva sus años con
+        <strong class="text-tinta">alegría y sentido</strong>.
+      </p>
+    </div>
+
+    <div class="mx-auto grid max-w-6xl grid-cols-2 gap-y-10 border-t border-arena-200 px-4 py-14 lg:grid-cols-4">
       {
         cifras.map((c) => (
-          <div class="border-l-2 border-dorado-200 px-5 text-center lg:text-left">
-            <p class="font-display text-4xl font-bold text-celeste-700 lg:text-5xl">{c.valor}</p>
+          <div class="border-l-2 border-dorado-300 px-5 text-center lg:text-left">
+            <p class="font-display text-4xl font-bold tabular-nums text-celeste-700 lg:text-5xl">{c.valor}</p>
             <p class="mt-2 text-base text-tinta/70">{c.etiqueta}</p>
           </div>
         ))
@@ -149,123 +149,164 @@ const posts = (await getUltimosPosts(3)) || [];
     </div>
   </section>
 
+  <!-- ══════════ PROGRAMA DESTACADO: texto + visual ══════════ -->
+  <section class="bg-arena-50">
+    <div class="mx-auto grid max-w-6xl items-center gap-12 px-4 py-20 lg:grid-cols-2">
+      <div>
+        <span class="antetitulo">Conoce nuestro trabajo</span>
+        <h2 class="mt-4 font-display text-3xl font-semibold text-celeste-900 sm:text-4xl">
+          Caminando junto a nuestros mayores
+        </h2>
+        <p class="mt-5 text-lg text-tinta/75">
+          En el Centro Diurno "Ángeluz" acompañamos a las personas mayores de Portoviejo con
+          atención integral: salud, alimentación, recreación y compañía diaria.
+        </p>
+        <p class="mt-3 text-lg text-tinta/75">
+          Cada actividad busca que sigan aprendiendo, celebrando y sintiéndose parte de una
+          comunidad que los valora.
+        </p>
+        <a href="/programas/actividades-sociales"
+          class="mt-8 inline-flex items-center gap-2 rounded-full bg-dorado-400 px-7 py-3.5 text-lg font-semibold text-celeste-900 shadow-sm transition hover:-translate-y-0.5 hover:bg-dorado-300">
+          Descúbrelo
+          <Icono name="flecha" class="h-5 w-5" />
+        </a>
+      </div>
+
+      <div class="relative aspect-[4/3] overflow-hidden rounded-[2rem] bg-celeste-800 shadow-lg">
+        <div class="cielo-estrellado absolute inset-0 opacity-50" aria-hidden="true"></div>
+        <div class="halo-dorado absolute inset-0" aria-hidden="true"></div>
+        <div class="relative flex h-full flex-col items-center justify-center gap-4 p-8 text-center">
+          <Icono name="corazon-manos" class="h-14 w-14 text-dorado-300" />
+          <p class="font-display text-2xl italic text-white">«Vivir para servir»</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ══════════ VALORES ══════════ -->
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <div class="grid gap-6 md:grid-cols-3">
-      {
-        valores.map((v) => (
-          <div class="flex items-start gap-4 rounded-2xl border border-arena-200/70 bg-white p-6 shadow-[var(--shadow-suave)]">
-            <span class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-celeste-50 text-celeste-700">
-              <Icono name={v.icono} class="h-6 w-6" />
-            </span>
-            <div>
-              <h3 class="text-xl">{v.titulo}</h3>
-              <p class="mt-1 text-base text-tinta/75">{v.texto}</p>
+  <section class="bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-20">
+      <div class="mx-auto max-w-2xl text-center">
+        <h2 class="font-display text-3xl font-semibold text-celeste-900 sm:text-4xl">Lo que nos guía</h2>
+        <p class="mt-3 text-lg text-tinta/75">Los valores que sostienen cada obra de la fundación.</p>
+      </div>
+      <div class="mt-14 grid gap-10 sm:grid-cols-3">
+        {
+          valores.map((v) => (
+            <div class="flex flex-col items-center text-center">
+              <span class="grid h-16 w-16 place-items-center rounded-full bg-celeste-50 text-celeste-700 ring-1 ring-celeste-100">
+                <Icono name={v.icono} class="h-7 w-7" />
+              </span>
+              <h3 class="mt-4 text-xl">{v.titulo}</h3>
+              <p class="mt-2 max-w-xs text-base text-tinta/70">{v.texto}</p>
             </div>
-          </div>
-        ))
-      }
+          ))
+        }
+      </div>
     </div>
   </section>
 
   <!-- ══════════ PROGRAMAS ══════════ -->
-  <section class="mx-auto max-w-6xl px-4 py-16">
-    <div class="mb-12 max-w-2xl">
-      <span class="antetitulo">Lo que hacemos</span>
-      <h2 class="mt-4 font-display text-3xl font-semibold sm:text-4xl">Nuestros programas</h2>
-      <p class="mt-3 text-lg text-tinta/75">
-        Iniciativas que transforman la vida de las personas mayores y fortalecen su comunidad.
-      </p>
-    </div>
-    <div class="grid gap-6 md:grid-cols-3">
-      {
-        programas.map((p) => (
-          <a
-            href={p.href}
-            class="group relative flex flex-col overflow-hidden rounded-2xl border border-arena-200/70 bg-white p-8 shadow-[var(--shadow-suave)] transition hover:-translate-y-1 hover:border-dorado-200 hover:shadow-lg"
-          >
-            <span class="halo-dorado absolute -right-8 -top-8 h-28 w-28 opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true" />
-            <span class="relative grid h-14 w-14 place-items-center rounded-2xl bg-celeste-700 text-dorado-300 shadow-sm">
-              <Icono name={p.icono} class="h-7 w-7" />
-            </span>
-            <h3 class="relative mt-5 text-2xl">{p.titulo}</h3>
-            <p class="relative mt-3 flex-1 text-base text-tinta/75">{p.descripcion}</p>
-            <span class="relative mt-6 inline-flex items-center gap-1.5 font-semibold text-celeste-600 transition group-hover:gap-2.5 group-hover:text-celeste-700">
-              Ver más
-              <Icono name="flecha" class="h-5 w-5" />
-            </span>
-          </a>
-        ))
-      }
+  <section class="border-t border-arena-200 bg-arena-50">
+    <div class="mx-auto max-w-6xl px-4 py-20">
+      <div class="mb-12 max-w-2xl">
+        <span class="antetitulo">Lo que hacemos</span>
+        <h2 class="mt-4 font-display text-3xl font-semibold text-celeste-900 sm:text-4xl">Nuestros programas</h2>
+        <p class="mt-3 text-lg text-tinta/75">
+          Iniciativas que transforman la vida de las personas mayores y fortalecen su comunidad.
+        </p>
+      </div>
+      <div class="grid gap-6 md:grid-cols-3">
+        {
+          programas.map((p) => (
+            <a
+              href={p.href}
+              class="group relative flex flex-col overflow-hidden rounded-2xl border border-arena-200 bg-white p-8 transition hover:-translate-y-1 hover:border-dorado-200 hover:shadow-lg"
+            >
+              <span class="halo-dorado absolute -right-8 -top-8 h-28 w-28 opacity-0 transition-opacity duration-500 group-hover:opacity-100" aria-hidden="true" />
+              <span class="relative grid h-14 w-14 place-items-center rounded-2xl bg-celeste-700 text-dorado-300 shadow-sm">
+                <Icono name={p.icono} class="h-7 w-7" />
+              </span>
+              <h3 class="relative mt-5 text-2xl">{p.titulo}</h3>
+              <p class="relative mt-3 flex-1 text-base text-tinta/75">{p.descripcion}</p>
+              <span class="relative mt-6 inline-flex items-center gap-1.5 font-semibold text-celeste-600 transition group-hover:gap-2.5 group-hover:text-celeste-700">
+                Ver más
+                <Icono name="flecha" class="h-5 w-5" />
+              </span>
+            </a>
+          ))
+        }
+      </div>
     </div>
   </section>
 
   <!-- ══════════ PUBLICACIONES RECIENTES ══════════ -->
   {
     posts.length > 0 && (
-      <section class="mx-auto max-w-6xl px-4 py-16">
-        <div class="mb-12 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <span class="antetitulo">Nuestra comunidad</span>
-            <h2 class="mt-4 font-display text-3xl font-semibold sm:text-4xl">Publicaciones recientes</h2>
-            <p class="mt-3 text-lg text-tinta/75">Momentos y novedades de la fundación.</p>
-          </div>
-          <a
-            href="/posts"
-            class="inline-flex items-center gap-2 rounded-full border border-celeste-300 px-6 py-3 text-base font-semibold text-celeste-700 transition hover:bg-celeste-50"
-          >
-            Ver todas
-            <Icono name="flecha" class="h-5 w-5" />
-          </a>
-        </div>
-        <div class="grid gap-6 md:grid-cols-3">
-          {posts.map((p: any) => (
+      <section class="border-t border-arena-200 bg-white">
+        <div class="mx-auto max-w-6xl px-4 py-20">
+          <div class="mb-12 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <span class="antetitulo">Nuestra comunidad</span>
+              <h2 class="mt-4 font-display text-3xl font-semibold text-celeste-900 sm:text-4xl">Publicaciones recientes</h2>
+              <p class="mt-3 text-lg text-tinta/75">Momentos y novedades de la fundación.</p>
+            </div>
             <a
-              href={`/posts/${p.slug}`}
-              class="group flex flex-col overflow-hidden rounded-2xl border border-arena-200/70 bg-white shadow-[var(--shadow-suave)] transition hover:-translate-y-1 hover:shadow-lg"
+              href="/posts"
+              class="inline-flex items-center gap-2 rounded-full border border-celeste-300 px-6 py-3 text-base font-semibold text-celeste-700 transition hover:bg-celeste-50"
             >
-              {p.imagenes && p.imagenes.length > 0 ? (
-                <img
-                  src={urlForImage(p.imagenes[0]).width(800).height(600).fit('crop').url()}
-                  alt={p.titulo}
-                  class="h-52 w-full object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <div class="relative grid h-52 place-items-center overflow-hidden bg-celeste-800" aria-hidden="true">
-                  <div class="cielo-estrellado absolute inset-0 opacity-60" />
-                  <div class="halo-dorado absolute inset-0" />
-                  <svg viewBox="0 0 64 64" class="relative h-16 w-16">
-                    <path d="M32 7 C33.6 24 40 30.4 57 32 C40 33.6 33.6 40 32 57 C30.4 40 24 33.6 7 32 C24 30.4 30.4 24 32 7 Z" fill="#f1d792" />
-                  </svg>
-                </div>
-              )}
-              <div class="flex flex-1 flex-col p-6">
-                <span class="inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-dorado-700">
-                  <Icono name="estrella" class="h-3.5 w-3.5" />
-                  {formatearFecha(p.fecha, { day: '2-digit', month: 'short', year: 'numeric' })}
-                </span>
-                <h3 class="mt-2 text-xl leading-snug">{p.titulo}</h3>
-                {p.resumen && <p class="mt-2 flex-1 text-base text-tinta/75">{p.resumen}</p>}
-                <span class="mt-4 inline-flex items-center gap-1.5 font-semibold text-celeste-600 transition group-hover:gap-2.5 group-hover:text-celeste-700">
-                  Ver publicación
-                  <Icono name="flecha" class="h-5 w-5" />
-                </span>
-              </div>
+              Ver todas
+              <Icono name="flecha" class="h-5 w-5" />
             </a>
-          ))}
+          </div>
+          <div class="grid gap-8 md:grid-cols-3">
+            {posts.map((p: any) => (
+              <a href={`/posts/${p.slug}`} class="group flex flex-col">
+                <div class="overflow-hidden rounded-2xl">
+                  {p.imagenes && p.imagenes.length > 0 ? (
+                    <img
+                      src={urlForImage(p.imagenes[0]).width(800).height(600).fit('crop').url()}
+                      alt={p.titulo}
+                      class="h-52 w-full object-cover transition duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  ) : (
+                    <div class="relative grid h-52 place-items-center overflow-hidden bg-celeste-800" aria-hidden="true">
+                      <div class="cielo-estrellado absolute inset-0 opacity-60" />
+                      <div class="halo-dorado absolute inset-0" />
+                      <svg viewBox="0 0 64 64" class="relative h-16 w-16">
+                        <path d="M32 7 C33.6 24 40 30.4 57 32 C40 33.6 33.6 40 32 57 C30.4 40 24 33.6 7 32 C24 30.4 30.4 24 32 7 Z" fill="#f1d792" />
+                      </svg>
+                    </div>
+                  )}
+                </div>
+                <div class="flex flex-1 flex-col pt-5">
+                  <span class="inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-dorado-700">
+                    <Icono name="estrella" class="h-3.5 w-3.5" />
+                    {formatearFecha(p.fecha, { day: '2-digit', month: 'short', year: 'numeric' })}
+                  </span>
+                  <h3 class="mt-2 text-xl leading-snug">{p.titulo}</h3>
+                  {p.resumen && <p class="mt-2 flex-1 text-base text-tinta/75">{p.resumen}</p>}
+                  <span class="mt-4 inline-flex items-center gap-1.5 font-semibold text-celeste-600 transition group-hover:gap-2.5 group-hover:text-celeste-700">
+                    Ver publicación
+                    <Icono name="flecha" class="h-5 w-5" />
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
         </div>
       </section>
     )
   }
 
   <!-- ══════════ ÚLTIMAS NOTICIAS ══════════ -->
-  <section class="relative overflow-hidden bg-celeste-50/60">
+  <section class="border-t border-arena-200 bg-arena-50">
     <div class="mx-auto max-w-6xl px-4 py-20">
       <div class="mb-12 flex flex-wrap items-end justify-between gap-4">
         <div>
           <span class="antetitulo">Al día</span>
-          <h2 class="mt-4 font-display text-3xl font-semibold sm:text-4xl">Últimas noticias</h2>
+          <h2 class="mt-4 font-display text-3xl font-semibold text-celeste-900 sm:text-4xl">Últimas noticias</h2>
           <p class="mt-3 text-lg text-tinta/75">Lo más reciente de la fundación.</p>
         </div>
         <a href="/noticias"
@@ -274,27 +315,29 @@ const posts = (await getUltimosPosts(3)) || [];
           <Icono name="flecha" class="h-5 w-5" />
         </a>
       </div>
-      <div class="grid gap-6 md:grid-cols-3">
+      <div class="grid gap-8 md:grid-cols-3">
         {
           noticias.map((n) => (
-            <a href={n.href} class="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-[var(--shadow-suave)] transition hover:-translate-y-1 hover:shadow-lg">
-              {n.imagen ? (
-                <img
-                  src={urlForImage(n.imagen).width(800).height(440).fit('crop').url()}
-                  alt={n.titulo}
-                  class="h-44 w-full object-cover"
-                  loading="lazy"
-                />
-              ) : (
-                <div class="relative grid h-44 place-items-center overflow-hidden bg-celeste-800" aria-hidden="true">
-                  <div class="cielo-estrellado absolute inset-0 opacity-60"></div>
-                  <div class="halo-dorado absolute inset-0"></div>
-                  <svg viewBox="0 0 64 64" class="relative h-16 w-16">
-                    <path d="M32 7 C33.6 24 40 30.4 57 32 C40 33.6 33.6 40 32 57 C30.4 40 24 33.6 7 32 C24 30.4 30.4 24 32 7 Z" fill="#f1d792" />
-                  </svg>
-                </div>
-              )}
-              <div class="flex flex-1 flex-col p-6">
+            <a href={n.href} class="group flex flex-col">
+              <div class="overflow-hidden rounded-2xl">
+                {n.imagen ? (
+                  <img
+                    src={urlForImage(n.imagen).width(800).height(440).fit('crop').url()}
+                    alt={n.titulo}
+                    class="h-44 w-full object-cover transition duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="relative grid h-44 place-items-center overflow-hidden bg-celeste-800" aria-hidden="true">
+                    <div class="cielo-estrellado absolute inset-0 opacity-60"></div>
+                    <div class="halo-dorado absolute inset-0"></div>
+                    <svg viewBox="0 0 64 64" class="relative h-16 w-16">
+                      <path d="M32 7 C33.6 24 40 30.4 57 32 C40 33.6 33.6 40 32 57 C30.4 40 24 33.6 7 32 C24 30.4 30.4 24 32 7 Z" fill="#f1d792" />
+                    </svg>
+                  </div>
+                )}
+              </div>
+              <div class="flex flex-1 flex-col pt-5">
                 <span class="inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-dorado-700">
                   <Icono name="estrella" class="h-3.5 w-3.5" />
                   {n.fechaLabel}

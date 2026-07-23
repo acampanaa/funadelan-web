@@ -1,11 +1,29 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import Lightbox from '@/components/Lightbox.astro';
 import { getGaleria, urlForImage, formatearFecha } from '@/lib/sanity';
 
 const breadcrumbs = [{ label: 'Noticias', href: '/noticias' }];
 
 const items = await getGaleria();
+
+/**
+ * Extrae el ID de un video de YouTube desde una URL (varios formatos).
+ * Devuelve null si la URL no es de YouTube.
+ */
+function youtubeId(url: string): string | null {
+  try {
+    const u = new URL(url);
+    if (u.hostname.includes('youtu.be')) return u.pathname.slice(1);
+    if (u.hostname.includes('youtube.com')) {
+      return u.searchParams.get('v') || u.pathname.split('/').at(-1) || null;
+    }
+  } catch {
+    // URL inválida
+  }
+  return null;
+}
 ---
 
 <PageLayout
@@ -13,44 +31,104 @@ const items = await getGaleria();
   lead="Fotos y videos de nuestras actividades."
   breadcrumbs={breadcrumbs}
 >
-  {
-    !items || items.length === 0 ? (
-      <Placeholder note="Aún no hay fotos ni videos. Súbelos en Sanity Studio (tipo «Elemento de galería»)." />
-    ) : (
-      <div class="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {items.map((item: any) =>
-          item.tipo === 'video' && item.videoUrl ? (
-            <a
-              href={item.videoUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              class="group relative grid aspect-square place-items-center overflow-hidden rounded-xl bg-celeste-800 text-white"
-            >
-              <span class="text-4xl transition group-hover:scale-110" aria-hidden="true">▶</span>
-              {item.titulo && (
-                <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-sm">
-                  {item.titulo}
+  {!items || items.length === 0 ? (
+    <Placeholder note="Aún no hay fotos ni videos. Súbelos en Sanity Studio (tipo «Elemento de galería»)." />
+  ) : (
+    <>
+      <div class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4">
+        {items.map((item: any) => {
+          if (item.tipo === 'video' && item.videoUrl) {
+            const ytId = youtubeId(item.videoUrl);
+            const thumbnail = ytId
+              ? `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`
+              : null;
+
+            return (
+              <a
+                href={item.videoUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="group relative aspect-square overflow-hidden rounded-xl bg-celeste-800"
+                aria-label={item.titulo ? `Ver video: ${item.titulo}` : 'Ver video'}
+              >
+                {thumbnail ? (
+                  <img
+                    src={thumbnail}
+                    alt={item.titulo || 'Video de la galería'}
+                    class="h-full w-full object-cover transition duration-300 group-hover:scale-105 group-hover:brightness-75"
+                    loading="lazy"
+                  />
+                ) : (
+                  <div class="cielo-estrellado absolute inset-0 opacity-40" aria-hidden="true" />
+                )}
+                {/* Botón play superpuesto */}
+                <span
+                  class="absolute inset-0 flex items-center justify-center"
+                  aria-hidden="true"
+                >
+                  <span class="grid h-14 w-14 place-items-center rounded-full bg-black/50 text-white backdrop-blur-sm transition group-hover:bg-dorado-400/90 group-hover:text-celeste-900">
+                    <svg viewBox="0 0 24 24" class="h-6 w-6 translate-x-0.5" fill="currentColor">
+                      <path d="M8 5.14v14l11-7-11-7z" />
+                    </svg>
+                  </span>
                 </span>
-              )}
-            </a>
-          ) : item.imagen ? (
-            <figure class="group relative aspect-square overflow-hidden rounded-xl bg-celeste-50">
-              <img
-                src={urlForImage(item.imagen).width(600).height(600).fit('crop').url()}
-                alt={item.titulo || 'Foto de la galería'}
-                class="h-full w-full object-cover transition group-hover:scale-105"
-                loading="lazy"
-              />
-              {item.titulo && (
-                <figcaption class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-sm text-white">
-                  {item.titulo}
-                  {item.fecha && <span class="block text-xs text-white/70">{formatearFecha(item.fecha)}</span>}
-                </figcaption>
-              )}
-            </figure>
-          ) : null,
-        )}
+                {item.titulo && (
+                  <span class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent p-3 text-sm text-white">
+                    {item.titulo}
+                  </span>
+                )}
+              </a>
+            );
+          }
+
+          if (item.imagen) {
+            const urlFull = urlForImage(item.imagen).width(1600).height(1200).fit('max').url();
+            const urlThumb = urlForImage(item.imagen).width(600).height(600).fit('crop').url();
+
+            return (
+              <a
+                href={urlFull}
+                data-lightbox
+                data-alt={item.titulo || 'Foto de la galería'}
+                class="group relative aspect-square overflow-hidden rounded-xl bg-celeste-50"
+                aria-label={item.titulo ? `Ampliar: ${item.titulo}` : 'Ampliar foto'}
+              >
+                <img
+                  src={urlThumb}
+                  alt={item.titulo || 'Foto de la galería'}
+                  class="h-full w-full object-cover transition duration-300 group-hover:scale-105 group-hover:brightness-90"
+                  loading="lazy"
+                />
+                {/* Icono de zoom al hacer hover */}
+                <span
+                  class="absolute inset-0 flex items-center justify-center opacity-0 transition group-hover:opacity-100"
+                  aria-hidden="true"
+                >
+                  <span class="grid h-10 w-10 place-items-center rounded-full bg-black/40 text-white backdrop-blur-sm">
+                    <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.35-4.35M11 8v6M8 11h6" />
+                    </svg>
+                  </span>
+                </span>
+                {item.titulo && (
+                  <figcaption class="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-black/70 to-transparent p-3 text-sm text-white transition group-hover:translate-y-0">
+                    {item.titulo}
+                    {item.fecha && (
+                      <span class="block text-xs text-white/70">{formatearFecha(item.fecha)}</span>
+                    )}
+                  </figcaption>
+                )}
+              </a>
+            );
+          }
+
+          return null;
+        })}
       </div>
-    )
-  }
+
+      {/* El Lightbox recoge automáticamente todos los [data-lightbox] de la página */}
+      <Lightbox />
+    </>
+  )}
 </PageLayout>

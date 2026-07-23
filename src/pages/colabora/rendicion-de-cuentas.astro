@@ -15,7 +15,7 @@ const informes = await getInformes();
 >
   {
     !informes || informes.length === 0 ? (
-      <Placeholder note="Aún no hay informes publicados sobre rendición de cuentas." />
+      <Placeholder note="Aún no hay informes publicados. Súbelos en Sanity Studio (tipo «Informe (Rendición de cuentas)»)." />
     ) : (
       <ul class="mx-auto max-w-3xl space-y-4">
         {informes.map((inf: any) => (

@@ -112,7 +112,7 @@ import Icono from '@/components/Icono.astro';
       const a = enlaces[index];
       img.src = a.getAttribute('href') || '';
       img.alt = a.getAttribute('data-alt') || '';
-      count.textContent = `${index + 1} / ${enlaces.length}`;
+      if (count) count.textContent = `${index + 1} / ${enlaces.length}`;
       resetZoom();
     }
 

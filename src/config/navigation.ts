@@ -16,6 +16,7 @@ export const mainNav: NavLink[] = [
       { label: 'La fundación', href: '/quienes-somos/la-fundacion' },
       { label: 'Historia', href: '/quienes-somos/historia' },
       { label: 'Misión / Visión', href: '/quienes-somos/mision-vision' },
+      { label: 'Derechos del Adulto Mayor', href: '/quienes-somos/derechos-adulto-mayor' },
       { label: 'Organigrama', href: '/quienes-somos/organigrama' },
       { label: 'Testimonios', href: '/quienes-somos/testimonios' },
       { label: 'Alianzas', href: '/quienes-somos/alianzas' },
