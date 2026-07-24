@@ -1,40 +1,89 @@
 ---
-import { mainNav } from '@/config/navigation';
 import Logo from '@/components/Logo.astro';
-import Icono from '@/components/Icono.astro';
 
 const year = new Date().getFullYear();
-const columns = mainNav.filter((item) => item.children);
+
+const enlaces = [
+  { label: 'Quiénes somos', href: '/quienes-somos' },
+  { label: 'Espiritualidad', href: '/espiritualidad' },
+  { label: 'Programas', href: '/programas' },
+  { label: 'Noticias', href: '/noticias' },
+];
+
+const colabora = [
+  { label: 'Donar', href: '/colabora/donar' },
+  { label: 'Voluntariado', href: '/colabora/voluntariado' },
+  { label: 'Rendición de cuentas', href: '/colabora/rendicion-de-cuentas' },
+  { label: 'Contacto', href: '/colabora/contacto' },
+];
+
+// @todo Actualizar Instagram con la URL real de FUNADELÁN.
+const redes = [
+  {
+    nombre: 'Facebook',
+    url: 'https://www.facebook.com/profile.php?id=100064983300077',
+    svgPath: 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z',
+  },
+  {
+    nombre: 'Instagram',
+    url: 'https://www.instagram.com/funadelan',
+    svgPath: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z',
+  },
+];
 ---
 
 <footer class="mt-24 border-t border-arena-200 bg-arena-50">
   <div class="mx-auto max-w-6xl px-4 py-16">
-    <div class="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
+    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
       <div class="lg:col-span-1">
         <Logo imgClass="h-14 w-auto" />
         <p class="mt-4 font-display text-lg italic text-celeste-700">«Vivir para servir»</p>
         <p class="mt-3 text-base leading-relaxed text-tinta/70">
-          Fundación Amigos de los Ángeles. Promovemos la fe en los Ángeles y la
-          ayuda social a personas mayores en Portoviejo, Manabí, Ecuador.
+          Fundación Amigos de los Ángeles. Fe y ayuda social a personas mayores
+          en Portoviejo, Manabí, Ecuador.
         </p>
+        <div class="mt-5 flex gap-3">
+          {redes.map((red) => (
+            <a
+              href={red.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={red.nombre}
+              class="grid h-10 w-10 place-items-center rounded-full bg-celeste-100 text-celeste-700 transition hover:bg-celeste-700 hover:text-white"
+            >
+              <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
+                <path d={red.svgPath} />
+              </svg>
+            </a>
+          ))}
+        </div>
       </div>
 
-      {
-        columns.map((col) => (
-          <nav aria-label={col.label}>
-            <h2 class="font-display text-lg font-semibold text-celeste-800">{col.label}</h2>
-            <ul class="mt-4 space-y-3">
-              {col.children!.map((child) => (
-                <li>
-                  <a href={child.href} class="text-base text-tinta/70 transition hover:text-celeste-700">
-                    {child.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-        ))
-      }
+      <nav aria-label="Enlaces">
+        <h2 class="font-display text-lg font-semibold text-celeste-800">Enlaces</h2>
+        <ul class="mt-4 space-y-3">
+          {enlaces.map((item) => (
+            <li>
+              <a href={item.href} class="text-base text-tinta/70 transition hover:text-celeste-700">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav aria-label="Colabora">
+        <h2 class="font-display text-lg font-semibold text-celeste-800">Colabora</h2>
+        <ul class="mt-4 space-y-3">
+          {colabora.map((item) => (
+            <li>
+              <a href={item.href} class="text-base text-tinta/70 transition hover:text-celeste-700">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
       <div>
         <h2 class="font-display text-lg font-semibold text-celeste-800">Recibe noticias</h2>
@@ -61,21 +110,8 @@ const columns = mainNav.filter((item) => item.children);
     </div>
   </div>
 
-  <!-- Barra de contacto: acento cálido con el motivo de cielo estrellado -->
-  <div class="relative overflow-hidden bg-celeste-800 text-celeste-100">
-    <div class="cielo-estrellado pointer-events-none absolute inset-0 opacity-40" aria-hidden="true"></div>
-    <div class="halo-dorado pointer-events-none absolute -top-16 right-10 h-56 w-56" aria-hidden="true"></div>
-    <div class="relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-6 px-4 py-8 sm:flex-row sm:items-center">
-      <p class="font-display text-xl">¿Necesitas ayuda o quieres colaborar?</p>
-      <a
-        href="/colabora/contacto"
-        class="inline-flex items-center gap-2 rounded-full bg-dorado-400 px-6 py-3 text-base font-semibold text-celeste-900 transition hover:bg-dorado-300"
-      >
-        <Icono name="correo" class="h-5 w-5" />
-        Contáctanos
-      </a>
-    </div>
-    <div class="relative mx-auto flex max-w-6xl flex-col items-start justify-between gap-3 border-t border-celeste-700 px-4 py-5 text-sm text-celeste-300 sm:flex-row sm:items-center">
+  <div class="border-t border-arena-200 bg-celeste-800 text-sm text-celeste-300">
+    <div class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-2 px-4 py-5 sm:flex-row sm:items-center">
       <p>© {year} FUNADELÁN — Fundación Amigos de los Ángeles. Todos los derechos reservados.</p>
       <p>Portoviejo, Manabí, Ecuador</p>
     </div>
@@ -94,7 +130,7 @@ const columns = mainNav.filter((item) => item.children);
     const email = (form.elements.namedItem('email') as HTMLInputElement).value;
     boton.setAttribute('disabled', 'true');
     msg.textContent = 'Enviando…';
-    msg.style.color = '#7a3b20';
+    msg.style.color = '#862303';
 
     try {
       const res = await fetch('/api/suscribir', {

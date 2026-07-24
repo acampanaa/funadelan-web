@@ -30,3 +30,10 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+# mockups de referencia (Stitch), no forman parte del sitio
+DESIGN/
+
+# herramientas locales de Claude Code (skills instaladas), no son del sitio
+.agents/
+skills-lock.json

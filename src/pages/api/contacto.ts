@@ -74,14 +74,14 @@ export const POST: APIRoute = async ({ request }) => {
   // 1. Aviso a la fundación con los datos del mensaje (responder-a = visitante).
   const htmlAviso = `
     <div style="font-family:Arial,sans-serif;max-width:560px;margin:auto">
-      <h2 style="font-family:Georgia,serif;color:#5c2e1c">Nuevo mensaje de contacto</h2>
-      <table style="font-size:15px;color:#2a2018;line-height:1.6">
+      <h2 style="font-family:Georgia,serif;color:#862303">Nuevo mensaje de contacto</h2>
+      <table style="font-size:15px;color:#1c1c18;line-height:1.6">
         <tr><td style="padding:4px 12px 4px 0"><strong>Nombre:</strong></td><td>${escapeHtml(nombre)}</td></tr>
         <tr><td style="padding:4px 12px 4px 0"><strong>Correo:</strong></td><td>${escapeHtml(email)}</td></tr>
         ${telefono ? `<tr><td style="padding:4px 12px 4px 0"><strong>Teléfono:</strong></td><td>${escapeHtml(telefono)}</td></tr>` : ''}
         <tr><td style="padding:4px 12px 4px 0"><strong>Asunto:</strong></td><td>${escapeHtml(asunto)}</td></tr>
       </table>
-      <p style="font-size:15px;color:#2a2018;line-height:1.7;margin-top:16px;white-space:pre-wrap;border-left:3px solid #e0a730;padding-left:12px">${escapeHtml(mensaje)}</p>
+      <p style="font-size:15px;color:#1c1c18;line-height:1.7;margin-top:16px;white-space:pre-wrap;border-left:3px solid #d4af37;padding-left:12px">${escapeHtml(mensaje)}</p>
     </div>`;
 
   try {
@@ -109,11 +109,11 @@ export const POST: APIRoute = async ({ request }) => {
   // 2. Acuse de recibo para el visitante (no bloquea si falla).
   const htmlAcuse = `
     <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto">
-      <h1 style="font-family:Georgia,serif;color:#5c2e1c">¡Gracias por escribirnos! ✦</h1>
-      <p style="font-size:16px;line-height:1.7;color:#2a2018">
+      <h1 style="font-family:Georgia,serif;color:#862303">¡Gracias por escribirnos! ✦</h1>
+      <p style="font-size:16px;line-height:1.7;color:#1c1c18">
         Hola ${escapeHtml(nombre)}, recibimos tu mensaje y te responderemos pronto.
       </p>
-      <p style="font-size:15px;color:#2a2018;line-height:1.6;background:#fbf3ec;border-radius:8px;padding:12px">
+      <p style="font-size:15px;color:#1c1c18;line-height:1.6;background:#fdf1ec;border-radius:8px;padding:12px">
         <strong>Tu mensaje:</strong><br><span style="white-space:pre-wrap">${escapeHtml(mensaje)}</span>
       </p>
       <p style="font-size:14px;color:#6b7280">Fundación Amigos de los Ángeles · Portoviejo, Manabí, Ecuador</p>

@@ -1,43 +1,54 @@
 @import 'tailwindcss';
 
 /*
-  Sistema de diseño FUNADELÁN.
-  Paleta CÁLIDA: terracota/sepia + dorado angélico sobre marfil cálido,
+  Tailwind v4 exige "@media (hover: hover)" en hover:/group-hover: para evitar
+  el hover pegado en táctiles. En este sitio los desplegables del navbar dependen
+  de group-hover, y algunos navegadores/dispositivos (incluidos táctiles con
+  mouse conectado) reportan hover:none, dejando el hover roto por completo.
+  Redefinimos la variante para que sea un :hover simple y directo.
+*/
+@custom-variant hover (&:hover);
+
+/*
+  Sistema de diseño FUNADELÁN — "Seraphic Warmth" (Stitch, ver DESIGN/DESIGN.md).
+  Paleta CÁLIDA: terracota + dorado angélico sobre marfil cálido,
   en armonía con los tonos del logo (querubines, alas doradas, caligrafía sepia).
-  Nota: los tokens conservan el nombre histórico "celeste-*" por compatibilidad,
-  pero sus valores son ahora una rampa cálida (terracota → sepia → espresso).
+  Nota: los tokens conservan el nombre histórico "celeste-*"/"dorado-*" por
+  compatibilidad con el resto del código; sus valores son ahora la rampa
+  terracota/dorado angélico de Seraphic Warmth.
   Prioridad RNF-12: legibilidad para adultos mayores -> base 18px,
   alto contraste, interlineado generoso, áreas de toque amplias.
 */
 @theme {
-  /* Marca — rampa cálida (terracota/sepia) */
-  --color-celeste-50: #fbf3ec;
-  --color-celeste-100: #f6e5d6;
-  --color-celeste-200: #ecc9ac;
-  --color-celeste-300: #dda574;
-  --color-celeste-400: #cd8148;
-  --color-celeste-500: #b6602c;
-  --color-celeste-600: #984922;
-  --color-celeste-700: #7a3b20;
-  --color-celeste-800: #5c2e1c;
-  --color-celeste-900: #442218;
+  /* Marca — rampa terracota (primary de Seraphic Warmth) */
+  --color-celeste-50: #fdf1ec;
+  --color-celeste-100: #ffdbd1;
+  --color-celeste-200: #ffb5a0;
+  --color-celeste-300: #e0876a;
+  --color-celeste-400: #c44f2e;
+  --color-celeste-500: #a63a1a;
+  --color-celeste-600: #a33818;
+  --color-celeste-700: #862303;
+  --color-celeste-800: #31302d; /* inverse-surface: fondo de secciones oscuras */
+  --color-celeste-900: #1c1c18; /* on-surface: el más oscuro, texto/fondo de máximo contraste */
 
-  --color-dorado-50: #fdf8ed;
-  --color-dorado-100: #f8ecca;
-  --color-dorado-200: #f1d792;
-  --color-dorado-300: #e9bf5a;
-  --color-dorado-400: #e0a730;
+  /* Dorado angélico (secondary de Seraphic Warmth) */
+  --color-dorado-50: #fef9ec;
+  --color-dorado-100: #ffe088;
+  --color-dorado-200: #e9c349;
+  --color-dorado-300: #fed65b;
+  --color-dorado-400: #d4af37; /* "angelic gold": botones donar, halos */
   --color-dorado-500: #c98a1c;
   --color-dorado-600: #a86c16;
-  --color-dorado-700: #855316;
+  --color-dorado-700: #735c00;
 
   /* Neutro cálido (arena) para dar humanidad y separar superficies */
-  --color-arena-50: #faf6ee;
-  --color-arena-100: #f3ebdc;
-  --color-arena-200: #e7dabf;
+  --color-arena-50: #f7f3ed;
+  --color-arena-100: #f1ede7;
+  --color-arena-200: #e6e2dc;
 
-  --color-crema: #fdf8f1; /* marfil cálido */
-  --color-tinta: #2a2018; /* café muy oscuro (texto), más cálido que el gris azulado */
+  --color-crema: #fdf9f3; /* marfil cálido */
+  --color-tinta: #1c1c18; /* café muy oscuro (texto), más cálido que el gris azulado */
 
   /* Tipografía: cuerpo legible + títulos con carácter */
   --font-sans: 'Nunito Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -52,8 +63,18 @@
   --radius-2xl: 1.5rem;
   --radius-arco: 2.5rem; /* forma de arco/santuario, motivo de marca */
 
-  /* Sombra suave y cálida (no gris azulado corporativo) */
-  --shadow-suave: 0 1px 2px rgba(31, 39, 51, 0.04), 0 12px 28px -12px rgba(29, 63, 110, 0.18);
+  /* Sombra orgánica cálida (no gris azulado corporativo) */
+  --shadow-suave: 0 4px 20px rgba(88, 66, 60, 0.08);
+}
+
+/* Resplandor "halo dorado" para botones/imágenes destacadas (ver DESIGN.md) */
+.halo-gold {
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+}
+
+/* Sombra orgánica y cálida para tarjetas flotantes (ver DESIGN.md) */
+.organic-shadow {
+  box-shadow: var(--shadow-suave);
 }
 
 html {
