@@ -8,50 +8,50 @@ const isActive = (href: string) =>
   href === '/' ? path === '/' : path.startsWith(href);
 ---
 
-<!-- Barra utilitaria: contacto rápido, discreta, como en sitios de ONG de referencia -->
-<div class="hidden border-b border-arena-200 bg-arena-50 text-sm text-tinta/70 lg:block">
+<div class="font-header hidden border-b border-celeste-800 bg-celeste-900 text-sm text-white/80 lg:block">
   <div class="mx-auto flex max-w-6xl items-center justify-between px-4 py-2">
-    <a href="/colabora/contacto" class="inline-flex items-center gap-1.5 transition hover:text-celeste-700">
-      <Icono name="ubicacion" class="h-4 w-4" />
+    <a href="/colabora/contacto" class="inline-flex items-center gap-2 hover:text-white">
+      <Icono name="ubicacion" class="h-4 w-4 text-dorado-300" />
       Portoviejo, Manabí, Ecuador
     </a>
-    <a href="mailto:fundacionamigosdelosangeles@gmail.com" class="inline-flex items-center gap-1.5 transition hover:text-celeste-700">
-      <Icono name="correo" class="h-4 w-4" />
+    <a href="mailto:fundacionamigosdelosangeles@gmail.com" class="inline-flex items-center gap-2 hover:text-white">
+      <Icono name="correo" class="h-4 w-4 text-dorado-300" />
       fundacionamigosdelosangeles@gmail.com
     </a>
   </div>
 </div>
 
-<header class="sticky top-0 z-50 border-b border-arena-200/70 bg-white/95 backdrop-blur">
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3">
-    <Logo imgClass="h-12 w-auto lg:h-14" />
+<header class="font-header sticky top-0 z-50 border-b border-arena-200 bg-crema">
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-5 px-4 py-3">
+    <Logo imgClass="h-13 w-auto lg:h-15" />
 
-    <div id="nav-cluster" class="flex flex-1 items-center justify-end gap-1">
-      <!-- Navegación de escritorio -->
+    <div id="nav-cluster" class="flex flex-1 items-center justify-end gap-2">
       <nav class="hidden lg:block" aria-label="Navegación principal">
-        <ul class="flex items-center">
+        <ul class="flex items-stretch">
           {
             mainNav.slice(1).map((item) => (
               <li class="group relative">
                 <a
                   href={item.href}
                   class:list={[
-                    'inline-flex items-center gap-1 px-3.5 py-2 text-base font-medium transition-colors hover:text-celeste-700',
-                    isActive(item.href) ? 'text-celeste-700' : 'text-tinta',
+                    'inline-flex h-12 items-center gap-1 border-b-2 px-3 text-base font-semibold transition-colors',
+                    isActive(item.href)
+                      ? 'border-celeste-700 text-celeste-700'
+                      : 'border-transparent text-tinta/80 hover:border-arena-200 hover:text-celeste-700',
                   ]}
                   aria-current={isActive(item.href) ? 'page' : undefined}
                 >
                   {item.label}
-                  {item.children && <Icono name="chevron" class="h-4 w-4 text-tinta/50 transition group-hover:text-celeste-600" />}
+                  {item.children && <Icono name="chevron" class="h-4 w-4 text-tinta/45" />}
                 </a>
-                <span class="absolute inset-x-3 -bottom-px h-0.5 scale-x-0 bg-dorado-400 transition-transform group-hover:scale-x-100" aria-hidden="true" />
+
                 {item.children && (
-                  <ul class="invisible absolute left-0 top-full min-w-56 -translate-y-1 rounded-xl border border-arena-200 bg-white p-2 opacity-0 shadow-lg transition-all duration-150 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+                  <ul class="invisible absolute left-0 top-full min-w-64 border border-arena-200 bg-crema py-2 opacity-0 group-hover:visible group-hover:opacity-100">
                     {item.children.map((child) => (
                       <li>
                         <a
                           href={child.href}
-                          class="block rounded-lg px-3 py-2 text-base text-tinta hover:bg-arena-50 hover:text-celeste-700"
+                          class="block border-l-2 border-transparent px-4 py-2.5 text-base text-tinta/80 hover:border-celeste-700 hover:bg-arena-50 hover:text-celeste-700"
                         >
                           {child.label}
                         </a>
@@ -65,10 +65,9 @@ const isActive = (href: string) =>
         </ul>
       </nav>
 
-      <!-- Botón de búsqueda -->
       <button
         id="search-toggle"
-        class="ml-1 inline-flex h-11 w-11 items-center justify-center rounded-full text-tinta/70 transition hover:bg-arena-50 hover:text-celeste-700"
+        class="inline-flex h-11 w-11 items-center justify-center border border-transparent text-tinta/70 hover:border-arena-200 hover:text-celeste-700"
         aria-label="Buscar"
         aria-expanded="false"
         aria-controls="search-inline"
@@ -76,26 +75,27 @@ const isActive = (href: string) =>
         <Icono name="lupa" class="h-5 w-5" />
       </button>
 
+      <!-- Donaciones temporalmente deshabilitadas. Volver a activar cuando esté listo.
       <a
         href="/colabora/donar"
-        class="halo-gold ml-1 hidden items-center gap-2 rounded-full bg-dorado-400 px-5 py-2.5 text-base font-semibold text-celeste-900 shadow-sm transition hover:-translate-y-0.5 hover:bg-dorado-300 hover:shadow-md lg:inline-flex"
+        class="hidden items-center gap-2 border border-dorado-500 bg-dorado-400 px-5 py-2.5 text-base font-semibold text-celeste-900 hover:bg-dorado-300 lg:inline-flex"
       >
         <Icono name="corazon" class="h-5 w-5" />
         Donar
       </a>
+      -->
 
-      <!-- Botón móvil -->
       <button
         id="menu-toggle"
-        class="inline-flex items-center gap-2 rounded-lg border border-arena-200 px-3 py-2 text-base font-medium text-celeste-700 transition hover:bg-arena-50 lg:hidden"
+        class="inline-flex min-h-11 items-center gap-2 border border-arena-200 px-3 py-2 text-base font-semibold text-celeste-700 hover:bg-arena-50 lg:hidden"
         aria-expanded="false"
         aria-controls="mobile-nav"
       >
-        <Icono name="menu" class="h-5 w-5" /> Menú
+        <Icono name="menu" class="h-5 w-5" />
+        Menú
       </button>
     </div>
 
-    <!-- Barra de búsqueda en línea: reemplaza los botones al abrirse -->
     <form
       id="search-inline"
       action="/buscar"
@@ -103,26 +103,23 @@ const isActive = (href: string) =>
       role="search"
       class="hidden flex flex-1 items-center gap-2"
     >
-      <Icono name="lupa" class="h-6 w-6 shrink-0 text-celeste-600" />
+      <Icono name="lupa" class="h-5 w-5 shrink-0 text-celeste-700" />
       <label for="search-input" class="sr-only">Buscar en el sitio</label>
       <input
         id="search-input"
         type="search"
         name="q"
-        placeholder="Buscar publicaciones, noticias, oraciones…"
+        placeholder="Buscar en FUNADELÁN…"
         autocomplete="off"
-        class="w-full rounded-full border border-arena-200 bg-white px-5 py-2.5 text-base text-tinta placeholder:text-tinta/50 focus:border-dorado-400"
+        class="min-w-0 flex-1 border border-arena-200 bg-white px-4 py-2.5 text-base text-tinta placeholder:text-tinta/70 focus:border-celeste-700"
       />
-      <button
-        type="submit"
-        class="shrink-0 rounded-full bg-celeste-700 px-5 py-2.5 text-base font-semibold text-white transition hover:bg-celeste-600"
-      >
+      <button type="submit" class="shrink-0 bg-celeste-700 px-5 py-2.5 text-base font-semibold text-white hover:bg-celeste-600">
         Buscar
       </button>
       <button
         type="button"
         id="search-close"
-        class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-tinta/60 transition hover:bg-arena-50"
+        class="inline-flex h-11 w-11 shrink-0 items-center justify-center text-tinta/70 hover:bg-arena-50"
         aria-label="Cerrar búsqueda"
       >
         <span aria-hidden="true" class="text-2xl leading-none">×</span>
@@ -130,52 +127,35 @@ const isActive = (href: string) =>
     </form>
   </div>
 
-  <!-- Navegación móvil -->
   <nav
     id="mobile-nav"
-    class="hidden border-t border-arena-200 bg-white px-4 py-3 lg:hidden"
-    aria-label="Navegación principal (móvil)"
+    class="hidden border-t border-arena-200 bg-crema px-4 pb-5 pt-2 lg:hidden"
+    aria-label="Navegación principal móvil"
   >
-    <ul class="space-y-1">
+    <ul class="divide-y divide-arena-200">
       {
         mainNav.slice(1).map((item, i) => (
           <li>
             {item.children ? (
               <>
-                {/* Botón acordeón para ítems con submenú */}
                 <button
                   type="button"
                   data-accordion={i}
-                  class="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left text-lg font-medium text-tinta hover:bg-arena-50"
+                  class="flex w-full items-center justify-between py-3 text-left text-lg font-semibold text-tinta"
                   aria-expanded="false"
                 >
-                  <a href={item.href} class="flex-1" tabindex="-1">{item.label}</a>
-                  <svg
-                    viewBox="0 0 24 24"
-                    class="h-5 w-5 shrink-0 text-tinta/50 transition-transform duration-200"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.75"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                    data-chevron={i}
-                  >
-                    <path d="m6 9 6 6 6-6" />
-                  </svg>
+                  <span>{item.label}</span>
+                  <Icono name="chevron" class="h-5 w-5 text-tinta/50 transition-transform" />
                 </button>
-                <ul
-                  id={`mobile-sub-${i}`}
-                  class="hidden ml-3 border-l border-arena-200 pl-3"
-                >
+                <ul id={`mobile-sub-${i}`} class="hidden border-l border-arena-200 pb-3 pl-4">
                   <li>
-                    <a href={item.href} class="block rounded-lg px-3 py-2 text-base font-medium text-celeste-700 hover:bg-arena-50">
-                      Ver todo · {item.label}
+                    <a href={item.href} class="block py-2 font-semibold text-celeste-700">
+                      Ver todo: {item.label}
                     </a>
                   </li>
                   {item.children.map((child) => (
                     <li>
-                      <a href={child.href} class="block rounded-lg px-3 py-2 text-base text-tinta/80 hover:bg-arena-50">
+                      <a href={child.href} class="block py-2 text-tinta/80 hover:text-celeste-700">
                         {child.label}
                       </a>
                     </li>
@@ -183,36 +163,34 @@ const isActive = (href: string) =>
                 </ul>
               </>
             ) : (
-              <a href={item.href} class="block rounded-lg px-3 py-2.5 text-lg font-medium text-tinta hover:bg-arena-50">
+              <a href={item.href} class="block py-3 text-lg font-semibold text-tinta hover:text-celeste-700">
                 {item.label}
               </a>
             )}
           </li>
         ))
       }
-      <li class="pt-2">
-        <a
-          href="/colabora/donar"
-          class="halo-gold inline-flex items-center gap-2 rounded-full bg-dorado-400 px-5 py-2.5 text-base font-semibold text-celeste-900 shadow-sm"
-        >
+      <!-- Donaciones temporalmente deshabilitadas. Volver a activar cuando esté listo.
+      <li class="pt-4">
+        <a href="/colabora/donar" class="inline-flex items-center gap-2 border border-dorado-500 bg-dorado-400 px-5 py-2.5 font-semibold text-celeste-900">
           <Icono name="corazon" class="h-5 w-5" />
           Donar
         </a>
       </li>
+      -->
     </ul>
   </nav>
 </header>
 
 <script>
-  // --- Menú hamburguesa ---
   const toggle = document.getElementById('menu-toggle');
   const nav = document.getElementById('mobile-nav');
+
   toggle?.addEventListener('click', () => {
     const open = nav?.classList.toggle('hidden') === false;
     toggle.setAttribute('aria-expanded', String(open));
   });
 
-  // --- Búsqueda en línea: la barra reemplaza los botones del header y viceversa. ---
   const searchToggle = document.getElementById('search-toggle');
   const navCluster = document.getElementById('nav-cluster');
   const searchInline = document.getElementById('search-inline');
@@ -228,24 +206,20 @@ const isActive = (href: string) =>
 
   searchToggle?.addEventListener('click', () => abrirBusqueda(true));
   searchClose?.addEventListener('click', () => abrirBusqueda(false));
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && !searchInline?.classList.contains('hidden')) abrirBusqueda(false);
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') abrirBusqueda(false);
   });
 
-  // --- Acordeón menú móvil ---
-  document.querySelectorAll<HTMLButtonElement>('[data-accordion]').forEach((btn) => {
-    const idx = btn.dataset.accordion!;
-    const submenu = document.getElementById(`mobile-sub-${idx}`);
-    const chevron = document.querySelector<SVGElement>(`[data-chevron="${idx}"]`);
+  document.querySelectorAll<HTMLButtonElement>('[data-accordion]').forEach((button) => {
+    const index = button.dataset.accordion;
+    const submenu = document.getElementById(`mobile-sub-${index}`);
+    const chevron = button.querySelector('svg');
 
-    btn.addEventListener('click', () => {
-      const expanded = btn.getAttribute('aria-expanded') === 'true';
-      btn.setAttribute('aria-expanded', String(!expanded));
+    button.addEventListener('click', () => {
+      const expanded = button.getAttribute('aria-expanded') === 'true';
+      button.setAttribute('aria-expanded', String(!expanded));
       submenu?.classList.toggle('hidden', expanded);
-      // Rotar el chevron 180° cuando está abierto
-      if (chevron) {
-        chevron.style.transform = expanded ? '' : 'rotate(180deg)';
-      }
+      if (chevron) chevron.style.transform = expanded ? '' : 'rotate(180deg)';
     });
   });
 </script>

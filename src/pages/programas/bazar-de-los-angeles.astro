@@ -1,0 +1,23 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+
+const breadcrumbs = [{ label: 'Programas', href: '/programas' }];
+---
+
+<PageLayout
+  title="Bazar de los Ángeles"
+  lead="Nuestro evento de recaudación anual."
+  breadcrumbs={breadcrumbs}
+>
+  <div class="max-w-3xl space-y-5 text-lg text-tinta/85">
+    <p>
+      El <strong>Bazar de los Ángeles</strong> es el evento de recaudación de fondos que
+      organiza FUNADELÁN cada año, en el que ofrecemos a la venta figuras religiosas de
+      ángeles.
+    </p>
+    <p>
+      Todo lo recaudado se destina a sostener los programas de la fundación en beneficio
+      de las personas mayores de Portoviejo.
+    </p>
+  </div>
+</PageLayout>

@@ -1,0 +1,141 @@
+---
+/**
+ * Feed embebido de una Página de Facebook (plugin oficial «Page Plugin»).
+ *
+ * Se carga bajo demanda: primero se muestra una tarjeta de aviso y el iframe
+ * solo se inserta cuando la persona pulsa el botón. Así el sitio no carga
+ * recursos ni cookies de Meta a menos que la visita lo pida, y no penaliza
+ * el tiempo de carga de la página.
+ *
+ * Usa la variante en iframe del plugin (no el SDK de JavaScript), que es
+ * bastante más liviana y no inyecta scripts de terceros.
+ */
+interface Props {
+  /** URL de la Página. Debe ser una Página, no un perfil personal. */
+  href: string;
+  /** Alto del feed en píxeles. El plugin admite entre 70 y 1000. */
+  height?: number;
+  /** Texto del encabezado de la tarjeta previa. */
+  titulo?: string;
+  class?: string;
+}
+
+const {
+  href,
+  height = 700,
+  titulo = 'Publicaciones de Facebook',
+  class: clase = '',
+} = Astro.props;
+---
+
+<div
+  class={`overflow-hidden rounded-2xl border border-arena-200/70 bg-white shadow-[var(--shadow-suave)] ${clase}`}
+  data-fb-feed
+  data-href={href}
+  data-height={height}
+>
+  <!-- Aviso previo: se reemplaza por el iframe al pulsar el botón. -->
+  <div class="flex flex-col items-center justify-center gap-4 px-6 py-14 text-center" data-fb-aviso>
+    <span class="grid h-14 w-14 place-items-center rounded-full bg-[#1877F2] text-white">
+      <svg viewBox="0 0 24 24" class="h-7 w-7" fill="currentColor" aria-hidden="true">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+      </svg>
+    </span>
+
+    <div>
+      <p class="font-display text-xl font-semibold text-celeste-800">{titulo}</p>
+      <p class="mx-auto mt-2 max-w-md text-base text-tinta/70">
+        Este contenido se carga desde Facebook. Al mostrarlo, Meta puede
+        registrar tu visita e instalar sus propias cookies.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      data-fb-boton
+      class="inline-flex items-center gap-2 rounded-full bg-[#0e65d9] px-7 py-3 text-base font-semibold text-white transition hover:-translate-y-0.5 hover:bg-[#0b52b0]"
+    >
+      Mostrar publicaciones
+    </button>
+
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-sm font-semibold text-celeste-700 underline underline-offset-4 hover:text-celeste-500"
+    >
+      O visita la página directamente en Facebook
+    </a>
+  </div>
+</div>
+
+<script>
+  /** Ancho admitido por el plugin de Facebook. */
+  const ANCHO_MIN = 180;
+  const ANCHO_MAX = 500;
+
+  function anchoPara(contenedor: HTMLElement): number {
+    const disponible = contenedor.clientWidth || ANCHO_MAX;
+    return Math.round(Math.min(ANCHO_MAX, Math.max(ANCHO_MIN, disponible)));
+  }
+
+  function construirSrc(href: string, ancho: number, alto: number): string {
+    const params = new URLSearchParams({
+      href,
+      tabs: 'timeline',
+      width: String(ancho),
+      height: String(alto),
+      small_header: 'false',
+      adapt_container_width: 'true',
+      hide_cover: 'false',
+      show_facepile: 'true',
+      locale: 'es_LA',
+    });
+    return `https://www.facebook.com/plugins/page.php?${params}`;
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-fb-feed]').forEach((contenedor) => {
+    const boton = contenedor.querySelector<HTMLButtonElement>('[data-fb-boton]');
+    const aviso = contenedor.querySelector<HTMLElement>('[data-fb-aviso]');
+    const href = contenedor.dataset.href;
+    const alto = Number(contenedor.dataset.height) || 700;
+    if (!boton || !aviso || !href) return;
+
+    boton.addEventListener('click', () => {
+      const ancho = anchoPara(contenedor);
+
+      const iframe = document.createElement('iframe');
+      iframe.src = construirSrc(href, ancho, alto);
+      iframe.title = 'Publicaciones recientes de FUNADELÁN en Facebook';
+      iframe.width = String(ancho);
+      iframe.height = String(alto);
+      iframe.loading = 'lazy';
+      iframe.scrolling = 'no';
+      iframe.allow = 'clipboard-write; encrypted-media; picture-in-picture; web-share';
+      iframe.allowFullscreen = true;
+      iframe.className = 'mx-auto block w-full max-w-[500px] border-0';
+      iframe.style.overflow = 'hidden';
+
+      aviso.replaceWith(iframe);
+
+      // El plugin fija su ancho al cargar, así que hay que reconstruir el
+      // iframe si la ventana cambia de tamaño. Recargarlo reinicia el feed,
+      // por eso solo se hace ante cambios grandes (girar el móvil, no el
+      // vaivén de mostrar u ocultar la barra de direcciones) y con una
+      // espera generosa hasta que el redimensionado termine.
+      let ultimoAncho = ancho;
+      let temporizador: number | undefined;
+
+      window.addEventListener('resize', () => {
+        window.clearTimeout(temporizador);
+        temporizador = window.setTimeout(() => {
+          const nuevoAncho = anchoPara(contenedor);
+          if (Math.abs(nuevoAncho - ultimoAncho) < 80) return;
+          ultimoAncho = nuevoAncho;
+          iframe.width = String(nuevoAncho);
+          iframe.src = construirSrc(href, nuevoAncho, alto);
+        }, 500);
+      });
+    });
+  });
+</script>

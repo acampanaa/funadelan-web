@@ -1,4 +1,6 @@
 import type { APIRoute } from 'astro';
+// @ts-expect-error — módulo .mjs compartido con la función de Netlify.
+import { plantillaCorreo, parrafo, escapeHtml, SITIO } from '@/lib/emails.mjs';
 
 // Endpoint de suscripción al boletín (RF-17).
 // Se ejecuta en el servidor (no se pre-renderiza) tanto en `npm run dev`
@@ -84,21 +86,25 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // 2. Enviar el correo de bienvenida / confirmación de suscripción.
-  const html = `
-    <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto">
-      <h1 style="font-family:Georgia,serif;color:#862303">¡Bienvenido/a a FUNADELÁN! ✦</h1>
-      <p style="font-size:16px;line-height:1.7;color:#1c1c18">
-        Gracias por suscribirte a las notificaciones de la <strong>Fundación Amigos
-        de los Ángeles</strong>. A partir de ahora recibirás nuestras noticias,
-        actividades y mensajes de esperanza.
-      </p>
-      <p style="font-size:16px;line-height:1.7;color:#1c1c18">
-        «La vida solo tiene sentido cuando se la entrega, se la dona.»
-      </p>
-      <p style="font-size:14px;color:#6b7280">
-        Portoviejo, Manabí, Ecuador · Fundación Amigos de los Ángeles
-      </p>
-    </div>`;
+  const saludo = nombre ? `Hola, ${escapeHtml(nombre)}:` : 'Hola:';
+  const html = plantillaCorreo({
+    titulo: 'Te damos la bienvenida',
+    preheader: 'Gracias por suscribirte al boletín de la Fundación Amigos de los Ángeles.',
+    cuerpoHtml: [
+      parrafo(saludo),
+      parrafo(
+        'Gracias por suscribirte al boletín de la <strong>Fundación Amigos de los Ángeles</strong>. ' +
+          'Desde ahora te llegarán a este correo nuestras publicaciones: actividades del Centro ' +
+          'Diurno «Ángeluz», noticias de la fundación y mensajes de esperanza.',
+      ),
+      parrafo('Nos alegra tenerte cerca.'),
+    ].join(''),
+    cita: '«La vida solo tiene sentido cuando se la entrega, se la dona.»',
+    cta: { texto: 'Conocer la fundación', url: `${SITIO}/quienes-somos` },
+    notaPie:
+      'Recibes este correo porque te suscribiste en funadelan.org. Si no fuiste tú o ya no ' +
+      `quieres recibirlo, escríbenos a <a href="mailto:${senderEmail}" style="color:#ad3d1e">${senderEmail}</a> y te damos de baja.`,
+  });
 
   try {
     const resCorreo = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -107,8 +113,8 @@ export const POST: APIRoute = async ({ request }) => {
       body: JSON.stringify({
         sender: { name: senderName, email: senderEmail },
         to: [{ email, name: nombre || undefined }],
-        subject: 'Confirmación de suscripción — FUNADELÁN',
-        htmlContent: `<html><body>${html}</body></html>`,
+        subject: 'Te damos la bienvenida — FUNADELÁN',
+        htmlContent: html,
       }),
     });
     if (!resCorreo.ok) {

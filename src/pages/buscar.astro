@@ -60,7 +60,7 @@ const lead = q
           <p class="mt-4 text-lg text-tinta/80">
             No encontramos nada para «<strong>{q}</strong>».
           </p>
-          <p class="mt-1 text-base text-tinta/60">Prueba con otras palabras.</p>
+          <p class="mt-1 text-base text-tinta/70">Prueba con otras palabras.</p>
         </div>
       ) : (
         <ul class="divide-y divide-arena-200/70">
@@ -74,7 +74,7 @@ const lead = q
                     {etiquetaTipo[r._type] || 'Contenido'}
                     {r.fecha && <span class="text-tinta/50">· {formatearFecha(r.fecha)}</span>}
                   </span>
-                  <h2 class="text-2xl text-celeste-800 transition group-hover:text-celeste-600">{r.titulo}</h2>
+                  <h2 class="text-2xl text-celeste-800 transition group-hover:text-celeste-500 group-hover:underline underline-offset-4">{r.titulo}</h2>
                   {r.resumen && <p class="text-base text-tinta/75">{r.resumen}</p>}
                 </a>
               </li>

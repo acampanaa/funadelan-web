@@ -1,6 +1,7 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
+import Icono from '@/components/Icono.astro';
 import { getInformes } from '@/lib/sanity';
 
 const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
@@ -17,22 +18,24 @@ const informes = await getInformes();
     !informes || informes.length === 0 ? (
       <Placeholder note="Aún no hay informes publicados. Súbelos en Sanity Studio (tipo «Informe (Rendición de cuentas)»)." />
     ) : (
-      <ul class="mx-auto max-w-3xl space-y-4">
+      <ul class="mx-auto max-w-3xl border-b border-arena-200">
         {informes.map((inf: any) => (
           <li>
             <a
               href={inf.archivoUrl ? `${inf.archivoUrl}?dl=` : '#'}
-              class="group flex items-center gap-4 rounded-2xl border border-celeste-100 bg-white p-5 shadow-sm transition hover:border-celeste-200 hover:shadow-lg"
+              class="group flex items-center gap-4 border-t border-arena-200 py-5"
             >
-              <span class="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-celeste-50 text-2xl" aria-hidden="true">📄</span>
+              <span class="grid h-12 w-12 shrink-0 place-items-center border border-celeste-100 bg-celeste-50 text-celeste-700" aria-hidden="true">
+                <Icono name="brujula" class="h-6 w-6" />
+              </span>
               <div class="flex-1">
                 <h2 class="text-lg font-semibold text-celeste-800">{inf.titulo}</h2>
-                <p class="text-sm text-tinta/60">
+                <p class="text-sm text-tinta/70">
                   {inf.anio}
                   {inf.descripcion && ` · ${inf.descripcion}`}
                 </p>
               </div>
-              <span class="font-semibold text-celeste-600 group-hover:text-celeste-700">Descargar PDF ↓</span>
+              <span class="font-semibold text-celeste-600 group-hover:text-celeste-500 group-hover:underline underline-offset-4">Descargar PDF ↓</span>
             </a>
           </li>
         ))}

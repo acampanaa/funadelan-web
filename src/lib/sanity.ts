@@ -175,12 +175,37 @@ export async function getAlianzas() {
   );
 }
 
-/** Elementos de la galería (fotos y videos), del más reciente al más antiguo. */
+/** Elementos de la galería (fotos y videos), del más reciente al más antiguo.
+ *  Incluye tanto los elementos cargados directamente en "Elemento de galería"
+ *  como las fotos de cada "Publicación", para no tener que subir cada foto
+ *  dos veces. Las fotos que vienen de una publicación llevan además
+ *  postTitulo/postSlug, para poder indicar de dónde son. */
 export async function getGaleria() {
-  return sanityClient.fetch(
-    `*[_type == "galeriaItem"] | order(fecha desc){
-      _id, titulo, tipo, imagen, videoUrl, fecha
-    }`,
+  const [items, posts] = await Promise.all([
+    sanityClient.fetch(
+      `*[_type == "galeriaItem"]{ _id, titulo, tipo, imagen, videoUrl, fecha }`,
+    ),
+    sanityClient.fetch(
+      `*[_type == "post" && count(imagenes) > 0]{
+        titulo, fecha, "slug": slug.current, imagenes
+      }`,
+    ),
+  ]);
+
+  const fotosDePosts = (posts || []).flatMap((post: any) =>
+    (post.imagenes || []).map((imagen: any, i: number) => ({
+      _id: `post-${post.slug}-${i}`,
+      tipo: 'foto',
+      imagen,
+      fecha: post.fecha,
+      titulo: post.titulo,
+      postTitulo: post.titulo,
+      postSlug: post.slug,
+    })),
+  );
+
+  return [...(items || []), ...fotosDePosts].sort((a: any, b: any) =>
+    (b.fecha || '').localeCompare(a.fecha || ''),
   );
 }
 

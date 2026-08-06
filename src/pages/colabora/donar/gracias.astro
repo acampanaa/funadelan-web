@@ -1,5 +1,6 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
+import Icono from '@/components/Icono.astro';
 
 const breadcrumbs = [
   { label: 'Colabora', href: '/colabora' },
@@ -15,7 +16,9 @@ const breadcrumbs = [
 >
   <div class="mx-auto max-w-2xl text-center">
     <div class="grid place-items-center">
-      <span class="grid h-24 w-24 place-items-center rounded-full bg-dorado-100 text-5xl" aria-hidden="true">💛</span>
+      <span class="grid h-20 w-20 place-items-center border border-dorado-300 bg-dorado-50 text-dorado-600" aria-hidden="true">
+        <Icono name="corazon" class="h-9 w-9" />
+      </span>
     </div>
 
     <p class="mt-8 text-lg text-tinta/85">

@@ -1,0 +1,150 @@
+---
+/**
+ * Publicaciones de Instagram embebidas con el widget oficial de Meta.
+ *
+ * Aviso importante sobre por qué esto no es como el de Facebook:
+ * Instagram NO tiene un plugin de perfil equivalente al «Page Plugin». Ni
+ * siquiera con cuenta de empresa: el modo empresa habilita la Graph API
+ * (acceso por programa a las publicaciones), no un widget. Lo único oficial
+ * que existe es el embed de publicaciones SUELTAS, que es lo que se usa aquí.
+ * Por eso hay que indicarle qué publicaciones mostrar.
+ *
+ * Igual que el de Facebook, se carga bajo demanda: el script de Instagram solo
+ * entra cuando la persona pulsa el botón.
+ */
+interface Props {
+  /** Enlaces permanentes de las publicaciones (https://www.instagram.com/p/…). */
+  posts: string[];
+  titulo?: string;
+  /** Perfil al que enlaza el pie de la tarjeta. */
+  perfil: string;
+  /**
+   * Alto máximo en píxeles. Las publicaciones de Instagram vienen altas y dos
+   * seguidas estiraban la columna al doble que el feed de Facebook; pasado
+   * este alto se desplazan por dentro, como hace el propio widget de Facebook.
+   */
+  altoMax?: number;
+  class?: string;
+}
+
+const {
+  posts,
+  titulo = 'Publicaciones de Instagram',
+  perfil,
+  altoMax = 720,
+  class: clase = '',
+} = Astro.props;
+---
+
+<div
+  class={`overflow-hidden rounded-2xl border border-arena-200/70 bg-white shadow-[var(--shadow-suave)] ${clase}`}
+  data-ig-feed
+  data-posts={JSON.stringify(posts)}
+  data-alto-max={altoMax}
+>
+  <div class="flex flex-col items-center justify-center gap-4 px-6 py-14 text-center" data-ig-aviso>
+    <span class="grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-[#f09433] via-[#dc2743] to-[#bc1888] text-white">
+      <svg viewBox="0 0 24 24" class="h-7 w-7" fill="currentColor" aria-hidden="true">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+      </svg>
+    </span>
+
+    <div>
+      <p class="font-display text-xl font-semibold text-celeste-800">{titulo}</p>
+      <p class="mx-auto mt-2 max-w-md text-base text-tinta/70">
+        Este contenido se carga desde Instagram. Al mostrarlo, Meta puede
+        registrar tu visita e instalar sus propias cookies.
+      </p>
+    </div>
+
+    <button
+      type="button"
+      data-ig-boton
+      class="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-[#f09433] via-[#dc2743] to-[#bc1888] px-7 py-3 text-base font-semibold text-white transition hover:-translate-y-0.5 hover:opacity-95"
+    >
+      Mostrar publicaciones
+    </button>
+
+    <a
+      href={perfil}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="text-sm font-semibold text-celeste-700 underline underline-offset-4 hover:text-celeste-500"
+    >
+      O visita el perfil directamente en Instagram
+    </a>
+  </div>
+</div>
+
+<script>
+  const SCRIPT_IG = 'https://www.instagram.com/embed.js';
+
+  /** Carga embed.js una sola vez, aunque haya varios feeds en la página. */
+  function cargarScript(): Promise<void> {
+    const yaEsta = document.querySelector(`script[src="${SCRIPT_IG}"]`);
+    if (yaEsta) return Promise.resolve();
+
+    return new Promise((resolve, reject) => {
+      const s = document.createElement('script');
+      s.src = SCRIPT_IG;
+      s.async = true;
+      s.onload = () => resolve();
+      s.onerror = () => reject(new Error('No se pudo cargar el script de Instagram'));
+      document.body.appendChild(s);
+    });
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-ig-feed]').forEach((contenedor) => {
+    const boton = contenedor.querySelector<HTMLButtonElement>('[data-ig-boton]');
+    const aviso = contenedor.querySelector<HTMLElement>('[data-ig-aviso]');
+    if (!boton || !aviso || !contenedor.dataset.posts) return;
+
+    let posts: string[] = [];
+    try {
+      posts = JSON.parse(contenedor.dataset.posts);
+    } catch {
+      return;
+    }
+
+    boton.addEventListener('click', async () => {
+      boton.disabled = true;
+      boton.textContent = 'Cargando…';
+
+      const rejilla = document.createElement('div');
+      rejilla.className = 'grid gap-4 p-4';
+
+      // Recorta el alto y desplaza por dentro. `overscroll-behavior` evita que
+      // al llegar al final del listado el desplazamiento se contagie a la
+      // página y la persona salga disparada hacia abajo.
+      const altoMax = Number(contenedor.dataset.altoMax);
+      if (altoMax > 0) {
+        rejilla.style.maxHeight = `${altoMax}px`;
+        rejilla.style.overflowY = 'auto';
+        rejilla.style.overscrollBehavior = 'contain';
+      }
+
+      for (const url of posts) {
+        const cita = document.createElement('blockquote');
+        cita.className = 'instagram-media';
+        cita.setAttribute('data-instgrm-permalink', url);
+        cita.setAttribute('data-instgrm-version', '14');
+        rejilla.appendChild(cita);
+      }
+
+      aviso.replaceWith(rejilla);
+
+      try {
+        await cargarScript();
+        // Si el script ya estaba cargado por otro feed, hay que pedirle que
+        // procese los blockquotes nuevos a mano.
+        window.instgrm?.Embeds?.process();
+      } catch {
+        rejilla.innerHTML =
+          '<p class="px-2 py-8 text-center text-base text-tinta/70">' +
+          'No se pudieron cargar las publicaciones. ' +
+          '<a href="https://www.instagram.com/funadelan_ec/" target="_blank" rel="noopener noreferrer" class="font-semibold text-celeste-700 underline">Verlas en Instagram</a>.' +
+          '</p>';
+      }
+    });
+  });
+</script>

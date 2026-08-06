@@ -1,0 +1,14 @@
+---
+// Renderiza una imagen incrustada dentro de un bloque de Portable Text
+// (usado por ContenidoEditable para "cuerpo"/"contenido" con imágenes).
+import { urlForImage } from '@/lib/sanity';
+
+const { node } = Astro.props;
+---
+
+<img
+  src={urlForImage(node).width(1000).url()}
+  alt=""
+  loading="lazy"
+  class="my-6 w-full rounded-2xl object-cover shadow-[var(--shadow-suave)]"
+/>

@@ -40,6 +40,7 @@ export const mainNav: NavLink[] = [
       { label: 'Arquitectura (nueva propuesta)', href: '/programas/universidad-adulto-mayor/arquitectura' },
       { label: 'Red Mundial del Adulto Mayor', href: '/programas/red-mundial' },
       { label: 'Actividades sociales', href: '/programas/actividades-sociales' },
+      { label: 'Bazar de los Ángeles', href: '/programas/bazar-de-los-angeles' },
     ],
   },
   {
@@ -56,7 +57,8 @@ export const mainNav: NavLink[] = [
     label: 'Colabora',
     href: '/colabora',
     children: [
-      { label: 'Donar', href: '/colabora/donar' },
+      // Donaciones temporalmente deshabilitadas. Volver a activar cuando esté listo.
+      // { label: 'Donar', href: '/colabora/donar' },
       { label: 'Rendición de cuentas', href: '/colabora/rendicion-de-cuentas' },
       { label: 'Voluntariado', href: '/colabora/voluntariado' },
       { label: 'Contacto', href: '/colabora/contacto' },

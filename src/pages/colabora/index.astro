@@ -1,6 +1,7 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import ContenidoEditable from '@/components/ContenidoEditable.astro';
+import Icono from '@/components/Icono.astro';
 import { getPaginaEstatica } from '@/lib/sanity';
 
 const breadcrumbs = [];
@@ -9,10 +10,11 @@ const pagina = await getPaginaEstatica('colabora');
 const lead = pagina?.lead || 'Hay muchas formas de sumarte a la misión.';
 
 const formas = [
-  { titulo: 'Donar', descripcion: 'Tu aporte sostiene el acompañamiento diario a las personas mayores.', href: '/colabora/donar', emoji: '💛' },
-  { titulo: 'Voluntariado', descripcion: 'Comparte tu tiempo y talento con quienes más lo necesitan.', href: '/colabora/voluntariado', emoji: '🤝' },
-  { titulo: 'Rendición de cuentas', descripcion: 'Conoce con transparencia cómo usamos cada recurso.', href: '/colabora/rendicion-de-cuentas', emoji: '📄' },
-  { titulo: 'Contacto', descripcion: 'Escríbenos para conocer otras formas de colaborar.', href: '/colabora/contacto', emoji: '✉️' },
+  // Donaciones temporalmente deshabilitadas. Volver a activar cuando esté listo.
+  // { titulo: 'Donar', descripcion: 'Tu aporte sostiene el acompañamiento diario a las personas mayores.', href: '/colabora/donar', icono: 'corazon' as const },
+  { titulo: 'Voluntariado', descripcion: 'Comparte tu tiempo y talento con quienes más lo necesitan.', href: '/colabora/voluntariado', icono: 'personas' as const },
+  { titulo: 'Rendición de cuentas', descripcion: 'Conoce con transparencia cómo usamos cada recurso.', href: '/colabora/rendicion-de-cuentas', icono: 'brujula' as const },
+  { titulo: 'Contacto', descripcion: 'Escríbenos para conocer otras formas de colaborar.', href: '/colabora/contacto', icono: 'correo' as const },
 ];
 ---
 
@@ -24,17 +26,17 @@ const formas = [
     </p>
   </ContenidoEditable>
 
-  <div class="mt-10 grid gap-6 sm:grid-cols-2">
+  <div class="mt-10 border-b border-arena-200">
     {
       formas.map((f) => (
         <a
           href={f.href}
-          class="group flex flex-col rounded-2xl border border-celeste-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+          class="group grid gap-3 border-t border-arena-200 py-6 sm:grid-cols-[3rem_12rem_1fr_auto] sm:items-center sm:gap-6"
         >
-          <span class="text-4xl" aria-hidden="true">{f.emoji}</span>
-          <h2 class="mt-4 text-2xl">{f.titulo}</h2>
-          <p class="mt-2 flex-1 text-base text-tinta/75">{f.descripcion}</p>
-          <span class="mt-4 font-semibold text-celeste-600 group-hover:text-celeste-700">Ver más →</span>
+          <Icono name={f.icono} class="h-8 w-8 text-celeste-700" />
+          <h2 class="text-2xl">{f.titulo}</h2>
+          <p class="text-base text-tinta/75">{f.descripcion}</p>
+          <span class="font-bold text-celeste-700 underline decoration-celeste-200 underline-offset-4 group-hover:decoration-celeste-700">Ver más</span>
         </a>
       ))
     }

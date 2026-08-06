@@ -11,13 +11,13 @@ const enlaces = [
 ];
 
 const colabora = [
-  { label: 'Donar', href: '/colabora/donar' },
+  // Donaciones temporalmente deshabilitadas. Volver a activar cuando esté listo.
+  // { label: 'Donar', href: '/colabora/donar' },
   { label: 'Voluntariado', href: '/colabora/voluntariado' },
   { label: 'Rendición de cuentas', href: '/colabora/rendicion-de-cuentas' },
   { label: 'Contacto', href: '/colabora/contacto' },
 ];
 
-// @todo Actualizar Instagram con la URL real de FUNADELÁN.
 const redes = [
   {
     nombre: 'Facebook',
@@ -26,30 +26,64 @@ const redes = [
   },
   {
     nombre: 'Instagram',
-    url: 'https://www.instagram.com/funadelan',
+    url: 'https://www.instagram.com/funadelan_ec/',
     svgPath: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z',
   },
 ];
 ---
 
-<footer class="mt-24 border-t border-arena-200 bg-arena-50">
-  <div class="mx-auto max-w-6xl px-4 py-16">
-    <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-      <div class="lg:col-span-1">
-        <Logo imgClass="h-14 w-auto" />
-        <p class="mt-4 font-display text-lg italic text-celeste-700">«Vivir para servir»</p>
-        <p class="mt-3 text-base leading-relaxed text-tinta/70">
-          Fundación Amigos de los Ángeles. Fe y ayuda social a personas mayores
-          en Portoviejo, Manabí, Ecuador.
+<footer class="mt-24 border-t border-arena-200">
+  <section class="bg-arena-50" aria-labelledby="titulo-boletin">
+    <div class="mx-auto grid max-w-6xl gap-8 px-4 py-12 lg:grid-cols-[1fr_1.15fr] lg:items-end">
+      <div>
+        <p class="antetitulo">Mantente cerca</p>
+        <h2 id="titulo-boletin" class="mt-3 text-3xl text-celeste-900">Noticias de la fundación</h2>
+        <p class="mt-3 max-w-lg text-base text-tinta/70">
+          Recibe actividades, reflexiones y formas concretas de colaborar.
         </p>
-        <div class="mt-5 flex gap-3">
+      </div>
+      <div>
+        <form id="form-suscripcion" class="flex flex-col gap-2 sm:flex-row">
+          <label for="susc-email" class="sr-only">Correo electrónico</label>
+          <input
+            id="susc-email"
+            name="email"
+            type="email"
+            inputmode="email"
+            autocomplete="email"
+            spellcheck="false"
+            required
+            placeholder="nombre@correo.com…"
+            class="min-h-12 min-w-0 flex-1 border border-arena-200 bg-white px-4 py-2.5 text-base text-tinta placeholder:text-tinta/70 focus:border-celeste-700"
+          />
+          <button
+            type="submit"
+            class="min-h-12 border border-celeste-700 bg-celeste-700 px-6 py-2.5 text-base font-bold text-white hover:bg-celeste-600 disabled:opacity-60"
+          >
+            Suscribirme
+          </button>
+        </form>
+        <p id="susc-mensaje" role="status" aria-live="polite" class="mt-2 text-sm"></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="bg-celeste-900 text-white">
+    <div class="mx-auto grid max-w-6xl gap-12 px-4 py-14 sm:grid-cols-2 lg:grid-cols-[1.45fr_.75fr_.75fr]">
+      <div>
+        <Logo tone="onDark" imgClass="h-16 w-auto" />
+        <p class="mt-5 max-w-md text-base leading-relaxed text-white/70">
+          Fundación Amigos de los Ángeles. Acompañamos con fe, dignidad y servicio
+          a las personas mayores de Portoviejo.
+        </p>
+        <div class="mt-6 flex gap-2">
           {redes.map((red) => (
             <a
               href={red.url}
               target="_blank"
               rel="noopener noreferrer"
               aria-label={red.nombre}
-              class="grid h-10 w-10 place-items-center rounded-full bg-celeste-100 text-celeste-700 transition hover:bg-celeste-700 hover:text-white"
+              class="grid h-11 w-11 place-items-center border border-white/25 text-white/80 hover:border-dorado-300 hover:text-dorado-300"
             >
               <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
                 <path d={red.svgPath} />
@@ -60,60 +94,29 @@ const redes = [
       </div>
 
       <nav aria-label="Enlaces">
-        <h2 class="font-display text-lg font-semibold text-celeste-800">Enlaces</h2>
-        <ul class="mt-4 space-y-3">
+        <h2 class="font-sans text-sm font-bold uppercase tracking-[0.1em] text-dorado-300">Explora</h2>
+        <ul class="mt-5 space-y-3">
           {enlaces.map((item) => (
-            <li>
-              <a href={item.href} class="text-base text-tinta/70 transition hover:text-celeste-700">
-                {item.label}
-              </a>
-            </li>
+            <li><a href={item.href} class="text-base text-white/75 hover:text-white">{item.label}</a></li>
           ))}
         </ul>
       </nav>
 
       <nav aria-label="Colabora">
-        <h2 class="font-display text-lg font-semibold text-celeste-800">Colabora</h2>
-        <ul class="mt-4 space-y-3">
+        <h2 class="font-sans text-sm font-bold uppercase tracking-[0.1em] text-dorado-300">Colabora</h2>
+        <ul class="mt-5 space-y-3">
           {colabora.map((item) => (
-            <li>
-              <a href={item.href} class="text-base text-tinta/70 transition hover:text-celeste-700">
-                {item.label}
-              </a>
-            </li>
+            <li><a href={item.href} class="text-base text-white/75 hover:text-white">{item.label}</a></li>
           ))}
         </ul>
       </nav>
-
-      <div>
-        <h2 class="font-display text-lg font-semibold text-celeste-800">Recibe noticias</h2>
-        <p class="mt-3 text-base text-tinta/70">Actividades y mensajes de la fundación en tu correo.</p>
-        <form id="form-suscripcion" class="mt-4 flex flex-col gap-2.5">
-          <label for="susc-email" class="sr-only">Correo electrónico</label>
-          <input
-            id="susc-email"
-            name="email"
-            type="email"
-            required
-            placeholder="tucorreo@ejemplo.com"
-            class="w-full rounded-full border border-arena-200 bg-white px-4 py-2.5 text-base text-tinta placeholder:text-tinta/50 focus:border-dorado-400"
-          />
-          <button
-            type="submit"
-            class="rounded-full bg-dorado-400 px-5 py-2.5 text-base font-semibold text-celeste-900 transition hover:bg-dorado-300 disabled:opacity-60"
-          >
-            Suscribirme
-          </button>
-        </form>
-        <p id="susc-mensaje" role="status" aria-live="polite" class="mt-2 text-sm"></p>
-      </div>
     </div>
-  </div>
 
-  <div class="border-t border-arena-200 bg-celeste-800 text-sm text-celeste-300">
-    <div class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-2 px-4 py-5 sm:flex-row sm:items-center">
-      <p>© {year} FUNADELÁN — Fundación Amigos de los Ángeles. Todos los derechos reservados.</p>
-      <p>Portoviejo, Manabí, Ecuador</p>
+    <div class="border-t border-white/15 text-sm text-white/60">
+      <div class="mx-auto flex max-w-6xl flex-col items-start justify-between gap-2 px-4 py-5 sm:flex-row sm:items-center">
+        <p>© {year} FUNADELÁN. Todos los derechos reservados.</p>
+        <p>Portoviejo, Manabí, Ecuador</p>
+      </div>
     </div>
   </div>
 </footer>

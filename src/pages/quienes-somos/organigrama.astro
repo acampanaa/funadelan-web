@@ -33,7 +33,7 @@ const niveles = [...new Set(cargos.map((c: any) => c.nivel))].sort(
                   <h2 class="text-xl font-semibold text-celeste-800">{c.cargo}</h2>
                   {c.area && <p class="mt-1 text-base text-tinta/70">{c.area}</p>}
                   {c.reportaA && (
-                    <p class="mt-3 text-sm text-tinta/55">Reporta a: {c.reportaA}</p>
+                    <p class="mt-3 text-sm text-tinta/70">Reporta a: {c.reportaA}</p>
                   )}
                 </div>
               ))}

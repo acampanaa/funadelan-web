@@ -7,6 +7,10 @@ dist/
 imgs/
 oraciones/
 posts/
+RECURSOS FACEBOOK/
+la-fundacion.jpg
+mision-vision.jpg
+quienes-somos.jpg
 
 # dependencies
 node_modules/
@@ -30,9 +34,11 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 .idea/
+*.code-workspace
 
 # mockups de referencia (Stitch), no forman parte del sitio
 DESIGN/
+code.html
 
 # herramientas locales de Claude Code (skills instaladas), no son del sitio
 .agents/

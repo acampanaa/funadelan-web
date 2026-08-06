@@ -1,16 +1,23 @@
-// Función serverless: recibe el webhook de Sanity al publicar una noticia
-// y dispara el envío del boletín vía la API de Brevo.
+// Función serverless: recibe el webhook de Sanity al publicar una noticia o
+// una publicación, y envía el boletín a los suscriptores vía la API de Brevo.
 //
-// Flujo (sección 5 del documento de arquitectura):
-//   Sanity publica noticia -> webhook -> esta función -> API Brevo -> suscriptores.
+// Flujo: Sanity publica -> webhook -> esta función -> API Brevo -> suscriptores.
 //
 // Variables de entorno requeridas (configurar en Netlify):
-//   SANITY_WEBHOOK_SECRET  -> para validar el origen del webhook
+//   SANITY_WEBHOOK_SECRET  -> obligatoria; valida que el webhook venga de Sanity
 //   BREVO_API_KEY          -> clave de API de Brevo
 //   BREVO_LIST_ID          -> id de la lista de suscriptores
-//   PUBLIC_SANITY_PROJECT_ID, PUBLIC_SANITY_DATASET -> para enlaces
+//   BREVO_SENDER_EMAIL     -> remitente verificado en Brevo
+//   BREVO_SENDER_NAME      -> nombre visible del remitente (opcional)
 
-import { createHmac } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
+import { plantillaCorreo, parrafo, escapeHtml, SITIO } from '../../src/lib/emails.mjs';
+
+/** Ruta pública según el tipo de documento de Sanity. */
+const RUTAS = {
+  post: 'posts',
+  noticia: 'noticias',
+};
 
 export default async (req) => {
   if (req.method !== 'POST') {
@@ -19,81 +26,114 @@ export default async (req) => {
 
   const raw = await req.text();
 
-  // 1. Validar firma del webhook de Sanity (cabecera sanity-webhook-signature).
+  // 1. Validar la firma del webhook.
+  //
+  // Esto falla a propósito si falta el secreto. Antes, cuando no estaba
+  // configurado, la validación se saltaba entera: cualquiera que conociera la
+  // URL podía disparar un envío masivo a toda la lista de suscriptores.
   const secret = process.env.SANITY_WEBHOOK_SECRET;
-  if (secret) {
-    const signatureHeader = req.headers.get('sanity-webhook-signature') || '';
-    if (!isValidSanitySignature(raw, signatureHeader, secret)) {
-      return new Response('Firma inválida', { status: 401 });
-    }
+  if (!secret) {
+    console.error('Falta SANITY_WEBHOOK_SECRET; se rechaza el webhook.');
+    return new Response('Webhook no configurado', { status: 500 });
+  }
+  if (!firmaValida(raw, req.headers.get('sanity-webhook-signature') || '', secret)) {
+    return new Response('Firma inválida', { status: 401 });
   }
 
-  let noticia;
+  let doc;
   try {
-    noticia = JSON.parse(raw);
+    doc = JSON.parse(raw);
   } catch {
     return new Response('Cuerpo inválido', { status: 400 });
   }
 
   const apiKey = process.env.BREVO_API_KEY;
   const listId = process.env.BREVO_LIST_ID;
-  if (!apiKey || !listId) {
+  const senderEmail = process.env.BREVO_SENDER_EMAIL;
+  if (!apiKey || !listId || !senderEmail) {
     console.warn('Brevo no configurado; se omite el envío.');
-    return new Response(JSON.stringify({ ok: false, reason: 'brevo-no-configurado' }), {
+    return new Response(JSON.stringify({ ok: false, motivo: 'brevo-no-configurado' }), {
       status: 200,
       headers: { 'content-type': 'application/json' },
     });
   }
 
-  // 2. Crear y programar el envío de una campaña con los datos de la noticia.
-  const titulo = noticia.titulo ?? 'Nueva publicación';
-  const resumen = noticia.resumen ?? '';
-  const enlace = `https://funadelan.org/noticias/${noticia.slug ?? ''}`;
+  // 2. Armar el correo.
+  const titulo = doc.titulo ?? 'Nueva publicación';
+  const resumen = doc.resumen ?? '';
+  // El slug de Sanity llega como objeto ({_type:'slug', current:'…'}) salvo que
+  // el webhook lo proyecte a texto; se admiten las dos formas.
+  const slug = typeof doc.slug === 'string' ? doc.slug : (doc.slug?.current ?? '');
+  const seccion = RUTAS[doc._type] ?? 'noticias';
+  const enlace = `${SITIO}/${seccion}/${encodeURIComponent(slug)}`;
 
-  const html = `
-    <h1 style="font-family:Georgia,serif;color:#18335a">${escapeHtml(titulo)}</h1>
-    <p style="font-size:16px;line-height:1.7;color:#1f2733">${escapeHtml(resumen)}</p>
-    <p><a href="${enlace}" style="display:inline-block;background:#e0a730;color:#142a4a;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:600">Leer más</a></p>
-  `;
+  const cuerpo = resumen
+    ? parrafo(escapeHtml(resumen))
+    : parrafo('Acabamos de publicar algo nuevo en nuestra página.');
 
-  const res = await fetch('https://api.brevo.com/v3/emailCampaigns', {
+  const html = plantillaCorreo({
+    titulo: escapeHtml(titulo),
+    preheader: resumen ? escapeHtml(resumen).slice(0, 140) : escapeHtml(titulo),
+    cuerpoHtml: cuerpo,
+    cta: { texto: 'Leer la publicación', url: enlace },
+    notaPie: 'Recibes este correo porque te suscribiste al boletín en funadelan.org.',
+  });
+
+  const cabeceras = {
+    'api-key': apiKey,
+    'content-type': 'application/json',
+    accept: 'application/json',
+  };
+
+  // 3. Crear la campaña. Ojo: esto la deja en borrador, no la envía.
+  const resCrear = await fetch('https://api.brevo.com/v3/emailCampaigns', {
     method: 'POST',
-    headers: { 'api-key': apiKey, 'content-type': 'application/json', accept: 'application/json' },
+    headers: cabeceras,
     body: JSON.stringify({
-      name: `Boletín — ${titulo}`,
+      name: `Boletín — ${titulo} — ${new Date().toISOString()}`,
       subject: titulo,
-      sender: { name: 'FUNADELÁN', email: 'boletin@funadelan.org' },
-      htmlContent: `<html><body>${html}</body></html>`,
+      sender: { name: process.env.BREVO_SENDER_NAME || 'FUNADELÁN', email: senderEmail },
+      htmlContent: html,
       recipients: { listIds: [Number(listId)] },
     }),
   });
 
-  if (!res.ok) {
-    const detail = await res.text();
-    console.error('Error de Brevo:', detail);
+  if (!resCrear.ok) {
+    console.error('Error de Brevo al crear la campaña:', await resCrear.text());
     return new Response('Error al crear la campaña', { status: 502 });
   }
 
-  return new Response(JSON.stringify({ ok: true }), {
+  const { id } = await resCrear.json();
+
+  // 4. Enviarla. Sin este paso la campaña se queda en borrador dentro de Brevo
+  //    y no le llega a nadie, que es justo lo que venía pasando.
+  const resEnviar = await fetch(`https://api.brevo.com/v3/emailCampaigns/${id}/sendNow`, {
+    method: 'POST',
+    headers: cabeceras,
+  });
+
+  if (!resEnviar.ok) {
+    console.error('Error de Brevo al enviar la campaña:', await resEnviar.text());
+    return new Response('Campaña creada pero no enviada', { status: 502 });
+  }
+
+  return new Response(JSON.stringify({ ok: true, campanaId: id }), {
     status: 200,
     headers: { 'content-type': 'application/json' },
   });
 };
 
-function isValidSanitySignature(payload, header, secret) {
+function firmaValida(payload, header, secret) {
   // Cabecera: "t=<timestamp>,v1=<hmac>"
-  const parts = Object.fromEntries(header.split(',').map((p) => p.split('=')));
-  if (!parts.t || !parts.v1) return false;
-  const expected = createHmac('sha256', secret)
-    .update(`${parts.t}.${payload}`)
-    .digest('base64url');
-  return expected === parts.v1;
-}
+  const partes = Object.fromEntries(header.split(',').map((p) => p.split('=')));
+  if (!partes.t || !partes.v1) return false;
 
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+  const esperada = createHmac('sha256', secret)
+    .update(`${partes.t}.${payload}`)
+    .digest('base64url');
+
+  // Comparación en tiempo constante para no filtrar la firma byte a byte.
+  const a = Buffer.from(esperada);
+  const b = Buffer.from(partes.v1);
+  return a.length === b.length && timingSafeEqual(a, b);
 }

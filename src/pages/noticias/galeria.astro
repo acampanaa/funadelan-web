@@ -111,9 +111,13 @@ function youtubeId(url: string): string | null {
                     </svg>
                   </span>
                 </span>
-                {item.titulo && (
+                {(item.titulo || item.fecha) && (
                   <figcaption class="absolute inset-x-0 bottom-0 translate-y-full bg-gradient-to-t from-black/70 to-transparent p-3 text-sm text-white transition group-hover:translate-y-0">
-                    {item.titulo}
+                    {item.postSlug ? (
+                      <span class="block">{item.postTitulo}</span>
+                    ) : (
+                      item.titulo && <span class="block">{item.titulo}</span>
+                    )}
                     {item.fecha && (
                       <span class="block text-xs text-white/70">{formatearFecha(item.fecha)}</span>
                     )}

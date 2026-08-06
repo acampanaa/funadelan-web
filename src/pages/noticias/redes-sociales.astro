@@ -1,55 +1,41 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Icono from '@/components/Icono.astro';
+import FacebookFeed from '@/components/FacebookFeed.astro';
+import InstagramFeed from '@/components/InstagramFeed.astro';
 
 const breadcrumbs = [{ label: 'Noticias', href: '/noticias' }];
 
-/**
- * URLs de redes sociales.
- * @todo Actualizar Instagram con la URL real de FUNADELÁN.
- */
+const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=100064983300077';
+const INSTAGRAM_URL = 'https://www.instagram.com/funadelan_ec/';
+
 const redes = [
   {
     nombre: 'Facebook',
     handle: 'Fundación Amigos de los Ángeles',
     descripcion: 'Síguenos en Facebook para estar al día con nuestras actividades, eventos y mensajes de fe.',
-    url: 'https://www.facebook.com/profile.php?id=100064983300077',
-    color: 'bg-[#1877F2]',
-    colorHover: 'hover:bg-[#0e65d9]',
-    icono: 'personas' as const,
+    url: FACEBOOK_URL,
     svgPath: 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z',
   },
   {
     nombre: 'Instagram',
-    handle: '@funadelan',
+    handle: '@funadelan_ec',
     descripcion: 'Fotografías y momentos de nuestra labor diaria junto a las personas mayores de Portoviejo.',
-    url: 'https://www.instagram.com/funadelan',
-    color: 'bg-gradient-to-br from-[#f09433] via-[#e6683c] via-[#dc2743] via-[#cc2366] to-[#bc1888]',
-    colorHover: 'hover:opacity-90',
-    icono: 'estrella' as const,
+    url: INSTAGRAM_URL,
     svgPath: 'M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z',
   },
 ];
 
-const destacados = [
-  {
-    plataforma: 'Facebook',
-    contenido: '«La vida solo tiene sentido cuando se la entrega, se la dona.» ✦ Gracias a todos quienes nos acompañaron en la novena de octubre.',
-    fecha: 'Hace 3 días',
-    likes: '48',
-  },
-  {
-    plataforma: 'Instagram',
-    contenido: 'Momentos del Centro Diurno «Ángeluz» 🌟 Cada día renovamos nuestra misión de servir con amor y dignidad. #FUNADELAN #AdultosMayores',
-    fecha: 'Hace 5 días',
-    likes: '127',
-  },
-  {
-    plataforma: 'Facebook',
-    contenido: '¡Nos acercamos a «Chocolate para el Alma»! 🍫 El evento más esperado del año llega el 15 de noviembre. ¡Acompáñanos!',
-    fecha: 'Hace 1 semana',
-    likes: '203',
-  },
+/**
+ * Publicaciones de Instagram que se muestran en la página.
+ *
+ * Hay que listarlas a mano: Instagram no ofrece un widget de perfil como el de
+ * Facebook, solo permite embeber publicaciones sueltas. Para cambiar cuáles
+ * salen, abre la publicación en Instagram, copia su enlace y pégalo aquí.
+ */
+const postsInstagram = [
+  'https://www.instagram.com/p/Da6XcZsOGGd/',
+  'https://www.instagram.com/p/DaD5haTloN6/',
 ];
 ---
 
@@ -65,101 +51,51 @@ const destacados = [
         href={red.url}
         target="_blank"
         rel="noopener noreferrer"
-        class="group flex flex-col overflow-hidden rounded-2xl border border-arena-200/70 bg-white shadow-[var(--shadow-suave)] transition hover:-translate-y-1 hover:shadow-lg"
+        class="group flex items-start gap-4 rounded-2xl border border-arena-200/70 bg-white p-6 shadow-[var(--shadow-suave)] transition hover:border-celeste-200"
       >
-        <!-- Cabecera de color -->
-        <div class={`${red.color} ${red.colorHover} relative flex items-center gap-4 p-6 text-white transition`}>
-          <span class="grid h-14 w-14 shrink-0 place-items-center rounded-full bg-white/20 backdrop-blur-sm">
-            <svg viewBox="0 0 24 24" class="h-7 w-7" fill="currentColor" aria-hidden="true">
-              <path d={red.svgPath} />
-            </svg>
-          </span>
-          <div>
-            <p class="text-2xl font-bold">{red.nombre}</p>
-            <p class="text-base text-white/80">{red.handle}</p>
-          </div>
-          <!-- Flecha de enlace -->
-          <span class="absolute right-5 top-1/2 -translate-y-1/2 opacity-60 transition group-hover:opacity-100 group-hover:translate-x-1">
-            <Icono name="flecha" class="h-6 w-6" />
-          </span>
-        </div>
-
-        <!-- Descripción -->
-        <div class="flex flex-1 flex-col p-6">
-          <p class="flex-1 text-base text-tinta/80">{red.descripcion}</p>
-          <span class="mt-5 inline-flex items-center gap-2 font-semibold text-celeste-700 transition group-hover:gap-3">
+        <span class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-celeste-100 text-celeste-700">
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="currentColor" aria-hidden="true">
+            <path d={red.svgPath} />
+          </svg>
+        </span>
+        <div class="min-w-0 flex-1">
+          <p class="text-xl font-semibold text-celeste-900">{red.nombre}</p>
+          <p class="truncate text-sm text-tinta/70">{red.handle}</p>
+          <p class="mt-2 text-base text-tinta/75">{red.descripcion}</p>
+          <span class="mt-3 inline-flex items-center gap-1.5 font-semibold text-celeste-700 transition group-hover:gap-2.5">
             Seguir en {red.nombre}
-            <Icono name="flecha" class="h-5 w-5" />
+            <Icono name="flecha" class="h-4 w-4" />
           </span>
         </div>
       </a>
     ))}
   </div>
 
-  <!-- Aviso informativo -->
-  <div class="mt-4 rounded-xl border border-dorado-200 bg-dorado-50/60 px-5 py-3 text-sm text-celeste-800">
-    <span class="mr-1 font-semibold">ℹ️ Nota:</span>
-    Los enlaces llevan a los perfiles de FUNADELÁN en cada red social. Actualiza las URLs en el código cuando los perfiles estén disponibles.
-  </div>
-
-  <!-- Sección: publicaciones destacadas (mockup estático para muestra) -->
+  <!-- Sección: publicaciones en vivo desde Facebook -->
   <section class="mt-16">
     <div class="mb-8">
       <span class="antetitulo">Últimas publicaciones</span>
       <h2 class="mt-3 font-display text-3xl font-semibold">Lo más reciente</h2>
       <p class="mt-2 text-base text-tinta/70">
-        Una selección de nuestras publicaciones recientes en redes sociales.
-        Visita nuestros perfiles para verlas todas.
+        Lo que compartimos en nuestras redes, aquí mismo.
       </p>
     </div>
 
-    <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-      {destacados.map((pub) => (
-        <article class="flex flex-col rounded-2xl border border-arena-200/70 bg-white p-6 shadow-[var(--shadow-suave)]">
-          <!-- Header del post -->
-          <div class="mb-4 flex items-center gap-3">
-            <span class="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-celeste-700 text-dorado-300">
-              <Icono name="estrella" class="h-5 w-5" />
-            </span>
-            <div>
-              <p class="font-semibold text-celeste-800">FUNADELÁN</p>
-              <p class="text-sm text-tinta/55">{pub.plataforma} · {pub.fecha}</p>
-            </div>
-          </div>
+    <div class="grid items-start gap-8 lg:grid-cols-[minmax(0,500px)_1fr]">
+      <div>
+        <h3 class="mb-4 flex items-center gap-2 font-display text-xl font-semibold text-celeste-800">
+          <Icono name="flecha" class="h-5 w-5 text-celeste-600" />
+          En Facebook
+        </h3>
+        <FacebookFeed href={FACEBOOK_URL} height={720} />
+      </div>
 
-          <!-- Contenido del post -->
-          <p class="flex-1 text-base text-tinta/85">{pub.contenido}</p>
-
-          <!-- Métricas (estáticas, solo visuales) -->
-          <div class="mt-5 flex items-center gap-4 border-t border-arena-100 pt-4 text-sm text-tinta/60">
-            <span class="inline-flex items-center gap-1.5">
-              <Icono name="corazon" class="h-4 w-4 text-celeste-600" />
-              {pub.likes} me gusta
-            </span>
-          </div>
-        </article>
-      ))}
-    </div>
-
-    <!-- CTA para seguir en redes -->
-    <div class="mt-10 text-center">
-      <p class="mb-6 text-lg text-tinta/75">
-        ¿Te gustó lo que ves? Síguenos para no perderte nada.
-      </p>
-      <div class="flex flex-wrap justify-center gap-4">
-        {redes.map((red) => (
-          <a
-            href={red.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            class={`${red.color} ${red.colorHover} inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-base font-semibold text-white transition hover:-translate-y-0.5`}
-          >
-            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
-              <path d={red.svgPath} />
-            </svg>
-            Seguir en {red.nombre}
-          </a>
-        ))}
+      <div>
+        <h3 class="mb-4 flex items-center gap-2 font-display text-xl font-semibold text-celeste-800">
+          <Icono name="flecha" class="h-5 w-5 text-celeste-600" />
+          En Instagram
+        </h3>
+        <InstagramFeed posts={postsInstagram} perfil={INSTAGRAM_URL} />
       </div>
     </div>
   </section>

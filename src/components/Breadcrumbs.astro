@@ -11,18 +11,26 @@ interface Props {
 const { items } = Astro.props;
 ---
 
+<!-- Ojo con los colores: estas migas van sobre el fondo crema claro de
+     PageLayout, no sobre un fondo oscuro. Antes usaban text-celeste-200 y
+     text-white (pensados para fondo oscuro) y quedaban casi invisibles: el
+     nombre de la página actual daba 1.06 de contraste, prácticamente nada. -->
 <nav aria-label="Migas de pan" class="text-sm">
-  <ol class="flex flex-wrap items-center gap-1 text-celeste-200">
-    <li><a href="/" class="hover:text-white">Inicio</a></li>
+  <ol class="flex flex-wrap items-center gap-1.5 text-tinta/70">
+    <li>
+      <a href="/" class="text-celeste-700 underline-offset-4 hover:text-celeste-500 hover:underline">Inicio</a>
+    </li>
     {
       items.map((item, i) => (
         <>
-          <li aria-hidden="true" class="opacity-60">/</li>
+          <li aria-hidden="true" class="text-tinta/40">/</li>
           <li>
             {item.href && i < items.length - 1 ? (
-              <a href={item.href} class="hover:text-white">{item.label}</a>
+              <a href={item.href} class="text-celeste-700 underline-offset-4 hover:text-celeste-500 hover:underline">
+                {item.label}
+              </a>
             ) : (
-              <span class="font-medium text-white" aria-current="page">{item.label}</span>
+              <span class="font-semibold text-celeste-900" aria-current="page">{item.label}</span>
             )}
           </li>
         </>

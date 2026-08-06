@@ -19,34 +19,31 @@ const oraciones = await getOraciones();
     !oraciones || oraciones.length === 0 ? (
       <Placeholder note="Aún no hay oraciones publicadas. Agrégalas en Sanity Studio (tipo «Oración»)." />
     ) : (
-      <div class="mx-auto flex max-w-xl flex-col gap-8">
+      <div class="mx-auto flex max-w-2xl flex-col gap-10">
         {oraciones.map((o: any) => (
-          <article class="overflow-hidden rounded-2xl border border-arena-200/70 bg-white shadow-[var(--shadow-suave)]">
-            {/* Cabecera tipo red social */}
-            <header class="flex items-center gap-3 p-4">
-              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-celeste-700 text-dorado-300">
-                <Icono name="estrella" class="h-6 w-6" />
-              </span>
-              <div class="min-w-0">
-                <p class="truncate font-display text-lg leading-tight text-celeste-800">{o.titulo}</p>
-                {o.fuente && <p class="truncate text-sm text-tinta/60">{o.fuente}</p>}
-              </div>
-            </header>
-
-            {o.imagen && (
+          <article class="rounded-2xl border border-arena-200/70 bg-white p-8 text-center shadow-[var(--shadow-suave)] sm:p-10">
+            {o.imagen ? (
               <img
-                src={urlForImage(o.imagen).width(1080).url()}
+                src={urlForImage(o.imagen).width(400).height(400).fit('crop').url()}
                 alt={o.titulo}
-                class="w-full"
+                class="mx-auto mb-6 aspect-square w-28 rounded-full object-cover"
                 loading="lazy"
               />
+            ) : (
+              <span class="mx-auto mb-6 grid h-14 w-14 place-items-center rounded-full bg-celeste-700 text-dorado-300">
+                <Icono name="estrella" class="h-6 w-6" />
+              </span>
             )}
 
+            <h2 class="font-display text-2xl text-celeste-800">{o.titulo}</h2>
+
             {o.texto && o.texto.length > 0 && (
-              <div class="richtext px-5 py-5 text-tinta/85">
+              <div class="richtext mt-5 font-display text-xl italic leading-relaxed text-tinta/85">
                 <PortableText value={o.texto} />
               </div>
             )}
+
+            {o.fuente && <p class="mt-5 text-sm text-tinta/70">— {o.fuente}</p>}
           </article>
         ))}
       </div>
