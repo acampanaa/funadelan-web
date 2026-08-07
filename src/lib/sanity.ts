@@ -103,7 +103,7 @@ export async function getPaginaEstatica(clave: string) {
 export async function getOrganigrama() {
   return sanityClient.fetch(
     `*[_type == "miembroOrganigrama"] | order(nivel asc, orden asc){
-      _id, cargo, area, nivel, orden,
+      _id, cargo, nombre, foto, area, nivel, orden,
       "reportaA": reportaA->cargo
     }`,
   );

@@ -109,20 +109,20 @@ const posts = (await getUltimosPosts(3)) || [];
         <!-- El ángel de la fundación. Va como decoración (aria-hidden y alt
              vacío): el mensaje de la portada ya está en el h1, y anunciarlo
              a un lector de pantalla solo añadiría ruido.
-             En móvil se coloca arriba a la derecha y más pequeño, porque el
-             texto ocupa la parte baja y si no se pisarían. -->
+             Se ubica a la izquierda, detrás del texto "Vivir para servir"
+             (el h1 va después en el DOM, así que queda por encima). -->
         <!-- Halo oscuro detrás del ángel. La estatua es blanca y la foto de
              fondo está llena de gente vestida de claro, así que sin esto la
              figura se confunde con la multitud. Oscurecer solo esa zona la
              despega sin apagar el resto de la fotografía. -->
         <div
-          class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_22%,rgba(25,18,15,.82)_0%,rgba(25,18,15,.5)_30%,transparent_58%)] sm:bg-[radial-gradient(circle_at_78%_48%,rgba(25,18,15,.82)_0%,rgba(25,18,15,.5)_32%,transparent_62%)]"
+          class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_40%_52%,rgba(25,18,15,.85)_0%,rgba(25,18,15,.55)_36%,transparent_68%)] sm:bg-[radial-gradient(circle_at_24%_42%,rgba(25,18,15,.85)_0%,rgba(25,18,15,.55)_38%,transparent_70%)]"
           aria-hidden="true"
         >
         </div>
 
         <div
-          class="pointer-events-none absolute inset-0 flex items-start justify-end sm:items-center"
+          class="pointer-events-none absolute inset-0 flex items-end justify-start"
           aria-hidden="true"
         >
           <img
@@ -131,7 +131,7 @@ const posts = (await getUltimosPosts(3)) || [];
             width="552"
             height="611"
             loading="eager"
-            class="mascara-angel mr-0 mt-4 h-[38%] w-auto sm:mr-4 sm:mt-0 sm:h-[72%] lg:mr-12 lg:h-[86%]"
+            class="mascara-angel ml-2 mb-28 h-[34%] w-auto opacity-80 sm:ml-6 sm:mb-36 sm:h-[50%] lg:ml-10 lg:mb-44 lg:h-[60%]"
           />
         </div>
 

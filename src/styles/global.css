@@ -265,15 +265,15 @@ body [class*='group-hover:scale']:hover {
   .mascara-angel {
     -webkit-mask-image: radial-gradient(
       ellipse 50% 52% at 50% 45%,
-      #000 44%,
-      rgb(0 0 0 / 0.6) 76%,
-      transparent 100%
+      #000 34%,
+      rgb(0 0 0 / 0.45) 62%,
+      transparent 88%
     );
     mask-image: radial-gradient(
       ellipse 50% 52% at 50% 45%,
-      #000 44%,
-      rgb(0 0 0 / 0.6) 76%,
-      transparent 100%
+      #000 34%,
+      rgb(0 0 0 / 0.45) 62%,
+      transparent 88%
     );
   }
 

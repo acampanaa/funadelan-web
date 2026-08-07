@@ -1,42 +1,133 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
-import { getOrganigrama } from '@/lib/sanity';
+import { getOrganigrama, urlForImage } from '@/lib/sanity';
 
 const breadcrumbs = [{ label: 'Quiénes somos', href: '/quienes-somos' }];
 
 // Contenido en vivo desde Sanity (tipo "Cargo (Organigrama)").
 const cargos = await getOrganigrama();
 
+/**
+ * Fotografías y nombres de la directiva, guardados aquí de momento.
+ *
+ * El sitio no tiene token de escritura en Sanity, así que las fotos no se
+ * pudieron subir al CMS. Viven en /public/img/directiva y se enlazan por el
+ * identificador del cargo. Lo que haya en Sanity manda: en cuanto se rellenen
+ * los campos «Nombre» y «Fotografía» en el Studio, esta tabla deja de usarse
+ * para ese cargo y se puede ir vaciando.
+ */
+const DIRECTIVA_LOCAL: Record<string, { nombre?: string; foto?: string }> = {
+  'cargo-presidente': {
+    nombre: 'Pedro Fabricio Alaña Echanique, S.J.',
+    foto: '/img/directiva/presidente.jpg',
+  },
+  'cargo-vicepresidente': {
+    nombre: 'Rosario Pico Macías',
+    foto: '/img/directiva/vicepresidenta.jpg',
+  },
+  'cargo-tesorera': {
+    nombre: 'Norma Fernández Zambrano',
+    foto: '/img/directiva/tesorera.jpg',
+  },
+  'cargo-secretaria': {
+    nombre: 'Aura Galarza Ibarra',
+    foto: '/img/directiva/secretaria.jpg',
+  },
+};
+
+/** Une lo de Sanity con lo local, dando prioridad a Sanity. */
+function resolver(c: any) {
+  const local = DIRECTIVA_LOCAL[c._id] ?? {};
+  const nombre = c.nombre || local.nombre || '';
+  const foto = c.foto
+    ? urlForImage(c.foto).width(400).height(400).fit('crop').url()
+    : local.foto;
+  return { ...c, nombre, foto };
+}
+
+const miembros = cargos.map(resolver);
+
 // Agrupar por nivel jerárquico para mostrarlo en filas (1 = más alto).
-const niveles = [...new Set(cargos.map((c: any) => c.nivel))].sort(
+const niveles = [...new Set(miembros.map((c: any) => c.nivel))].sort(
   (a: any, b: any) => a - b,
 );
+
+/** Iniciales de respaldo cuando alguien todavía no tiene fotografía. */
+function iniciales(texto: string) {
+  return texto
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((p) => p[0]?.toUpperCase() ?? '')
+    .join('');
+}
 ---
 
 <PageLayout
   title="Organigrama"
-  lead="Estructura organizativa de la fundación."
+  lead="Las personas que dirigen la fundación y cómo se organiza su trabajo."
   breadcrumbs={breadcrumbs}
 >
   {
-    cargos.length === 0 ? (
+    miembros.length === 0 ? (
       <Placeholder note="Aún no hay cargos publicados. Agrégalos en Sanity Studio (tipo «Cargo (Organigrama)») y aparecerán aquí." />
     ) : (
-      <div class="space-y-10">
-        {niveles.map((nivel) => (
-          <div class="flex flex-wrap justify-center gap-6">
-            {cargos
-              .filter((c: any) => c.nivel === nivel)
-              .map((c: any) => (
-                <div class="min-w-[16rem] max-w-xs flex-1 rounded-2xl border border-celeste-100 bg-white p-6 text-center shadow-sm">
-                  <h2 class="text-xl font-semibold text-celeste-800">{c.cargo}</h2>
-                  {c.area && <p class="mt-1 text-base text-tinta/70">{c.area}</p>}
-                  {c.reportaA && (
-                    <p class="mt-3 text-sm text-tinta/70">Reporta a: {c.reportaA}</p>
-                  )}
-                </div>
-              ))}
+      <div class="space-y-12">
+        {niveles.map((nivel, indiceNivel) => (
+          <div>
+            {/* Conector con el nivel de arriba: una línea corta y centrada que
+                sugiere la dependencia sin dibujar un diagrama completo. */}
+            {indiceNivel > 0 && (
+              <div class="mx-auto mb-12 h-8 w-px bg-arena-200" aria-hidden="true" />
+            )}
+
+            <ul class="flex flex-wrap justify-center gap-6 p-0" role="list">
+              {miembros
+                .filter((c: any) => c.nivel === nivel)
+                .map((c: any) => (
+                  <li class="min-w-[15rem] max-w-xs flex-1 list-none rounded-2xl border border-arena-200/70 bg-white p-6 text-center">
+                    {c.foto ? (
+                      <img
+                        src={c.foto}
+                        alt={c.nombre ? `Fotografía de ${c.nombre}` : ''}
+                        width="160"
+                        height="160"
+                        loading="lazy"
+                        class="mx-auto h-32 w-32 rounded-full object-cover object-top ring-2 ring-arena-200"
+                      />
+                    ) : (
+                      <div
+                        class="mx-auto grid h-32 w-32 place-items-center rounded-full bg-celeste-100 font-display text-3xl font-semibold text-celeste-700"
+                        aria-hidden="true"
+                      >
+                        {iniciales(c.nombre || c.cargo)}
+                      </div>
+                    )}
+
+                    {c.nombre && (
+                      <p class="mt-5 font-display text-xl font-semibold text-celeste-900">
+                        {c.nombre}
+                      </p>
+                    )}
+
+                    <p
+                      class:list={[
+                        'font-semibold text-celeste-700',
+                        c.nombre ? 'mt-1 text-base' : 'mt-5 text-xl',
+                      ]}
+                    >
+                      {c.cargo}
+                    </p>
+
+                    {c.area && <p class="mt-1 text-sm text-tinta/70">{c.area}</p>}
+
+                    {c.reportaA && (
+                      <p class="mt-3 text-sm text-tinta/70">Reporta a: {c.reportaA}</p>
+                    )}
+                  </li>
+                ))}
+            </ul>
           </div>
         ))}
       </div>
