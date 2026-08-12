@@ -82,8 +82,8 @@ function youtubeId(url: string): string | null {
           }
 
           if (item.imagen) {
-            const urlFull = urlForImage(item.imagen).width(1600).height(1200).fit('max').url();
-            const urlThumb = urlForImage(item.imagen).width(600).height(600).fit('crop').url();
+            const urlFull = urlForImage(item.imagen).width(2400).fit('max').url();
+            const urlThumb = urlForImage(item.imagen).width(600).height(600).fit('max').url();
 
             return (
               <a
@@ -96,7 +96,7 @@ function youtubeId(url: string): string | null {
                 <img
                   src={urlThumb}
                   alt={item.titulo || 'Foto de la galería'}
-                  class="h-full w-full object-cover transition duration-300 group-hover:scale-105 group-hover:brightness-90"
+                  class="h-full w-full object-contain transition duration-300 group-hover:scale-105 group-hover:brightness-90"
                   loading="lazy"
                 />
                 {/* Icono de zoom al hacer hover */}
