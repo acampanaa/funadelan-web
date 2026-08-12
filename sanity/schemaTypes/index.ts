@@ -10,10 +10,12 @@ import { post } from './post';
 import { informe } from './informe';
 import { galeriaItem } from './galeriaItem';
 import { paginaEstatica } from './paginaEstatica';
+import { heroImagen } from './heroImagen';
 
 export const schemaTypes = [
   // Páginas e informativos
   paginaEstatica,
+  heroImagen,
   // Contenido recurrente
   post,
   noticia,

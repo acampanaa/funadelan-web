@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import Icono from '@/components/Icono.astro';
-import { getUltimasNoticias, getUltimosPosts, urlForImage, formatearFecha } from '@/lib/sanity';
+import { getUltimasNoticias, getUltimosPosts, getHeroImagenes, urlForImage, formatearFecha } from '@/lib/sanity';
 
 const programas = [
   {
@@ -13,20 +13,13 @@ const programas = [
   },
   {
     numero: '02',
-    titulo: 'Universidad del Adulto Mayor',
-    descripcion:
-      'Formación, cultura y desarrollo personal para seguir aprendiendo y compartiendo a cualquier edad.',
-    href: '/programas/universidad-adulto-mayor',
-  },
-  {
-    numero: '03',
     titulo: 'Red Mundial del Adulto Mayor',
     descripcion:
       'Una red de aliados y comunidades unidas por la dignidad y los derechos de las personas mayores.',
     href: '/programas/red-mundial',
   },
   {
-    numero: '04',
+    numero: '03',
     titulo: 'Bazar de los Ángeles',
     descripcion:
       'Nuestro evento de recaudación anual: venta de figuras religiosas de ángeles a beneficio de la fundación.',
@@ -88,6 +81,20 @@ const noticias =
     : noticiasEjemplo;
 
 const posts = (await getUltimosPosts(3)) || [];
+
+const heroImagenesSanity = await getHeroImagenes();
+const heroImagenes =
+  Array.isArray(heroImagenesSanity) && heroImagenesSanity.length > 0
+    ? heroImagenesSanity.map((h: any) => ({
+        url: urlForImage(h.imagen).width(2400).height(1400).fit('crop').url(),
+        alt: h.alt,
+      }))
+    : [
+        {
+          url: '/img/derechos-adulto-mayor/derecho-01-principal.jpg',
+          alt: 'Personas mayores, familias y voluntarios durante una actividad comunitaria de FUNADELÁN',
+        },
+      ];
 ---
 
 <BaseLayout
@@ -95,15 +102,30 @@ const posts = (await getUltimosPosts(3)) || [];
 >
   <section class="border-b border-celeste-800 bg-celeste-900 text-white">
     <div class="mx-auto max-w-[90rem] p-0 sm:p-4 lg:p-6">
-      <div class="relative min-h-[38rem] overflow-hidden sm:min-h-[42rem]">
-        <img
-          src="/img/derechos-adulto-mayor/derecho-01-principal.jpg"
-          alt="Personas mayores, familias y voluntarios durante una actividad comunitaria de FUNADELÁN"
-          width="900"
-          height="575"
-          fetchpriority="high"
-          class="absolute inset-0 h-full w-full object-cover object-center"
-        />
+      <div class="relative min-h-[38rem] touch-pan-y overflow-hidden sm:min-h-[42rem]" data-hero-gesture>
+        <div class="absolute inset-0" id="hero-carrusel">
+          {
+            heroImagenes.map((img, i) => (
+              <img
+                src={img.url}
+                alt={img.alt}
+                fetchpriority={i === 0 ? 'high' : undefined}
+                loading={i === 0 ? 'eager' : 'lazy'}
+                data-hero-slide={i}
+                class="absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-1000 ease-in-out"
+                style={`opacity: ${i === 0 ? 1 : 0}`}
+              />
+            ))
+          }
+        </div>
+        <div class="pointer-events-none absolute inset-x-4 bottom-5 z-20 flex justify-end gap-2 sm:inset-x-8 sm:bottom-8 lg:inset-x-12">
+          <button type="button" data-hero-prev class="pointer-events-auto grid h-11 w-11 place-items-center rounded-full border border-white/35 bg-black/20 text-white backdrop-blur-sm transition hover:border-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dorado-300" aria-label="Imagen anterior">
+            <Icono name="flecha" class="h-5 w-5 rotate-180" />
+          </button>
+          <button type="button" data-hero-next class="pointer-events-auto grid h-11 w-11 place-items-center rounded-full border border-white/35 bg-black/20 text-white backdrop-blur-sm transition hover:border-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dorado-300" aria-label="Siguiente imagen">
+            <Icono name="flecha" class="h-5 w-5" />
+          </button>
+        </div>
         <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(25,18,15,.88)_0%,rgba(25,18,15,.62)_48%,rgba(25,18,15,.1)_100%)]" aria-hidden="true"></div>
 
         <!-- El ángel de la fundación. Va como decoración (aria-hidden y alt
@@ -156,7 +178,7 @@ const posts = (await getUltimosPosts(3)) || [];
                 Quiero colaborar
               </a>
               -->
-              <a href="/quienes-somos" class="text-link min-h-12 px-1 text-white decoration-white/45 hover:text-white">
+              <a href="/quienes-somos" class="text-link min-h-12 px-1 text-white decoration-white/45 hover:text-dorado-300">
                 Conoce la fundación
                 <Icono name="flecha" class="h-5 w-5" />
               </a>
@@ -212,7 +234,7 @@ const posts = (await getUltimosPosts(3)) || [];
           <h2 class="mt-4 text-4xl text-celeste-900 sm:text-5xl">Programas con continuidad</h2>
         </div>
         <p class="max-w-xl text-lg text-tinta/70 lg:justify-self-end">
-          Acompañamiento diario, formación y trabajo en red. Cuatro líneas de acción con objetivos claros.
+          Acompañamiento diario, formación y trabajo en red. Tres líneas de acción con objetivos claros.
         </p>
       </div>
 
@@ -348,6 +370,45 @@ const posts = (await getUltimosPosts(3)) || [];
     </div>
   </section>
 
+  <section class="bg-white">
+    <div class="mx-auto max-w-6xl px-4 py-14 sm:py-16">
+      <p class="antetitulo">Visítanos</p>
+      <h2 class="mt-3 text-4xl text-celeste-900 sm:text-5xl">Aquí nos encontramos</h2>
+      <p class="mt-4 max-w-2xl text-lg text-tinta/70">
+        El Limón, parroquia Simón Bolívar, Portoviejo, Manabí, Ecuador.
+      </p>
+
+      <div
+        data-mapa
+        data-src="https://www.google.com/maps?q=-1.089258,-80.431480&z=17&output=embed"
+        class="mt-8 overflow-hidden border border-arena-200"
+      >
+        <div data-mapa-aviso class="flex flex-col items-center gap-4 bg-arena-50 px-6 py-16 text-center">
+          <Icono name="ubicacion" class="h-8 w-8 text-celeste-700" />
+          <p class="max-w-md text-base text-tinta/70">
+            Este mapa se carga desde Google Maps. Al mostrarlo, Google puede registrar tu visita
+            e instalar sus propias cookies.
+          </p>
+          <button
+            type="button"
+            data-mapa-boton
+            class="inline-flex items-center gap-2 border border-celeste-700 bg-celeste-700 px-6 py-3 text-base font-bold text-white hover:bg-celeste-600"
+          >
+            Mostrar el mapa
+          </button>
+          <a
+            href="https://www.google.com/maps/place/1%C2%B005'21.3%22S+80%C2%B025'53.3%22W/@-1.0892577,-80.4340553,17z"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-link"
+          >
+            O ábrelo directamente en Google Maps
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="border-y border-celeste-800 bg-celeste-700 text-white">
     <div class="mx-auto grid max-w-6xl gap-8 px-4 py-14 sm:py-16 lg:grid-cols-[1.25fr_.75fr] lg:items-center">
       <div>
@@ -370,3 +431,74 @@ const posts = (await getUltimosPosts(3)) || [];
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  // Carrusel del hero: crossfade automático con navegación por botones y swipe.
+  const heroSlides = document.querySelectorAll<HTMLImageElement>('#hero-carrusel [data-hero-slide]');
+  const hero = document.querySelector<HTMLElement>('[data-hero-gesture]');
+  const heroPrev = document.querySelector<HTMLButtonElement>('[data-hero-prev]');
+  const heroNext = document.querySelector<HTMLButtonElement>('[data-hero-next]');
+
+  if (heroSlides.length > 1 && hero) {
+    let activo = 0;
+    let timer: ReturnType<typeof setInterval> | undefined;
+    let pointerId: number | null = null;
+    let startX = 0;
+    let startY = 0;
+
+    const mostrar = (indice: number) => {
+      const siguiente = (indice + heroSlides.length) % heroSlides.length;
+      heroSlides[activo].style.opacity = '0';
+      heroSlides[siguiente].style.opacity = '1';
+      activo = siguiente;
+    };
+
+    const reiniciarAuto = () => {
+      if (timer) clearInterval(timer);
+      timer = setInterval(() => mostrar(activo + 1), 6000);
+    };
+
+    const navegar = (direccion: number) => {
+      mostrar(activo + direccion);
+      reiniciarAuto();
+    };
+
+    heroPrev?.addEventListener('click', () => navegar(-1));
+    heroNext?.addEventListener('click', () => navegar(1));
+
+    hero.addEventListener('pointerdown', (event) => {
+      pointerId = event.pointerId;
+      startX = event.clientX;
+      startY = event.clientY;
+      hero.setPointerCapture(event.pointerId);
+    });
+
+    hero.addEventListener('pointerup', (event) => {
+      if (event.pointerId !== pointerId) return;
+      const dx = event.clientX - startX;
+      const dy = event.clientY - startY;
+      pointerId = null;
+      if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy)) navegar(dx < 0 ? 1 : -1);
+    });
+
+    hero.addEventListener('pointercancel', () => { pointerId = null; });
+    reiniciarAuto();
+  }
+  document.querySelectorAll<HTMLElement>('[data-mapa]').forEach((contenedor) => {
+    const boton = contenedor.querySelector<HTMLButtonElement>('[data-mapa-boton]');
+    const aviso = contenedor.querySelector<HTMLElement>('[data-mapa-aviso]');
+    const src = contenedor.dataset.src;
+    if (!boton || !aviso || !src) return;
+
+    boton.addEventListener('click', () => {
+      const iframe = document.createElement('iframe');
+      iframe.src = src;
+      iframe.width = '100%';
+      iframe.height = '420';
+      iframe.loading = 'lazy';
+      iframe.style.border = '0';
+      iframe.title = 'Ubicación de FUNADELÁN en Google Maps';
+      aviso.replaceWith(iframe);
+    });
+  });
+</script>
