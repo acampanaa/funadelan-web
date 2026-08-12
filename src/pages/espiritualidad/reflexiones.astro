@@ -1,7 +1,7 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
-import { getReflexiones, formatearFecha } from '@/lib/sanity';
+import { getReflexiones, formatearFecha, urlForImage } from '@/lib/sanity';
 
 const breadcrumbs = [{ label: 'Espiritualidad', href: '/espiritualidad' }];
 
@@ -19,12 +19,25 @@ const reflexiones = await getReflexiones();
     ) : (
       <div class="mx-auto max-w-3xl divide-y divide-celeste-100">
         {reflexiones.map((r: any) => (
-          <a href={r.slug ? `/espiritualidad/reflexiones/${r.slug}` : '#'} class="group flex flex-col gap-1 py-6">
-            <h2 class="text-2xl text-celeste-800 transition group-hover:text-celeste-500 group-hover:underline underline-offset-4">{r.titulo}</h2>
-            <p class="text-base text-tinta/70">
-              {[r.autor, formatearFecha(r.fecha)].filter(Boolean).join(' · ')}
-            </p>
-            <span class="mt-1 font-semibold text-celeste-600">Leer →</span>
+          <a
+            href={r.slug ? `/espiritualidad/reflexiones/${r.slug}` : '#'}
+            class="group flex items-center gap-5 py-6"
+          >
+            {r.imagen && (
+              <img
+                src={urlForImage(r.imagen).width(200).height(200).fit('crop').url()}
+                alt=""
+                class="h-20 w-20 shrink-0 rounded-xl object-cover"
+                loading="lazy"
+              />
+            )}
+            <div class="flex min-w-0 flex-col gap-1">
+              <h2 class="text-2xl text-celeste-800 transition group-hover:text-celeste-500 group-hover:underline underline-offset-4">{r.titulo}</h2>
+              <p class="text-base text-tinta/70">
+                {[r.autor, formatearFecha(r.fecha)].filter(Boolean).join(' · ')}
+              </p>
+              <span class="mt-1 font-semibold text-celeste-600">Leer →</span>
+            </div>
           </a>
         ))}
       </div>

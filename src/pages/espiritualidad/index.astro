@@ -2,12 +2,13 @@
 import PageLayout from '@/layouts/PageLayout.astro';
 import ContenidoEditable from '@/components/ContenidoEditable.astro';
 import Icono from '@/components/Icono.astro';
-import { getPaginaEstatica } from '@/lib/sanity';
+import { getPaginaEstatica, getEspiritualidadPreviews, urlForImage } from '@/lib/sanity';
 
 const breadcrumbs = [];
 
 const pagina = await getPaginaEstatica('espiritualidad');
 const lead = pagina?.lead || 'Reflexiones, mensajes y encuentros para alimentar la fe.';
+const previews = await getEspiritualidadPreviews();
 
 const secciones = [
   {
@@ -15,12 +16,28 @@ const secciones = [
     descripcion: 'Palabras para el alma, inspiradas en los Ángeles como mensajeros de Dios.',
     href: '/espiritualidad/reflexiones',
     icono: 'estrella' as const,
+    imagen: previews.reflexion,
+  },
+  {
+    titulo: 'Oraciones',
+    descripcion: 'Oraciones a los Santos Ángeles para acompañar la vida de fe de nuestra comunidad.',
+    href: '/oraciones',
+    icono: 'corazon' as const,
+    imagen: previews.oracion,
   },
   {
     titulo: 'Eventos espirituales',
     descripcion: 'Novenas, celebraciones y encuentros de fe a lo largo del año.',
     href: '/espiritualidad/eventos',
     icono: 'personas' as const,
+    imagen: previews.evento,
+  },
+  {
+    titulo: 'Para Ti, Joven',
+    descripcion: 'Escritos semanales del presidente de la fundación, pensados para la juventud.',
+    href: 'https://fabroparatijoven.wixsite.com/website',
+    icono: 'globo' as const,
+    external: true,
   },
 ];
 ---
@@ -39,12 +56,27 @@ const secciones = [
       secciones.map((s) => (
         <a
           href={s.href}
-          class="group grid gap-3 border-t border-arena-200 py-7 sm:grid-cols-[3rem_14rem_1fr_auto] sm:items-center sm:gap-6"
+          target={s.external ? '_blank' : undefined}
+          rel={s.external ? 'noopener noreferrer' : undefined}
+          class="group grid gap-4 border-t border-arena-200 py-7 sm:grid-cols-[6rem_14rem_1fr_auto] sm:items-center sm:gap-6"
         >
-          <Icono name={s.icono} class="h-8 w-8 text-celeste-700" />
+          {s.imagen ? (
+            <img
+              src={urlForImage(s.imagen).width(240).height(240).fit('crop').url()}
+              alt=""
+              class="h-24 w-24 rounded-xl object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <span class="grid h-24 w-24 place-items-center rounded-xl bg-celeste-50">
+              <Icono name={s.icono} class="h-8 w-8 text-celeste-700" />
+            </span>
+          )}
           <h2 class="text-2xl">{s.titulo}</h2>
           <p class="text-base text-tinta/75">{s.descripcion}</p>
-          <span class="font-bold text-celeste-700 underline decoration-celeste-200 underline-offset-4 group-hover:decoration-celeste-700">Ver más</span>
+          <span class="font-bold text-celeste-700 underline decoration-celeste-200 underline-offset-4 group-hover:decoration-celeste-700">
+            {s.external ? 'Visitar sitio' : 'Ver más'}
+          </span>
         </a>
       ))
     }

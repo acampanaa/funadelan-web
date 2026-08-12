@@ -22,6 +22,15 @@ export function formatearFecha(
   return new Intl.DateTimeFormat('es-EC', opciones).format(new Date(fecha));
 }
 
+/** Fotos del carrusel de portada (Hero de Inicio), ordenadas por "orden". */
+export async function getHeroImagenes() {
+  return sanityClient.fetch(
+    `*[_type == "heroImagen"] | order(orden asc){
+      _id, imagen, alt
+    }`,
+  );
+}
+
 /** Últimas N noticias para la sección de Inicio. */
 export async function getUltimasNoticias(limite = 3) {
   return sanityClient.fetch(
@@ -119,11 +128,14 @@ export async function getNoticia(slug: string) {
   );
 }
 
-/** Reflexiones / mensajes, de la más reciente a la más antigua. */
+/** Reflexiones / mensajes, de la más reciente a la más antigua.
+ *  "imagen" es la primera imagen incluida en el cuerpo, si tiene, para
+ *  mostrar una vista previa en el listado. */
 export async function getReflexiones() {
   return sanityClient.fetch(
     `*[_type == "reflexion"] | order(fecha desc){
-      _id, titulo, "slug": slug.current, fecha, autor
+      _id, titulo, "slug": slug.current, fecha, autor,
+      "imagen": cuerpo[_type == "image"][0]
     }`,
   );
 }
@@ -155,6 +167,20 @@ export async function getEventos(tipo?: string) {
     }`,
     tipo ? { tipo } : {},
   );
+}
+
+/** Una imagen representativa por sección, para las tarjetas de /espiritualidad. */
+export async function getEspiritualidadPreviews() {
+  const [reflexion, oracion, evento] = await Promise.all([
+    sanityClient.fetch(
+      `*[_type == "reflexion"] | order(fecha desc)[0].cuerpo[_type == "image"][0]`,
+    ),
+    sanityClient.fetch(`*[_type == "oracion"] | order(orden asc, titulo asc)[0].imagen`),
+    sanityClient.fetch(
+      `*[_type == "evento" && tipo == "espiritual"] | order(fechaInicio desc)[0].imagen`,
+    ),
+  ]);
+  return { reflexion, oracion, evento };
 }
 
 /** Testimonios. */

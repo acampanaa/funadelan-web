@@ -5,6 +5,7 @@ export interface NavLink {
   label: string;
   href: string;
   children?: NavLink[];
+  external?: boolean;
 }
 
 export const mainNav: NavLink[] = [
@@ -29,6 +30,11 @@ export const mainNav: NavLink[] = [
       { label: 'Reflexiones y mensajes', href: '/espiritualidad/reflexiones' },
       { label: 'Oraciones', href: '/oraciones' },
       { label: 'Eventos', href: '/espiritualidad/eventos' },
+      {
+        label: 'Para Ti, Joven',
+        href: 'https://fabroparatijoven.wixsite.com/website',
+        external: true,
+      },
     ],
   },
   {

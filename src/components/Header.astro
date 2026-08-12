@@ -51,6 +51,8 @@ const isActive = (href: string) =>
                       <li>
                         <a
                           href={child.href}
+                          target={child.external ? '_blank' : undefined}
+                          rel={child.external ? 'noopener noreferrer' : undefined}
                           class="block border-l-2 border-transparent px-4 py-2.5 text-base text-tinta/80 hover:border-celeste-700 hover:bg-arena-50 hover:text-celeste-700"
                         >
                           {child.label}
@@ -155,7 +157,12 @@ const isActive = (href: string) =>
                   </li>
                   {item.children.map((child) => (
                     <li>
-                      <a href={child.href} class="block py-2 text-tinta/80 hover:text-celeste-700">
+                      <a
+                        href={child.href}
+                        target={child.external ? '_blank' : undefined}
+                        rel={child.external ? 'noopener noreferrer' : undefined}
+                        class="block py-2 text-tinta/80 hover:text-celeste-700"
+                      >
                         {child.label}
                       </a>
                     </li>
