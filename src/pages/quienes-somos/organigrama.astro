@@ -5,45 +5,15 @@ import { getOrganigrama, urlForImage } from '@/lib/sanity';
 
 const breadcrumbs = [{ label: 'Quiénes somos', href: '/quienes-somos' }];
 
-// Contenido en vivo desde Sanity (tipo "Cargo (Organigrama)").
+// Contenido en vivo desde Sanity (tipo "Cargo (Organigrama)"), incluido el
+// nombre y la fotografía de quien ocupa cada cargo.
 const cargos = await getOrganigrama();
 
-/**
- * Fotografías y nombres de la directiva, guardados aquí de momento.
- *
- * El sitio no tiene token de escritura en Sanity, así que las fotos no se
- * pudieron subir al CMS. Viven en /public/img/directiva y se enlazan por el
- * identificador del cargo. Lo que haya en Sanity manda: en cuanto se rellenen
- * los campos «Nombre» y «Fotografía» en el Studio, esta tabla deja de usarse
- * para ese cargo y se puede ir vaciando.
- */
-const DIRECTIVA_LOCAL: Record<string, { nombre?: string; foto?: string }> = {
-  'cargo-presidente': {
-    nombre: 'Pedro Fabricio Alaña Echanique, S.J.',
-    foto: '/img/directiva/presidente.jpg',
-  },
-  'cargo-vicepresidente': {
-    nombre: 'Rosario Pico Macías',
-    foto: '/img/directiva/vicepresidenta.jpg',
-  },
-  'cargo-tesorera': {
-    nombre: 'Norma Fernández Zambrano',
-    foto: '/img/directiva/tesorera.jpg',
-  },
-  'cargo-secretaria': {
-    nombre: 'Aura Galarza Ibarra',
-    foto: '/img/directiva/secretaria.jpg',
-  },
-};
-
-/** Une lo de Sanity con lo local, dando prioridad a Sanity. */
 function resolver(c: any) {
-  const local = DIRECTIVA_LOCAL[c._id] ?? {};
-  const nombre = c.nombre || local.nombre || '';
-  const foto = c.foto
-    ? urlForImage(c.foto).width(400).height(400).fit('crop').url()
-    : local.foto;
-  return { ...c, nombre, foto };
+  return {
+    ...c,
+    foto: c.foto ? urlForImage(c.foto).width(400).height(400).fit('crop').url() : undefined,
+  };
 }
 
 const miembros = cargos.map(resolver);
