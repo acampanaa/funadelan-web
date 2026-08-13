@@ -11,13 +11,12 @@
 //   BREVO_SENDER_NAME      -> nombre visible del remitente (opcional)
 //
 // El webhook de Sanity debe enviar esta proyección, que normaliza los campos de
-// los distintos tipos de documento (y resuelve las referencias de imagen y PDF,
-// que si no llegarían como _ref y no se podrían usar en el correo):
+// los distintos tipos de documento (y resuelve la referencia del PDF, que si no
+// llegaría como _ref y no se podría enlazar):
 //
 //   {
 //     _id, _type, titulo, "slug": slug.current, fecha, autor, resumen,
 //     descripcion, anio, lugar, tipo, plantilla, fechaInicio, fechaFin,
-//     "imagen": coalesce(imagen.asset->url, imagenes[0].asset->url),
 //     "archivo": archivo.asset->url,
 //     "extracto": coalesce(
 //       array::join(cuerpo[_type == "block"][0].children[].text, ""),
@@ -26,7 +25,7 @@
 //   }
 
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import { plantillaCorreo, parrafo, apunte, imagen, ficha, escapeHtml, SITIO } from '../../src/lib/emails.mjs';
+import { plantillaCorreo, parrafo, apunte, ficha, escapeHtml, SITIO } from '../../src/lib/emails.mjs';
 
 const PIE = 'Recibes este correo porque te suscribiste al boletín en funadelan.org.';
 
@@ -42,7 +41,6 @@ const CORREOS = {
     asunto: doc.titulo,
     etiqueta: 'Noticia',
     cuerpoHtml: [
-      imagen({ url: doc.imagen, alt: doc.titulo }),
       doc.fecha ? apunte(fechaLarga(doc.fecha)) : '',
       parrafo(escapeHtml(doc.resumen || 'Acabamos de publicar una noticia en nuestra página.')),
     ].join(''),
@@ -53,7 +51,6 @@ const CORREOS = {
     asunto: doc.titulo,
     etiqueta: 'Publicación',
     cuerpoHtml: [
-      imagen({ url: doc.imagen, alt: doc.titulo }),
       apunte(
         [doc.autor ? `Por ${escapeHtml(doc.autor)}` : '', doc.fecha ? fechaLarga(doc.fecha) : '']
           .filter(Boolean)
@@ -116,7 +113,6 @@ const EVENTOS = {
     asunto: `Te esperamos: ${doc.titulo}`,
     etiqueta: doc.tipo === 'espiritual' ? 'Evento espiritual' : 'Evento',
     cuerpoHtml: [
-      imagen({ url: doc.imagen, alt: doc.titulo }),
       ficha([
         ['Cuándo', escapeHtml(rangoFechas(doc.fechaInicio, doc.fechaFin))],
         ['Dónde', doc.lugar ? escapeHtml(doc.lugar) : ''],
@@ -133,7 +129,6 @@ const EVENTOS = {
     etiqueta: 'Nuestro evento del año',
     preheader: doc.resumen || 'Una noche para compartir y sostener el Centro Diurno Ángeluz.',
     cuerpoHtml: [
-      imagen({ url: doc.imagen, alt: doc.titulo }),
       parrafo(
         'Llega otra vez nuestra noche más esperada. <strong>Chocolate para el Alma</strong> es el encuentro solidario con el que sostenemos buena parte del trabajo del año: cada asistente ayuda a que el Centro Diurno Ángeluz siga abierto.',
       ),

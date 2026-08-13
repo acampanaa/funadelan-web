@@ -83,7 +83,11 @@ Cada tipo de documento tiene su propio correo: `noticia`, `post`, `reflexion`,
 `evento` e `informe`. Los eventos además eligen plantilla desde Sanity (campo
 «Plantilla del boletín»): la estándar o la de Chocolate para el Alma, que por ser
 el evento anual de recaudación lleva su propia invitación. Los tipos sin página
-propia (oraciones, testimonios) no disparan boletín. Para revisar los cinco diseños en el navegador, sin tocar
+propia (oraciones, testimonios) no disparan boletín.
+
+Ningún correo lleva la foto del contenido: la única imagen es el logo de la
+cabecera, y por eso `PUBLIC_SITE_URL` tiene que apuntar a un dominio que
+responda de verdad; si no, los correos salen sin logo y con los enlaces muertos. Para revisar los cinco diseños en el navegador, sin tocar
 Brevo ni enviar nada:
 
 ```bash

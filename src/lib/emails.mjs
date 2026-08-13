@@ -178,19 +178,6 @@ export function apunte(html) {
 }
 
 /**
- * Foto de cabecera del contenido.
- *
- * Va con ancho fijo además del porcentual porque Outlook ignora `max-width`
- * y, sin el atributo width, estira la imagen a su tamaño original.
- */
-export function imagen({ url, alt = '' }) {
-  if (!url) return '';
-  return `
-              <img src="${url}" width="520" alt="${alt}"
-                   style="display:block;width:100%;max-width:520px;height:auto;margin:0 0 24px;border:0;border-radius:4px;outline:none">`;
-}
-
-/**
  * Ficha de datos (cuándo, dónde…). Recibe pares [etiqueta, valor] y descarta
  * los que vengan vacíos.
  *

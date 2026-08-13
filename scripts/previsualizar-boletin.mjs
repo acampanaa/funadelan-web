@@ -13,7 +13,6 @@ const EJEMPLOS = {
     fecha: '2026-04-17T12:00:00.000Z',
     resumen:
       'FUNADELÁN y el Gobierno Provincial de Manabí inauguraron el Centro de Atención Integral Manabí Humano Angeluz: fisioterapia, psicología y odontología gratuitas en la sede de El Limón.',
-    imagen: 'https://funadelan.org/img/inicio.jpg',
   },
   post: {
     _type: 'post',
@@ -23,7 +22,6 @@ const EJEMPLOS = {
     autor: 'Fabricio Alaña, SJ',
     resumen:
       'El Gobierno Provincial de Manabí reconoció los 23 años de labor social de FUNADELÁN y la creación del Centro de Atención Integral.',
-    imagen: 'https://funadelan.org/img/historia.jpg',
   },
   reflexion: {
     _type: 'reflexion',
@@ -43,7 +41,6 @@ const EJEMPLOS = {
     fechaFin: '2026-10-02T23:00:00.000Z',
     lugar: 'Sede de FUNADELÁN, El Limón, Portoviejo',
     resumen: 'Nueve días de oración en comunidad, abiertos a todas las familias del sector.',
-    imagen: 'https://funadelan.netlify.app/img/historia.jpg',
   },
   evento_chocolate: {
     _type: 'evento',
@@ -55,7 +52,6 @@ const EJEMPLOS = {
     lugar: 'Ceibo Real Hotel, Portoviejo',
     resumen:
       'Una noche de encuentro con música, chocolate y la compañía de quienes hacen posible la fundación.',
-    imagen: 'https://funadelan.netlify.app/img/la-fundacion.jpg',
   },
   informe: {
     _type: 'informe',
