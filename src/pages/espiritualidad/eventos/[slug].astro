@@ -1,0 +1,73 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import ContenidoEditable from '@/components/ContenidoEditable.astro';
+import Lightbox from '@/components/Lightbox.astro';
+import { sanityClient, getEvento, urlForImage, formatearFecha } from '@/lib/sanity';
+
+export async function getStaticPaths() {
+  const eventos = await sanityClient.fetch(
+    `*[_type == "evento" && defined(slug.current)]{ "slug": slug.current }`,
+  );
+  return (eventos || []).map((evento: any) => ({ params: { slug: evento.slug } }));
+}
+
+const { slug } = Astro.params;
+const evento = await getEvento(slug!);
+
+if (!evento) {
+  return Astro.redirect('/espiritualidad/eventos');
+}
+
+const tipo = evento.tipo === 'social' ? 'Evento social' : 'Evento espiritual';
+const fechas = [
+  formatearFecha(evento.fechaInicio),
+  evento.fechaFin ? formatearFecha(evento.fechaFin) : '',
+].filter(Boolean).join(' — ');
+const lead = [tipo, fechas, evento.lugar].filter(Boolean).join(' · ');
+const breadcrumbs = [
+  { label: 'Espiritualidad', href: '/espiritualidad' },
+  { label: 'Eventos', href: '/espiritualidad/eventos' },
+];
+---
+
+<PageLayout
+  title={evento.titulo}
+  description={evento.resumen}
+  lead={lead}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mx-auto max-w-4xl">
+    {evento.imagen && (
+      <a
+        href={urlForImage(evento.imagen).width(2400).fit('max').url()}
+        data-lightbox
+        data-alt={evento.titulo}
+        aria-label={`Ver imagen completa de ${evento.titulo}`}
+        class="group mb-10 block cursor-zoom-in overflow-hidden rounded-2xl shadow-[var(--shadow-suave)]"
+      >
+        <img
+          src={urlForImage(evento.imagen).width(1400).height(840).fit('crop').url()}
+          alt={evento.titulo}
+          width="1400"
+          height="840"
+          class="aspect-[5/3] w-full object-cover transition duration-500 group-hover:scale-[1.02]"
+        />
+      </a>
+    )}
+
+    <ContenidoEditable cuerpo={evento.cuerpo}>
+      {evento.resumen && <p class="max-w-3xl text-lg leading-relaxed text-tinta/85">{evento.resumen}</p>}
+    </ContenidoEditable>
+
+    <div class="mt-12">
+      <a
+        href="/espiritualidad/eventos"
+        class="inline-flex rounded-full border border-celeste-300 px-5 py-2.5 text-base font-semibold text-celeste-700 transition hover:bg-celeste-50"
+      >
+        ← Volver a eventos
+      </a>
+    </div>
+  </div>
+
+  <Lightbox />
+</PageLayout>

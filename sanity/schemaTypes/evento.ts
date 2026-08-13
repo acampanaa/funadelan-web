@@ -8,7 +8,7 @@ export const evento = defineType({
   type: 'document',
   fields: [
     defineField({ name: 'titulo', title: 'Título', type: 'string', validation: (r) => r.required() }),
-    defineField({ name: 'slug', title: 'Slug (URL)', type: 'slug', options: { source: 'titulo' } }),
+    defineField({ name: 'slug', title: 'Slug (URL)', type: 'slug', options: { source: 'titulo' }, validation: (r) => r.required() }),
     defineField({ name: 'fechaInicio', title: 'Fecha de inicio', type: 'datetime', validation: (r) => r.required() }),
     defineField({ name: 'fechaFin', title: 'Fecha de fin', type: 'datetime' }),
     defineField({ name: 'lugar', title: 'Lugar', type: 'string' }),
@@ -38,6 +38,13 @@ export const evento = defineType({
       initialValue: 'estandar',
     }),
     defineField({ name: 'resumen', title: 'Resumen', type: 'text', rows: 3 }),
+    defineField({
+      name: 'cuerpo',
+      title: 'Contenido',
+      type: 'array',
+      of: [{ type: 'block' }, { type: 'image', options: { hotspot: true } }],
+      description: 'Información completa que se mostrará en la página individual del evento.',
+    }),
     defineField({ name: 'imagen', title: 'Imagen', type: 'image', options: { hotspot: true } }),
     defineField({ name: 'destacado', title: 'Destacado', type: 'boolean', initialValue: false }),
   ],
