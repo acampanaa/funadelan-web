@@ -23,6 +23,20 @@ export const evento = defineType({
         ],
       },
     }),
+    defineField({
+      name: 'plantilla',
+      title: 'Plantilla del boletín',
+      type: 'string',
+      description:
+        'Diseño del correo que se envía a los suscriptores al publicar el evento. «Chocolate para el Alma» tiene el suyo propio por ser el evento anual de recaudación.',
+      options: {
+        list: [
+          { title: 'Evento (estándar)', value: 'estandar' },
+          { title: 'Chocolate para el Alma', value: 'chocolate' },
+        ],
+      },
+      initialValue: 'estandar',
+    }),
     defineField({ name: 'resumen', title: 'Resumen', type: 'text', rows: 3 }),
     defineField({ name: 'imagen', title: 'Imagen', type: 'image', options: { hotspot: true } }),
     defineField({ name: 'destacado', title: 'Destacado', type: 'boolean', initialValue: false }),

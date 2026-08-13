@@ -73,10 +73,36 @@ funadelan-web/
 
 ## Boletín automático
 
-Al publicar una noticia, un webhook de Sanity llama a
+Al publicar contenido, un webhook de Sanity llama a
 `netlify/functions/boletin-webhook.mjs`, que crea una campaña en Brevo y la envía
 a los suscriptores. Configurar en Netlify: `SANITY_WEBHOOK_SECRET`, `BREVO_API_KEY`,
-`BREVO_LIST_ID`.
+`BREVO_LIST_ID`, `BREVO_SENDER_EMAIL` y `PUBLIC_SITE_URL` (los correos necesitan
+direcciones absolutas para el logo y los enlaces).
+
+Cada tipo de documento tiene su propio correo: `noticia`, `post`, `reflexion`,
+`evento` e `informe`. Los eventos además eligen plantilla desde Sanity (campo
+«Plantilla del boletín»): la estándar o la de Chocolate para el Alma, que por ser
+el evento anual de recaudación lleva su propia invitación. Los tipos sin página
+propia (oraciones, testimonios) no disparan boletín. Para revisar los cinco diseños en el navegador, sin tocar
+Brevo ni enviar nada:
+
+```bash
+node scripts/previsualizar-boletin.mjs   # deja los HTML en tmp/boletin/
+```
+
+### Webhook en Sanity
+
+En [sanity.io/manage](https://www.sanity.io/manage) → API → Webhooks:
+
+- **URL**: `https://<dominio>/.netlify/functions/boletin-webhook`
+- **Dataset**: `production`
+- **Trigger on**: solo `Create` (con `Update` se reenviaría el boletín en cada
+  corrección posterior)
+- **Filter**: `_type in ["noticia","post","reflexion","evento","informe"] && !(_id in path("drafts.**"))`
+- **Secret**: el mismo valor que `SANITY_WEBHOOK_SECRET` en Netlify
+- **Projection**: la de la cabecera de `boletin-webhook.mjs`. Es obligatoria:
+  normaliza los campos de los distintos tipos y resuelve las referencias de
+  imagen y de PDF, que sin `->` llegarían como `_ref` y no servirían en el correo.
 
 ## Pendientes / próximos pasos
 

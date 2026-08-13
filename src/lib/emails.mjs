@@ -50,13 +50,14 @@ export function escapeHtml(str) {
  *
  * @param {object} opts
  * @param {string} opts.titulo        Encabezado principal, ya escapado.
+ * @param {string} [opts.etiqueta]    Antetítulo sobre el encabezado ("Noticia", "Evento"…).
  * @param {string} opts.preheader     Texto de vista previa en la bandeja.
  * @param {string} opts.cuerpoHtml    Párrafos del cuerpo (HTML ya escapado).
  * @param {{texto: string, url: string}} [opts.cta]  Botón opcional.
  * @param {string} [opts.cita]        Frase destacada opcional.
  * @param {string} [opts.notaPie]     Línea extra en el pie (p. ej. baja).
  */
-export function plantillaCorreo({ titulo, preheader, cuerpoHtml, cta, cita, notaPie }) {
+export function plantillaCorreo({ titulo, etiqueta, preheader, cuerpoHtml, cta, cita, notaPie }) {
   const boton = cta
     ? `
               <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:32px auto 8px">
@@ -84,6 +85,13 @@ export function plantillaCorreo({ titulo, preheader, cuerpoHtml, cta, cita, nota
 
   const pieExtra = notaPie
     ? `<p style="margin:12px 0 0;font-family:${SANS};font-size:12px;line-height:1.6;color:${C.tintaSuave}">${notaPie}</p>`
+    : '';
+
+  const antetitulo = etiqueta
+    ? `
+              <div style="margin:0 0 10px;font-family:${SANS};font-size:11px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;color:${C.terracotaClaro}">
+                ${etiqueta}
+              </div>`
     : '';
 
   return `<!DOCTYPE html>
@@ -130,6 +138,7 @@ export function plantillaCorreo({ titulo, preheader, cuerpoHtml, cta, cita, nota
           <!-- Contenido -->
           <tr>
             <td style="padding:40px 40px 36px">
+              ${antetitulo}
               <h1 style="margin:0 0 20px;font-family:${SERIF};font-size:28px;font-weight:normal;line-height:1.3;color:${C.terracota}">
                 ${titulo}
               </h1>
@@ -161,6 +170,56 @@ export function plantillaCorreo({ titulo, preheader, cuerpoHtml, cta, cita, nota
 /** Un párrafo del cuerpo, con los estilos ya aplicados. */
 export function parrafo(html) {
   return `<p style="margin:0 0 16px;font-family:${SANS};font-size:16px;line-height:1.7;color:${C.tinta}">${html}</p>`;
+}
+
+/** Línea pequeña y discreta: autor, fecha, procedencia. */
+export function apunte(html) {
+  return `<p style="margin:0 0 20px;font-family:${SANS};font-size:13px;line-height:1.6;color:${C.tintaSuave}">${html}</p>`;
+}
+
+/**
+ * Foto de cabecera del contenido.
+ *
+ * Va con ancho fijo además del porcentual porque Outlook ignora `max-width`
+ * y, sin el atributo width, estira la imagen a su tamaño original.
+ */
+export function imagen({ url, alt = '' }) {
+  if (!url) return '';
+  return `
+              <img src="${url}" width="520" alt="${alt}"
+                   style="display:block;width:100%;max-width:520px;height:auto;margin:0 0 24px;border:0;border-radius:4px;outline:none">`;
+}
+
+/**
+ * Ficha de datos (cuándo, dónde…). Recibe pares [etiqueta, valor] y descarta
+ * los que vengan vacíos.
+ *
+ * @param {Array<[string, string]>} filas
+ */
+export function ficha(filas) {
+  const utiles = filas.filter(([, valor]) => valor);
+  if (utiles.length === 0) return '';
+
+  const celdas = utiles
+    .map(
+      ([etiqueta, valor]) => `
+                  <tr>
+                    <td style="padding:6px 16px 6px 0;font-family:${SANS};font-size:12px;font-weight:bold;letter-spacing:1px;text-transform:uppercase;color:${C.terracotaClaro};white-space:nowrap;vertical-align:top">${etiqueta}</td>
+                    <td style="padding:6px 0;font-family:${SANS};font-size:16px;line-height:1.5;color:${C.tinta}">${valor}</td>
+                  </tr>`,
+    )
+    .join('');
+
+  return `
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+                     style="margin:0 0 24px;background-color:${C.crema};border:1px solid ${C.arena};border-radius:4px">
+                <tr>
+                  <td style="padding:16px 20px">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0">${celdas}
+                    </table>
+                  </td>
+                </tr>
+              </table>`;
 }
 
 export { SITIO };
