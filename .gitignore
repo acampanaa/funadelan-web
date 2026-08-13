@@ -3,6 +3,9 @@ dist/
 .netlify/
 .astro/
 
+# borradores y pruebas locales
+/tmp/
+
 # material de origen (imágenes/textos ya subidos a Sanity o a public/)
 # Todos van con "/" delante y se refieren solo a la raíz del proyecto. Sin la
 # barra, git aplica el patrón a cualquier nivel: "posts/" llegó a tapar
