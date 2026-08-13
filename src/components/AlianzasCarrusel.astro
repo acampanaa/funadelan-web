@@ -1,0 +1,138 @@
+---
+import Icono from '@/components/Icono.astro';
+import { urlForImage } from '@/lib/sanity';
+
+interface Props {
+  alianzas: any[];
+}
+
+const { alianzas = [] } = Astro.props;
+---
+
+{
+  alianzas.length > 0 && (
+    <section class="alianzas-seccion border-b border-arena-200 bg-white" aria-labelledby="titulo-alianzas-inicio">
+      <div class="mx-auto max-w-6xl px-5 pb-7 pt-12 sm:px-4 sm:pb-9 sm:pt-16">
+        <div class="flex flex-wrap items-end justify-between gap-5">
+          <div>
+            <p class="antetitulo">Trabajo en conjunto</p>
+            <h2 id="titulo-alianzas-inicio" class="mt-3 text-3xl text-celeste-900 sm:text-4xl">Alianzas que hacen posible nuestra labor</h2>
+          </div>
+          <a href="/quienes-somos/alianzas" class="text-link">
+            Conoce a nuestros aliados
+            <Icono name="flecha" class="h-5 w-5" />
+          </a>
+        </div>
+      </div>
+
+      <div class="mx-auto max-w-6xl px-5 pb-12 sm:px-4 sm:pb-16">
+        <div class="alianzas-ventana" aria-label="Logotipos de organizaciones aliadas">
+        <div class="alianzas-pista">
+          {[false, true].map((duplicado) => (
+            <div
+              class:list={['alianzas-grupo', duplicado && 'alianzas-grupo--copia']}
+              aria-hidden={duplicado ? 'true' : undefined}
+            >
+              {alianzas.map((alianza: any) => {
+                const Tag = alianza.sitioWeb ? 'a' : 'div';
+                const esLogoHorizontal = ['alianza-prefectura-manabi', 'alianza-anihol'].includes(alianza._id);
+                return (
+                  <Tag
+                    href={alianza.sitioWeb}
+                    target={alianza.sitioWeb ? '_blank' : undefined}
+                    rel={alianza.sitioWeb ? 'noopener noreferrer' : undefined}
+                    tabindex={duplicado && alianza.sitioWeb ? '-1' : undefined}
+                    class:list={[
+                      'alianza-logo flex shrink-0 items-center justify-center px-3 py-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-celeste-600',
+                      esLogoHorizontal ? 'w-56 sm:w-64' : 'w-40 sm:w-48',
+                    ]}
+                    aria-label={!duplicado && alianza.sitioWeb ? `Visitar el sitio de ${alianza.nombre}` : undefined}
+                  >
+                    {alianza.logo ? (
+                      <img
+                        src={
+                          esLogoHorizontal
+                            ? urlForImage(alianza.logo).width(640).fit('max').url()
+                            : urlForImage(alianza.logo).width(420).height(220).fit('max').url()
+                        }
+                        alt={duplicado ? '' : alianza.nombre}
+                        class:list={[
+                          'max-w-full object-contain',
+                          esLogoHorizontal ? 'h-14 sm:h-16' : 'h-16 sm:h-20',
+                        ]}
+                        loading="lazy"
+                      />
+                    ) : (
+                      <span class="text-center font-display text-lg font-semibold text-celeste-800">{alianza.nombre}</span>
+                    )}
+                  </Tag>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .alianzas-ventana {
+    --separacion: clamp(1.5rem, 4vw, 3.5rem);
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.18) 7%, black 18%, black 82%, rgba(0, 0, 0, 0.18) 93%, transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, rgba(0, 0, 0, 0.18) 7%, black 18%, black 82%, rgba(0, 0, 0, 0.18) 93%, transparent 100%);
+  }
+
+  .alianzas-pista {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    animation: alianzas-desplazamiento 58s linear infinite;
+  }
+
+  .alianzas-grupo {
+    display: flex;
+    align-items: center;
+    gap: var(--separacion);
+    padding-right: var(--separacion);
+  }
+
+  .alianzas-grupo--copia {
+    pointer-events: none;
+  }
+
+  .alianzas-ventana:hover .alianzas-pista,
+  .alianzas-ventana:focus-within .alianzas-pista {
+    animation-play-state: paused;
+  }
+
+  .alianza-logo {
+    min-height: 6rem;
+  }
+
+  @keyframes alianzas-desplazamiento {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .alianzas-ventana {
+      overflow-x: auto;
+      -webkit-mask-image: none;
+      mask-image: none;
+      scrollbar-width: thin;
+    }
+
+    .alianzas-pista {
+      animation: none;
+      padding-inline: 1.25rem;
+    }
+
+    .alianzas-grupo--copia {
+      display: none;
+    }
+  }
+</style>

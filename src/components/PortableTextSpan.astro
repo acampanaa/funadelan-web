@@ -1,0 +1,22 @@
+---
+// Sustituye indicadores de ubicación escritos como emoji por el icono
+// vectorial del sistema, conservando el resto del texto de Sanity.
+import Icono from '@/components/Icono.astro';
+
+const { node } = Astro.props;
+const partes = String(node?.text || '').split('📍');
+---
+
+{
+  partes.map((parte: string, indice: number) => (
+    <>
+      {indice > 0 && (
+        <span class="mr-1 inline-flex translate-y-[0.12em] text-celeste-600" title="Ubicación">
+          <Icono name="ubicacion" class="h-5 w-5" />
+          <span class="sr-only">Ubicación: </span>
+        </span>
+      )}
+      {parte}
+    </>
+  ))
+}

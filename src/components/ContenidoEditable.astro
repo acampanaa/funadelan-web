@@ -3,6 +3,7 @@
 // Si Sanity no tiene contenido, cae al respaldo estático pasado en el <slot>.
 import { PortableText } from 'astro-portabletext';
 import PortableImage from '@/components/PortableImage.astro';
+import PortableTextSpan from '@/components/PortableTextSpan.astro';
 
 interface Props {
   cuerpo?: any[];
@@ -10,7 +11,10 @@ interface Props {
 const { cuerpo } = Astro.props;
 const tieneCuerpo = Array.isArray(cuerpo) && cuerpo.length > 0;
 
-const components = { type: { image: PortableImage } };
+const components = {
+  type: { image: PortableImage },
+  text: PortableTextSpan,
+};
 ---
 
 {

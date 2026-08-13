@@ -131,7 +131,7 @@ const isActive = (href: string) =>
 
   <nav
     id="mobile-nav"
-    class="hidden border-t border-arena-200 bg-crema px-4 pb-5 pt-2 lg:hidden"
+    class="absolute left-0 right-0 top-full hidden overflow-y-auto overscroll-contain border-t border-arena-200 bg-crema px-4 pb-5 pt-2 shadow-lg [scrollbar-gutter:stable] [touch-action:pan-y] lg:hidden"
     aria-label="Navegación principal móvil"
   >
     <ul class="divide-y divide-arena-200">
@@ -193,10 +193,24 @@ const isActive = (href: string) =>
   const toggle = document.getElementById('menu-toggle');
   const nav = document.getElementById('mobile-nav');
 
+  const ajustarAlturaMenu = () => {
+    if (!nav || nav.classList.contains('hidden')) return;
+    const espacioDisponible = window.innerHeight - nav.getBoundingClientRect().top;
+    nav.style.maxHeight = `${Math.max(160, espacioDisponible)}px`;
+  };
+
+  const mostrarMenu = (abrir: boolean) => {
+    nav?.classList.toggle('hidden', !abrir);
+    toggle?.setAttribute('aria-expanded', String(abrir));
+    if (abrir) requestAnimationFrame(ajustarAlturaMenu);
+    else if (nav) nav.style.maxHeight = '';
+  };
+
   toggle?.addEventListener('click', () => {
-    const open = nav?.classList.toggle('hidden') === false;
-    toggle.setAttribute('aria-expanded', String(open));
+    mostrarMenu(nav?.classList.contains('hidden') ?? true);
   });
+
+  window.addEventListener('resize', ajustarAlturaMenu);
 
   const searchToggle = document.getElementById('search-toggle');
   const navCluster = document.getElementById('nav-cluster');
@@ -205,6 +219,7 @@ const isActive = (href: string) =>
   const searchClose = document.getElementById('search-close');
 
   function abrirBusqueda(abrir: boolean) {
+    if (abrir) mostrarMenu(false);
     navCluster?.classList.toggle('hidden', abrir);
     searchInline?.classList.toggle('hidden', !abrir);
     searchToggle?.setAttribute('aria-expanded', String(abrir));
@@ -214,7 +229,11 @@ const isActive = (href: string) =>
   searchToggle?.addEventListener('click', () => abrirBusqueda(true));
   searchClose?.addEventListener('click', () => abrirBusqueda(false));
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') abrirBusqueda(false);
+    if (event.key === 'Escape') {
+      abrirBusqueda(false);
+      mostrarMenu(false);
+      toggle?.focus();
+    }
   });
 
   document.querySelectorAll<HTMLButtonElement>('[data-accordion]').forEach((button) => {
@@ -227,6 +246,7 @@ const isActive = (href: string) =>
       button.setAttribute('aria-expanded', String(!expanded));
       submenu?.classList.toggle('hidden', expanded);
       if (chevron) chevron.style.transform = expanded ? '' : 'rotate(180deg)';
+      requestAnimationFrame(ajustarAlturaMenu);
     });
   });
 </script>
