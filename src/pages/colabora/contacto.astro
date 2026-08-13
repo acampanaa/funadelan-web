@@ -1,6 +1,7 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import CampoTelefono from '@/components/CampoTelefono.astro';
+import Obligatorio from '@/components/Obligatorio.astro';
 
 const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
 ---
@@ -18,14 +19,14 @@ const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
       </p>
 
       <div>
-        <label for="nombre" class="block text-base font-semibold text-celeste-800">Nombre completo</label>
+        <label for="nombre" class="block text-base font-semibold text-celeste-800">Nombre completo <Obligatorio /></label>
         <input id="nombre" name="nombre" type="text" required
           class="mt-2 w-full rounded-xl border border-celeste-200 px-4 py-3 text-base focus:border-celeste-400" />
       </div>
 
       <div class="grid gap-5 sm:grid-cols-2">
         <div>
-          <label for="email" class="block text-base font-semibold text-celeste-800">Correo electrónico</label>
+          <label for="email" class="block text-base font-semibold text-celeste-800">Correo electrónico <Obligatorio /></label>
           <input id="email" name="email" type="email" required
             class="mt-2 w-full rounded-xl border border-celeste-200 px-4 py-3 text-base focus:border-celeste-400" />
         </div>
@@ -39,7 +40,7 @@ const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
       </div>
 
       <div>
-        <label for="mensaje" class="block text-base font-semibold text-celeste-800">Mensaje</label>
+        <label for="mensaje" class="block text-base font-semibold text-celeste-800">Mensaje <Obligatorio /></label>
         <textarea id="mensaje" name="mensaje" rows="5" required
           class="mt-2 w-full rounded-xl border border-celeste-200 px-4 py-3 text-base focus:border-celeste-400"></textarea>
       </div>

@@ -9,6 +9,7 @@
 // Se renderiza con el texto largo: si el JavaScript no carga, el desplegable
 // sigue siendo legible, que es lo que importa.
 import { prefijos, prefijoPorDefecto } from '@/config/prefijos';
+import Obligatorio from '@/components/Obligatorio.astro';
 
 interface Props {
   etiqueta?: string;
@@ -19,7 +20,9 @@ const { etiqueta = 'Teléfono', requerido = false } = Astro.props;
 ---
 
 <div>
-  <label for="telefono" class="block text-base font-semibold text-celeste-800">{etiqueta}</label>
+  <label for="telefono" class="block text-base font-semibold text-celeste-800">
+    {etiqueta}{requerido && <Obligatorio />}
+  </label>
   <div class="mt-2 flex max-w-md gap-2">
     <select
       id="prefijo"

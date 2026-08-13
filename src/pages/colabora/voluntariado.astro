@@ -2,6 +2,7 @@
 import PageLayout from '@/layouts/PageLayout.astro';
 import Icono from '@/components/Icono.astro';
 import CampoTelefono from '@/components/CampoTelefono.astro';
+import Obligatorio from '@/components/Obligatorio.astro';
 
 // Esta página lee el search param ?enviado=1 en el servidor (SSR).
 export const prerender = false;
@@ -66,12 +67,12 @@ const areas = [
 
     <div class="grid gap-5 sm:grid-cols-2">
       <div>
-        <label for="nombre" class="block text-base font-semibold text-celeste-800">Nombre completo</label>
+        <label for="nombre" class="block text-base font-semibold text-celeste-800">Nombre completo <Obligatorio /></label>
         <input id="nombre" name="nombre" type="text" required
           class="mt-2 w-full rounded-xl border border-celeste-200 px-4 py-3 text-base focus:border-celeste-400" />
       </div>
       <div>
-        <label for="email" class="block text-base font-semibold text-celeste-800">Correo electrónico</label>
+        <label for="email" class="block text-base font-semibold text-celeste-800">Correo electrónico <Obligatorio /></label>
         <input id="email" name="email" type="email" required
           class="mt-2 w-full rounded-xl border border-celeste-200 px-4 py-3 text-base focus:border-celeste-400" />
       </div>
@@ -80,7 +81,7 @@ const areas = [
     <CampoTelefono />
 
     <div>
-      <label for="area" class="block text-base font-semibold text-celeste-800">Área de interés / tipo de apoyo</label>
+      <label for="area" class="block text-base font-semibold text-celeste-800">Área de interés / tipo de apoyo <Obligatorio /></label>
       <select id="area" name="area_de_interes" required
         class="mt-2 w-full rounded-xl border border-celeste-200 bg-white px-4 py-3 text-base focus:border-celeste-400">
         <option value="" disabled selected>Selecciona un área…</option>
