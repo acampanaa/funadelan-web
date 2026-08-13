@@ -8,7 +8,7 @@ export const prerender = false;
 
 const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
 
-// Netlify Forms redirige a ?enviado=1 tras un envío exitoso.
+// /api/voluntariado redirige a ?enviado=1 tras un envío correcto.
 // Astro 5 en modo híbrido permite leer search params en el servidor.
 const enviado = Astro.url.searchParams.get('enviado') === '1';
 
@@ -30,7 +30,7 @@ const areas = [
   lead="Dona tu tiempo y talento. Cuéntanos cómo te gustaría ayudar, en qué área y cuál es tu disponibilidad."
   breadcrumbs={breadcrumbs}
 >
-  {/* Banner de éxito: se muestra cuando Netlify Forms redirige con ?enviado=1 */}
+  {/* Banner de éxito: se muestra cuando el endpoint redirige con ?enviado=1 */}
   {enviado && (
     <div class="mb-10 flex items-start gap-4 rounded-2xl border border-dorado-300 bg-dorado-50 px-6 py-5">
       <span class="grid h-12 w-12 shrink-0 place-items-center rounded-full bg-dorado-200 text-celeste-800" aria-hidden="true">
@@ -54,15 +54,15 @@ const areas = [
   {/* Formulario: se oculta si el formulario ya fue enviado */}
   {!enviado && (
   <form
+    id="form-voluntariado"
     name="voluntariado"
     method="POST"
-    data-netlify="true"
-    netlify-honeypot="bot-field"
-    action="/colabora/voluntariado?enviado=1"
+    action="/api/voluntariado"
     class="max-w-2xl space-y-5"
   >
-    <input type="hidden" name="form-name" value="voluntariado" />
-    <p class="hidden"><label>No llenar: <input name="bot-field" /></label></p>
+    <p class="hidden" aria-hidden="true">
+      <label>No llenar: <input name="bot-field" tabindex="-1" autocomplete="off" /></label>
+    </p>
 
     <div class="grid gap-5 sm:grid-cols-2">
       <div>
@@ -104,6 +104,46 @@ const areas = [
       class="rounded-full bg-dorado-400 px-8 py-3.5 text-lg font-semibold text-celeste-900 transition hover:bg-dorado-300">
       Quiero ser voluntario
     </button>
+
+    <p id="voluntariado-mensaje" class="text-base font-semibold" role="status" aria-live="polite"></p>
   </form>
   )}
+
+  <script>
+    // Sin JavaScript el formulario se envía solo y el endpoint responde con una
+    // redirección a ?enviado=1. Con él, se envía por detrás para poder mostrar
+    // el error sin perder lo que la persona ya escribió.
+    const form = document.getElementById('form-voluntariado') as HTMLFormElement | null;
+    const msg = document.getElementById('voluntariado-mensaje');
+    const boton = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+
+    form?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!msg || !boton) return;
+
+      boton.disabled = true;
+      msg.textContent = 'Enviando…';
+      msg.style.color = '#a33818';
+
+      try {
+        const res = await fetch('/api/voluntariado', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify(Object.fromEntries(new FormData(form))),
+        });
+        const data = await res.json();
+        if (data.ok) {
+          window.location.href = '/colabora/voluntariado?enviado=1';
+          return;
+        }
+        msg.textContent = data.error || 'Ocurrió un error. Intenta de nuevo.';
+        msg.style.color = '#b91c1c';
+      } catch {
+        msg.textContent = 'No se pudo conectar. Intenta más tarde.';
+        msg.style.color = '#b91c1c';
+      } finally {
+        boton.disabled = false;
+      }
+    });
+  </script>
 </PageLayout>
