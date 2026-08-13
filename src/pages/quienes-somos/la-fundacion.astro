@@ -12,39 +12,37 @@ const lead = pagina?.lead || 'Qué somos y qué nos mueve.';
 ---
 
 <PageLayout title="La fundación" lead={lead} breadcrumbs={breadcrumbs}>
-  <div class="grid gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-14">
-    <ContenidoEditable cuerpo={pagina?.cuerpo}>
-      <div class="max-w-3xl space-y-5 text-lg text-tinta/85">
-        <p>
-          La <strong>Fundación Amigos de los Ángeles (FUNADELÁN)</strong> es una
-          institución sin fines de lucro con sede en Portoviejo, Manabí, Ecuador,
-          dedicada al servicio de las personas adultas mayores y de quienes se
-          encuentran en situación de vulnerabilidad.
-        </p>
-        <p>
-          Nuestra labor une dos vocaciones: una profundamente espiritual —promover
-          la fe en los Ángeles y su labor como mensajeros de Dios— y una
-          marcadamente social —brindar ayuda concreta y digna a todos quienes lo
-          necesitan, siempre con autogestión y el desprendimiento de socios,
-          amigos y aliados.
-        </p>
-        <p>
-          Nuestro proyecto emblema es el <strong>Centro Diurno de Atención al
-          Adulto Mayor «Ángeluz»</strong>, un espacio pensado para acompañar a las
-          personas mayores en lo físico, emocional, espiritual y social. Junto a
-          él proyectamos iniciativas futuras como la Universidad del Adulto Mayor
-          y la Red Mundial del Adulto Mayor.
-        </p>
-      </div>
-    </ContenidoEditable>
+  <ContenidoEditable cuerpo={pagina?.cuerpo}>
+    <div class="max-w-3xl space-y-5 text-lg text-tinta/85">
+      <p>
+        La <strong>Fundación Amigos de los Ángeles (FUNADELÁN)</strong> es una
+        institución sin fines de lucro con sede en Portoviejo, Manabí, Ecuador,
+        dedicada al servicio de las personas adultas mayores y de quienes se
+        encuentran en situación de vulnerabilidad.
+      </p>
+      <p>
+        Nuestra labor une dos vocaciones: una profundamente espiritual —promover
+        la fe en los Ángeles y su labor como mensajeros de Dios— y una
+        marcadamente social —brindar ayuda concreta y digna a todos quienes lo
+        necesitan, siempre con autogestión y el desprendimiento de socios,
+        amigos y aliados.
+      </p>
+      <p>
+        Nuestro proyecto emblema es el <strong>Centro Diurno de Atención al
+        Adulto Mayor «Ángeluz»</strong>, un espacio pensado para acompañar a las
+        personas mayores en lo físico, emocional, espiritual y social. Junto a
+        él proyectamos iniciativas futuras como la Universidad del Adulto Mayor
+        y la Red Mundial del Adulto Mayor.
+      </p>
+    </div>
+  </ContenidoEditable>
 
-    <img
-      src="/img/historia.jpg"
-      alt="Voluntarios y amigos de FUNADELÁN reunidos al pie del monumento del Ángel"
-      width="720"
-      height="960"
-      class="w-full rounded-2xl object-cover shadow-[var(--shadow-suave)] lg:sticky lg:top-24 lg:self-start"
-      loading="lazy"
-    />
-  </div>
+  <img
+    src="/img/la-fundacion.jpg"
+    alt="Socios, voluntarios y directivos de FUNADELÁN reunidos tras la entrega de certificados"
+    width="960"
+    height="720"
+    class="mt-10 w-full max-w-3xl rounded-2xl object-cover shadow-[var(--shadow-suave)]"
+    loading="lazy"
+  />
 </PageLayout>

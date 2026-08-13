@@ -10,40 +10,51 @@ const lead = pagina?.lead || 'El camino recorrido al servicio de los adultos may
 ---
 
 <PageLayout title="Historia" lead={lead} breadcrumbs={breadcrumbs}>
-  <ContenidoEditable cuerpo={pagina?.cuerpo}>
-    <div class="max-w-3xl space-y-5 text-lg text-tinta/85">
-      <p>
-        Desde su creación en 2002, la Fundación Amigos de los Ángeles ha
-        caminado junto a las personas mayores y a las familias más vulnerables
-        de Portoviejo, uniendo la fe y el servicio en un mismo propósito.
-      </p>
-      <p>A lo largo de estos años hemos desarrollado acciones de impacto como:</p>
-      <ul class="list-disc space-y-2 pl-6">
-        <li>
-          <strong>Entrega de ayudas técnicas</strong> —sillas de ruedas,
-          caminadores, muletas y bastones— a personas con discapacidad o
-          movilidad reducida, en zonas urbanas y rurales.
-        </li>
-        <li>
-          <strong>Campañas de salud</strong> comunitarias con atención médica,
-          valoración por especialistas, vacunación y entrega de medicamentos.
-        </li>
-        <li>
-          <strong>Donaciones en emergencias</strong>: alimentos, kits de
-          higiene, ropa y abrigo para familias afectadas por desastres.
-        </li>
-        <li>
-          <strong>Fomento de la espiritualidad</strong> a través de novenas,
-          misas y celebraciones que fortalecen la fe y el sentido de comunidad.
-        </li>
-      </ul>
-      <p>
-        Cada año nos reunimos en torno a <strong>«Chocolate para el Alma»</strong>,
-        nuestro gran evento solidario y la principal fuente de recaudación de la
-        fundación. Hoy avanzamos en la construcción del <strong>Centro Diurno
-        «Ángeluz»</strong>, el sueño que nos mantiene «juntando nuestras alas»
-        para seguir sirviendo con dignidad.
-      </p>
-    </div>
-  </ContenidoEditable>
+  <div class="grid gap-10 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] lg:gap-14">
+    <ContenidoEditable cuerpo={pagina?.cuerpo}>
+      <div class="max-w-3xl space-y-5 text-lg text-tinta/85">
+        <p>
+          Desde su creación en 2002, la Fundación Amigos de los Ángeles ha
+          caminado junto a las personas mayores y a las familias más vulnerables
+          de Portoviejo, uniendo la fe y el servicio en un mismo propósito.
+        </p>
+        <p>A lo largo de estos años hemos desarrollado acciones de impacto como:</p>
+        <ul class="list-disc space-y-2 pl-6">
+          <li>
+            <strong>Entrega de ayudas técnicas</strong> —sillas de ruedas,
+            caminadores, muletas y bastones— a personas con discapacidad o
+            movilidad reducida, en zonas urbanas y rurales.
+          </li>
+          <li>
+            <strong>Campañas de salud</strong> comunitarias con atención médica,
+            valoración por especialistas, vacunación y entrega de medicamentos.
+          </li>
+          <li>
+            <strong>Donaciones en emergencias</strong>: alimentos, kits de
+            higiene, ropa y abrigo para familias afectadas por desastres.
+          </li>
+          <li>
+            <strong>Fomento de la espiritualidad</strong> a través de novenas,
+            misas y celebraciones que fortalecen la fe y el sentido de comunidad.
+          </li>
+        </ul>
+        <p>
+          Cada año nos reunimos en torno a <strong>«Chocolate para el Alma»</strong>,
+          nuestro gran evento solidario y la principal fuente de recaudación de la
+          fundación. Hoy avanzamos en la construcción del <strong>Centro Diurno
+          «Ángeluz»</strong>, el sueño que nos mantiene «juntando nuestras alas»
+          para seguir sirviendo con dignidad.
+        </p>
+      </div>
+    </ContenidoEditable>
+
+    <img
+      src="/img/historia.jpg"
+      alt="Voluntarios y amigos de FUNADELÁN reunidos al pie del monumento del Ángel"
+      width="720"
+      height="960"
+      class="w-full rounded-2xl object-cover shadow-[var(--shadow-suave)] lg:sticky lg:top-24 lg:self-start"
+      loading="lazy"
+    />
+  </div>
 </PageLayout>
