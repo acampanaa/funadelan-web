@@ -95,7 +95,8 @@ export const POST: APIRoute = async ({ request }) => {
       parrafo(
         'Gracias por suscribirte al boletín de la <strong>Fundación Amigos de los Ángeles</strong>. ' +
           'Desde ahora te llegarán a este correo nuestras publicaciones: actividades del Centro ' +
-          'Diurno «Ángeluz», noticias de la fundación y mensajes de esperanza.',
+          'Diurno «Ángeluz», que cuenta con el respaldo del Gobierno Provincial de Manabí, ' +
+          'noticias de la fundación y mensajes de esperanza.',
       ),
       parrafo('Nos alegra tenerte cerca.'),
     ].join(''),
