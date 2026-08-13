@@ -4,14 +4,16 @@ dist/
 .astro/
 
 # material de origen (imágenes/textos ya subidos a Sanity o a public/)
+# Los .jpg van con "/" delante: sin él el patrón también tapa la copia buena
+# que vive en public/img/ y la imagen desaparece del sitio publicado.
 imgs/
 oraciones/
 posts/
 RECURSOS FACEBOOK/
 alianzas/
-la-fundacion.jpg
-mision-vision.jpg
-quienes-somos.jpg
+/inauguracion.jpg
+/mision-vision.jpg
+/quienes-somos.jpg
 
 # dependencies
 node_modules/
