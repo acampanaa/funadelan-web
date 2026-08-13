@@ -118,15 +118,27 @@ const heroImagenes =
             ))
           }
         </div>
-        <div class="pointer-events-none absolute inset-x-4 bottom-5 z-20 flex justify-end gap-2 sm:inset-x-8 sm:bottom-8 lg:inset-x-12">
-          <button type="button" data-hero-prev class="pointer-events-auto grid h-11 w-11 place-items-center rounded-full border border-white/35 bg-black/20 text-white backdrop-blur-sm transition hover:border-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dorado-300" aria-label="Imagen anterior">
-            <Icono name="flecha" class="h-5 w-5 rotate-180" />
-          </button>
-          <button type="button" data-hero-next class="pointer-events-auto grid h-11 w-11 place-items-center rounded-full border border-white/35 bg-black/20 text-white backdrop-blur-sm transition hover:border-white hover:bg-white/15 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-dorado-300" aria-label="Siguiente imagen">
-            <Icono name="flecha" class="h-5 w-5" />
-          </button>
-        </div>
-        <div class="absolute inset-0 bg-[linear-gradient(90deg,rgba(25,18,15,.88)_0%,rgba(25,18,15,.62)_48%,rgba(25,18,15,.1)_100%)]" aria-hidden="true"></div>
+        {heroImagenes.length > 1 && (
+          <div class="pointer-events-none absolute inset-x-3 top-1/2 z-20 flex -translate-y-1/2 justify-between sm:inset-x-5 lg:inset-x-8">
+            <button
+              type="button"
+              data-hero-prev
+              class="group pointer-events-auto grid h-12 w-12 place-items-center rounded-full border border-white/40 bg-celeste-900/60 text-white shadow-[0_8px_28px_rgba(0,0,0,.28)] backdrop-blur-md transition-all duration-200 hover:-translate-x-0.5 hover:border-dorado-200 hover:bg-celeste-900/80 hover:text-dorado-200 active:scale-95 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-dorado-300 sm:h-14 sm:w-14"
+              aria-label="Ver imagen anterior"
+            >
+              <Icono name="chevron" class="h-6 w-6 rotate-90 transition-transform duration-200 group-hover:-translate-x-0.5" />
+            </button>
+            <button
+              type="button"
+              data-hero-next
+              class="group pointer-events-auto grid h-12 w-12 place-items-center rounded-full border border-white/40 bg-celeste-900/60 text-white shadow-[0_8px_28px_rgba(0,0,0,.28)] backdrop-blur-md transition-all duration-200 hover:translate-x-0.5 hover:border-dorado-200 hover:bg-celeste-900/80 hover:text-dorado-200 active:scale-95 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-3 focus-visible:outline-dorado-300 sm:h-14 sm:w-14"
+              aria-label="Ver siguiente imagen"
+            >
+              <Icono name="chevron" class="h-6 w-6 -rotate-90 transition-transform duration-200 group-hover:translate-x-0.5" />
+            </button>
+          </div>
+        )}
+        <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(25,18,15,.88)_0%,rgba(25,18,15,.62)_48%,rgba(25,18,15,.1)_100%)]" aria-hidden="true"></div>
 
         <!-- El ángel de la fundación. Va como decoración (aria-hidden y alt
              vacío): el mensaje de la portada ya está en el h1, y anunciarlo
@@ -467,6 +479,9 @@ const heroImagenes =
     heroNext?.addEventListener('click', () => navegar(1));
 
     hero.addEventListener('pointerdown', (event) => {
+      // Si el clic empieza en una flecha, no captures el puntero aquí:
+      // eso le robaba el evento "click" al botón y las flechas no hacían nada.
+      if ((event.target as HTMLElement).closest('[data-hero-prev], [data-hero-next]')) return;
       pointerId = event.pointerId;
       startX = event.clientX;
       startY = event.clientY;
