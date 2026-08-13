@@ -1,0 +1,78 @@
+---
+// Campo de teléfono con prefijo de país, compartido por contacto y voluntariado.
+//
+// El desplegable muestra «+593 · Ecuador» al abrirse y solo «+593» cuando está
+// cerrado, para no comerle sitio al número. Un <select> nativo pinta en cerrado
+// el mismo texto de la opción elegida, así que la única forma de tener dos
+// textos distintos es cambiar el de las opciones al abrir y al cerrar.
+//
+// Se renderiza con el texto largo: si el JavaScript no carga, el desplegable
+// sigue siendo legible, que es lo que importa.
+import { prefijos, prefijoPorDefecto } from '@/config/prefijos';
+
+interface Props {
+  etiqueta?: string;
+  requerido?: boolean;
+}
+
+const { etiqueta = 'Teléfono', requerido = false } = Astro.props;
+---
+
+<div>
+  <label for="telefono" class="block text-base font-semibold text-celeste-800">{etiqueta}</label>
+  <div class="mt-2 flex max-w-md gap-2">
+    <select
+      id="prefijo"
+      name="prefijo"
+      data-prefijo
+      aria-label="Prefijo del país"
+      class="w-24 shrink-0 rounded-xl border border-celeste-200 bg-white px-3 py-3 text-base focus:border-celeste-400"
+    >
+      {prefijos.map((p) => (
+        <option value={p.codigo} data-pais={p.pais} selected={p.codigo === prefijoPorDefecto}>
+          {p.codigo} · {p.pais}
+        </option>
+      ))}
+    </select>
+    <input
+      id="telefono"
+      name="telefono"
+      type="tel"
+      data-solo-digitos
+      required={requerido}
+      inputmode="numeric"
+      maxlength="10"
+      pattern="[0-9]{7,10}"
+      title="Solo números, entre 7 y 10 dígitos."
+      placeholder="0991234567"
+      class="w-full min-w-0 rounded-xl border border-celeste-200 px-4 py-3 text-base focus:border-celeste-400"
+    />
+  </div>
+</div>
+
+<script>
+  // Cerrado: solo el prefijo. Abierto: prefijo y país.
+  document.querySelectorAll<HTMLSelectElement>('select[data-prefijo]').forEach((select) => {
+    const opciones = Array.from(select.options);
+    const abrir = () => opciones.forEach((o) => (o.textContent = `${o.value} · ${o.dataset.pais}`));
+    const cerrar = () => opciones.forEach((o) => (o.textContent = o.value));
+
+    cerrar();
+    // `mousedown` y `keydown` se disparan antes de que se despliegue la lista,
+    // así que para cuando se ve ya tiene los nombres puestos.
+    select.addEventListener('mousedown', abrir);
+    select.addEventListener('keydown', abrir);
+    select.addEventListener('change', cerrar);
+    select.addEventListener('blur', cerrar);
+  });
+
+  // El teléfono admite solo dígitos y como mucho diez. `maxlength` no basta: no
+  // impide pegar letras ni un número con espacios, guiones o paréntesis, que es
+  // como la gente los tiene guardados.
+  document.querySelectorAll<HTMLInputElement>('input[data-solo-digitos]').forEach((campo) => {
+    campo.addEventListener('input', () => {
+      const limpio = campo.value.replace(/\D/g, '').slice(0, 10);
+      if (campo.value !== limpio) campo.value = limpio;
+    });
+  });
+</script>

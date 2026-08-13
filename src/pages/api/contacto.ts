@@ -39,7 +39,11 @@ export const POST: APIRoute = async ({ request }) => {
 
   const nombre = (datos.nombre || '').trim();
   const email = (datos.email || '').trim();
-  const telefono = (datos.telefono || '').trim();
+  // El formulario manda el prefijo aparte; en el correo interesa el número
+  // completo y marcable de una vez.
+  const soloDigitos = (datos.telefono || '').replace(/\D/g, '').slice(0, 10);
+  const prefijo = (datos.prefijo || '').trim();
+  const telefono = soloDigitos ? `${prefijo} ${soloDigitos}`.trim() : '';
   const asunto = (datos.asunto || '').trim() || 'Mensaje desde el sitio web';
   const mensaje = (datos.mensaje || '').trim();
 

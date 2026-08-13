@@ -1,12 +1,13 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
+import CampoTelefono from '@/components/CampoTelefono.astro';
 
 const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
 ---
 
 <PageLayout
   title="Contacto"
-  lead="¿Tienes preguntas o quieres colaborar? Escríbenos y te responderemos pronto."
+  lead="¿Tienes alguna pregunta o propuesta? Escríbenos para solicitar información, proponer una alianza o comunicarte con nuestro equipo."
   breadcrumbs={breadcrumbs}
 >
   <div class="grid gap-12 lg:grid-cols-[1.2fr_1fr]">
@@ -28,11 +29,7 @@ const breadcrumbs = [{ label: 'Colabora', href: '/colabora' }];
           <input id="email" name="email" type="email" required
             class="mt-2 w-full rounded-xl border border-celeste-200 px-4 py-3 text-base focus:border-celeste-400" />
         </div>
-        <div>
-          <label for="telefono" class="block text-base font-semibold text-celeste-800">Teléfono (opcional)</label>
-          <input id="telefono" name="telefono" type="tel"
-            class="mt-2 w-full rounded-xl border border-celeste-200 px-4 py-3 text-base focus:border-celeste-400" />
-        </div>
+        <CampoTelefono etiqueta="Teléfono (opcional)" />
       </div>
 
       <div>
