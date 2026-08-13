@@ -20,6 +20,7 @@ const alianzas = await getAlianzas();
       <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {alianzas.map((a: any) => {
           const Tag = a.sitioWeb ? 'a' : 'div';
+          const esLogoHorizontal = ['alianza-prefectura-manabi', 'alianza-anihol'].includes(a._id);
           return (
             <Tag
               href={a.sitioWeb}
@@ -29,9 +30,16 @@ const alianzas = await getAlianzas();
             >
               {a.logo ? (
                 <img
-                  src={urlForImage(a.logo).width(320).height(160).fit('max').url()}
+                  src={
+                    esLogoHorizontal
+                      ? urlForImage(a.logo).width(560).fit('max').url()
+                      : urlForImage(a.logo).width(320).height(160).fit('max').url()
+                  }
                   alt={a.nombre}
-                  class="h-20 w-auto object-contain"
+                  class:list={[
+                    'max-w-full object-contain',
+                    esLogoHorizontal ? 'h-14 w-full sm:h-16' : 'h-20 w-auto',
+                  ]}
                   loading="lazy"
                 />
               ) : (
