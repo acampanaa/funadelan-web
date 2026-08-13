@@ -1,0 +1,76 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import ContenidoEditable from '@/components/ContenidoEditable.astro';
+import Icono from '@/components/Icono.astro';
+import Lightbox from '@/components/Lightbox.astro';
+import { sanityClient, getPost, urlForImage, formatearFecha } from '@/lib/sanity';
+
+// Genera una página estática por cada publicación en Sanity.
+export async function getStaticPaths() {
+  const posts = await sanityClient.fetch(
+    `*[_type == "post" && defined(slug.current)]{ "slug": slug.current }`,
+  );
+  return (posts || []).map((p: any) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const post = await getPost(slug!);
+
+if (!post) {
+  return Astro.redirect('/posts');
+}
+
+const imagenes = post.imagenes || [];
+const meta = [post.autor, formatearFecha(post.fecha)].filter(Boolean).join(' · ');
+const breadcrumbs = [{ label: 'Publicaciones', href: '/posts' }];
+---
+
+<PageLayout
+  title={post.titulo}
+  description={post.resumen}
+  lead={meta}
+  breadcrumbs={breadcrumbs}
+>
+  <div class="mx-auto max-w-3xl">
+    <ContenidoEditable cuerpo={post.contenido}>
+      <p class="text-lg text-tinta/85">{post.resumen}</p>
+    </ContenidoEditable>
+
+    {
+      imagenes.length > 0 && (
+        <div class="mt-10 grid gap-4 sm:grid-cols-2">
+          {imagenes.map((img: any, i: number) => (
+            <a
+              href={urlForImage(img).width(2000).url()}
+              data-lightbox
+              data-alt={`${post.titulo} — foto ${i + 1}`}
+              class:list={[
+                'group block cursor-zoom-in overflow-hidden rounded-2xl border border-arena-200/70 bg-white shadow-[var(--shadow-suave)]',
+                imagenes.length % 2 === 1 && i === 0 ? 'sm:col-span-2' : '',
+              ]}
+            >
+              <img
+                src={urlForImage(img).width(1200).url()}
+                alt={`${post.titulo} — foto ${i + 1}`}
+                class="w-full transition duration-500 group-hover:scale-[1.02]"
+                loading="lazy"
+              />
+            </a>
+          ))}
+        </div>
+      )
+    }
+
+    <div class="mt-12">
+      <a
+        href="/posts"
+        class="inline-flex items-center gap-1.5 rounded-full border border-celeste-300 px-5 py-2.5 text-base font-semibold text-celeste-700 transition hover:bg-celeste-50"
+      >
+        <Icono name="flecha" class="h-5 w-5 rotate-180" />
+        Volver a publicaciones
+      </a>
+    </div>
+  </div>
+
+  <Lightbox />
+</PageLayout>

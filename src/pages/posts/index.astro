@@ -1,0 +1,67 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+import Placeholder from '@/components/Placeholder.astro';
+import Icono from '@/components/Icono.astro';
+import { getPosts, urlForImage, formatearFecha } from '@/lib/sanity';
+
+const posts = await getPosts();
+---
+
+<PageLayout
+  title="Publicaciones"
+  lead="Novedades, actividades y momentos de la Fundación Amigos de los Ángeles."
+>
+  {
+    !posts || posts.length === 0 ? (
+      <Placeholder note="Aún no hay publicaciones. Agrégalas en Sanity Studio (tipo «Publicación»)." />
+    ) : (
+      <div class="mx-auto grid max-w-5xl items-start gap-8 md:grid-cols-2">
+        {posts.map((p: any) => (
+          <article class="overflow-hidden rounded-2xl border border-arena-200/70 bg-white shadow-[var(--shadow-suave)]">
+            {/* Cabecera tipo red social */}
+            <header class="flex items-center gap-3 px-6 py-5">
+              <span class="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-celeste-700 text-dorado-300">
+                <Icono name="estrella" class="h-6 w-6" />
+              </span>
+              <div class="min-w-0">
+                <p class="truncate font-semibold text-celeste-800">{p.autor || 'FUNADELÁN'}</p>
+                <p class="truncate text-sm text-tinta/70">{formatearFecha(p.fecha)}</p>
+              </div>
+            </header>
+
+            {p.imagenes && p.imagenes.length > 0 && (
+              <a href={`/posts/${p.slug}`} class="relative block">
+                <img
+                  src={urlForImage(p.imagenes[0]).width(800).height(500).fit('crop').url()}
+                  alt={p.titulo}
+                  class="aspect-[8/5] w-full object-cover"
+                  loading="lazy"
+                />
+                {p.imagenes.length > 1 && (
+                  <span class="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-tinta/70 px-3 py-1 text-sm font-medium text-white backdrop-blur-sm">
+                    <Icono name="estrella" class="h-3.5 w-3.5" />
+                    {p.imagenes.length} fotos
+                  </span>
+                )}
+              </a>
+            )}
+
+            <div class="px-6 py-6">
+              <h2 class="text-xl leading-snug">
+                <a href={`/posts/${p.slug}`} class="transition hover:text-celeste-500 hover:underline underline-offset-4">{p.titulo}</a>
+              </h2>
+              {p.resumen && <p class="mt-2 text-base text-tinta/80">{p.resumen}</p>}
+              <a
+                href={`/posts/${p.slug}`}
+                class="mt-4 inline-flex items-center gap-1.5 font-semibold text-celeste-600 transition hover:gap-2.5 hover:text-celeste-500 hover:underline underline-offset-4"
+              >
+                Ver publicación
+                <Icono name="flecha" class="h-5 w-5" />
+              </a>
+            </div>
+          </article>
+        ))}
+      </div>
+    )
+  }
+</PageLayout>

@@ -4,13 +4,15 @@ dist/
 .astro/
 
 # material de origen (imágenes/textos ya subidos a Sanity o a public/)
-# Los .jpg van con "/" delante: sin él el patrón también tapa la copia buena
-# que vive en public/img/ y la imagen desaparece del sitio publicado.
-imgs/
-oraciones/
-posts/
-RECURSOS FACEBOOK/
-alianzas/
+# Todos van con "/" delante y se refieren solo a la raíz del proyecto. Sin la
+# barra, git aplica el patrón a cualquier nivel: "posts/" llegó a tapar
+# src/pages/posts/ y la sección de Publicaciones nunca se subió al repo, así
+# que en producción daba 404 aunque en local funcionara.
+/imgs/
+/oraciones/
+/posts/
+/RECURSOS FACEBOOK/
+/alianzas/
 /inauguracion.jpg
 /mision-vision.jpg
 /quienes-somos.jpg
