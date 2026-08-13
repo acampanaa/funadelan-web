@@ -13,8 +13,6 @@ export const proyecto = defineType({
       type: 'string',
       options: {
         list: [
-          { title: 'Universidad del Adulto Mayor', value: 'uam' },
-          { title: 'Red Mundial del Adulto Mayor', value: 'red-mundial' },
           { title: 'Actividades sociales', value: 'actividades' },
           { title: 'Centro Diurno "Ángeluz"', value: 'angeluz' },
         ],

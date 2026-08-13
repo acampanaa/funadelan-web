@@ -1,0 +1,22 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+
+const breadcrumbs = [{ label: 'Programas', href: '/programas' }];
+---
+
+<PageLayout
+  title="Novena de los Ángeles"
+  lead="Nueve días de oración, encuentro y esperanza."
+  breadcrumbs={breadcrumbs}
+>
+  <div class="max-w-3xl space-y-5 text-lg leading-relaxed text-tinta/85">
+    <p>
+      La <strong>Novena de los Ángeles</strong> reúne a nuestra comunidad para compartir
+      la fe, la oración y la reflexión durante nueve días.
+    </p>
+    <p>
+      Cada encuentro nos invita a acompañarnos, agradecer y renovar nuestro compromiso
+      de servir con amor a las personas mayores y a quienes más lo necesitan.
+    </p>
+  </div>
+</PageLayout>

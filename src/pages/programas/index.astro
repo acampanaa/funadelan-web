@@ -1,56 +1,50 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
-import Placeholder from '@/components/Placeholder.astro';
-import { getProyectos, urlForImage } from '@/lib/sanity';
 
 const breadcrumbs = [];
 
-const proyectos = await getProyectos();
-
-const etiquetaCategoria: Record<string, string> = {
-  uam: 'Universidad del Adulto Mayor',
-  'red-mundial': 'Red Mundial del Adulto Mayor',
-  actividades: 'Actividades sociales',
-  angeluz: 'Centro Diurno «Ángeluz»',
-};
+const programas = [
+  {
+    nombre: 'CAIMHA',
+    descripcion: 'Centro de Atención Integral Manabí Humano Angeluz: servicios de salud, acompañamiento y bienestar.',
+    href: '/programas/actividades-sociales',
+  },
+  {
+    nombre: 'Novena de los Ángeles',
+    descripcion: 'Nueve días de oración y encuentro para fortalecer la fe de nuestra comunidad.',
+    href: '/programas/novena-de-los-angeles',
+  },
+  {
+    nombre: 'Chocolate del Alma',
+    descripcion: 'Un encuentro solidario que reúne a la comunidad y sostiene la labor de FUNADELÁN.',
+    href: '/programas/chocolate-del-alma',
+  },
+  {
+    nombre: 'Bazar de los Ángeles',
+    descripcion: 'Figuras religiosas de ángeles cuya venta ayuda a financiar nuestros programas.',
+    href: '/programas/bazar-de-los-angeles',
+  },
+];
 ---
 
 <PageLayout
   title="Programas"
-  lead="Iniciativas que transforman la vida de las personas mayores."
+  lead="Iniciativas que unen atención, espiritualidad y solidaridad."
   breadcrumbs={breadcrumbs}
 >
-  {
-    !proyectos || proyectos.length === 0 ? (
-      <Placeholder note="Aún no hay programas publicados. Agrégalos en Sanity Studio (tipo «Proyecto / Programa»)." />
-    ) : (
-      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {proyectos.map((p: any) => (
-          <article class="flex flex-col overflow-hidden rounded-2xl border border-celeste-100 bg-white shadow-sm">
-            {p.imagen ? (
-              <img
-                src={urlForImage(p.imagen).width(800).height(440).fit('crop').url()}
-                alt={p.nombre}
-                class="h-44 w-full object-cover"
-                loading="lazy"
-              />
-            ) : (
-              <div class="grid h-44 place-items-center bg-gradient-to-br from-celeste-100 to-dorado-100 text-5xl" aria-hidden="true">
-                ✦
-              </div>
-            )}
-            <div class="flex flex-1 flex-col p-6">
-              {p.categoria && (
-                <span class="text-sm font-semibold uppercase tracking-wide text-dorado-700">
-                  {etiquetaCategoria[p.categoria] || p.categoria}
-                </span>
-              )}
-              <h2 class="mt-1 text-xl">{p.nombre}</h2>
-              {p.resumen && <p class="mt-2 flex-1 text-base text-tinta/75">{p.resumen}</p>}
-            </div>
-          </article>
-        ))}
-      </div>
-    )
-  }
+  <div class="grid gap-6 sm:grid-cols-2">
+    {programas.map((programa, indice) => (
+      <a
+        href={programa.href}
+        class="group flex min-h-64 flex-col rounded-2xl border border-celeste-100 bg-white p-7 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+      >
+        <span class="text-sm font-semibold uppercase tracking-[0.16em] text-dorado-700">
+          {String(indice + 1).padStart(2, '0')}
+        </span>
+        <h2 class="mt-4 text-2xl text-celeste-800">{programa.nombre}</h2>
+        <p class="mt-3 flex-1 text-base leading-relaxed text-tinta/75">{programa.descripcion}</p>
+        <span class="mt-6 font-semibold text-celeste-600 underline-offset-4 group-hover:underline">Conocer el programa →</span>
+      </a>
+    ))}
+  </div>
 </PageLayout>

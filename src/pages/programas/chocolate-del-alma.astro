@@ -1,0 +1,22 @@
+---
+import PageLayout from '@/layouts/PageLayout.astro';
+
+const breadcrumbs = [{ label: 'Programas', href: '/programas' }];
+---
+
+<PageLayout
+  title="Chocolate del Alma"
+  lead="Un encuentro solidario para compartir y sostener nuestra misión."
+  breadcrumbs={breadcrumbs}
+>
+  <div class="max-w-3xl space-y-5 text-lg leading-relaxed text-tinta/85">
+    <p>
+      <strong>Chocolate del Alma</strong> es un encuentro de fraternidad y solidaridad
+      que convoca a amigos, familias, voluntarios y aliados de FUNADELÁN.
+    </p>
+    <p>
+      Su propósito es reunir a la comunidad y apoyar las acciones que realizamos en
+      beneficio de las personas mayores de Portoviejo.
+    </p>
+  </div>
+</PageLayout>
