@@ -1,20 +1,46 @@
 ---
 import PageLayout from '@/layouts/PageLayout.astro';
 import Placeholder from '@/components/Placeholder.astro';
-import ListaProyectos from '@/components/ListaProyectos.astro';
-import { getProyectos } from '@/lib/sanity';
+import ContenidoEditable from '@/components/ContenidoEditable.astro';
+import { getProyectos, urlForImage } from '@/lib/sanity';
 
 const breadcrumbs = [{ label: 'Programas', href: '/programas' }];
 
 const proyectos = await getProyectos('actividades');
+const tiene = Array.isArray(proyectos) && proyectos.length > 0;
 ---
 
 <PageLayout
-  title="Actividades sociales"
-  lead="Acciones de ayuda y acompañamiento en comunidad."
+  title="CAIMHA"
+  lead="Centro de Atención Integral Manabí Humano Angeluz."
   breadcrumbs={breadcrumbs}
 >
-  <ListaProyectos proyectos={proyectos}>
-    <Placeholder note="Aún no hay actividades publicadas. Agrégalas en Sanity Studio (tipo «Proyecto / Programa», categoría «Actividades sociales»)." />
-  </ListaProyectos>
+  {
+    tiene ? (
+      <div class="space-y-16">
+        {proyectos.map((p: any) => (
+          <article class="grid gap-10 lg:grid-cols-[1.1fr_.9fr] lg:items-start lg:gap-14">
+            <div>
+              <h2 class="text-3xl text-celeste-900 sm:text-4xl">{p.nombre}</h2>
+              <div class="mt-6">
+                <ContenidoEditable cuerpo={p.descripcion}>
+                  <p class="max-w-3xl text-lg leading-relaxed text-tinta/85">{p.resumen}</p>
+                </ContenidoEditable>
+              </div>
+            </div>
+            {p.imagen && (
+              <img
+                src={urlForImage(p.imagen).width(900).url()}
+                alt={p.nombre}
+                class="w-full rounded-2xl object-cover shadow-[var(--shadow-suave)]"
+                loading="lazy"
+              />
+            )}
+          </article>
+        ))}
+      </div>
+    ) : (
+      <Placeholder note="Aún no hay información de CAIMHA publicada. Agrégala en Sanity Studio (tipo «Proyecto / Programa», categoría «Actividades sociales»)." />
+    )
+  }
 </PageLayout>

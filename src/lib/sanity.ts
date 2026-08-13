@@ -169,6 +169,16 @@ export async function getEventos(tipo?: string) {
   );
 }
 
+/** Un evento por slug (para la página de detalle). */
+export async function getEvento(slug: string) {
+  return sanityClient.fetch(
+    `*[_type == "evento" && slug.current == $slug][0]{
+      _id, titulo, fechaInicio, fechaFin, lugar, tipo, resumen, imagen, cuerpo
+    }`,
+    { slug },
+  );
+}
+
 /** Una imagen representativa por sección, para las tarjetas de /espiritualidad. */
 export async function getEspiritualidadPreviews() {
   const [reflexion, oracion, evento] = await Promise.all([
@@ -248,7 +258,7 @@ export async function getInformes() {
 export async function getProyectos(categoria?: string) {
   return sanityClient.fetch(
     `*[_type == "proyecto" ${categoria ? '&& categoria == $categoria' : ''}] | order(orden asc, nombre asc){
-      _id, nombre, "slug": slug.current, categoria, resumen, imagen, destacado
+      _id, nombre, "slug": slug.current, categoria, resumen, imagen, descripcion, destacado
     }`,
     categoria ? { categoria } : {},
   );
