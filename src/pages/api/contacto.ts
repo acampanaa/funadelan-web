@@ -1,4 +1,6 @@
 import type { APIRoute } from 'astro';
+// @ts-expect-error — módulo .mjs compartido con la función de Netlify.
+import { plantillaCorreo, parrafo, apunte, ficha, escapeHtml, SITIO } from '@/lib/emails.mjs';
 
 // Endpoint del formulario de contacto (RF-15 / RF-23).
 // Recibe el mensaje, avisa por correo a la fundación (con responder-a hacia el
@@ -16,12 +18,8 @@ function json(data: unknown, status = 200) {
 
 const esEmailValido = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
-const escapeHtml = (str: string) =>
-  String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
+/** Texto del visitante listo para el correo: escapado y con sus saltos de línea. */
+const conSaltos = (texto: string) => escapeHtml(texto).replace(/\r?\n/g, '<br>');
 
 export const POST: APIRoute = async ({ request }) => {
   // Acepta envío de formulario o JSON.
@@ -72,17 +70,26 @@ export const POST: APIRoute = async ({ request }) => {
   };
 
   // 1. Aviso a la fundación con los datos del mensaje (responder-a = visitante).
-  const htmlAviso = `
-    <div style="font-family:Arial,sans-serif;max-width:560px;margin:auto">
-      <h2 style="font-family:Georgia,serif;color:#862303">Nuevo mensaje de contacto</h2>
-      <table style="font-size:15px;color:#1c1c18;line-height:1.6">
-        <tr><td style="padding:4px 12px 4px 0"><strong>Nombre:</strong></td><td>${escapeHtml(nombre)}</td></tr>
-        <tr><td style="padding:4px 12px 4px 0"><strong>Correo:</strong></td><td>${escapeHtml(email)}</td></tr>
-        ${telefono ? `<tr><td style="padding:4px 12px 4px 0"><strong>Teléfono:</strong></td><td>${escapeHtml(telefono)}</td></tr>` : ''}
-        <tr><td style="padding:4px 12px 4px 0"><strong>Asunto:</strong></td><td>${escapeHtml(asunto)}</td></tr>
-      </table>
-      <p style="font-size:15px;color:#1c1c18;line-height:1.7;margin-top:16px;white-space:pre-wrap;border-left:3px solid #d4af37;padding-left:12px">${escapeHtml(mensaje)}</p>
-    </div>`;
+  //    El botón abre el correo del visitante ya en respuesta: en el móvil, que
+  //    es donde se leen estos avisos, ahorra copiar la dirección a mano.
+  const htmlAviso = plantillaCorreo({
+    titulo: escapeHtml(asunto),
+    etiqueta: 'Nuevo mensaje de contacto',
+    preheader: `${escapeHtml(nombre)}: ${escapeHtml(mensaje).slice(0, 120)}`,
+    cuerpoHtml: [
+      ficha([
+        ['Nombre', escapeHtml(nombre)],
+        ['Correo', `<a href="mailto:${escapeHtml(email)}" style="color:#ad3d1e">${escapeHtml(email)}</a>`],
+        ['Teléfono', telefono ? escapeHtml(telefono) : ''],
+      ]),
+      parrafo(conSaltos(mensaje)),
+    ].join(''),
+    cta: {
+      texto: 'Responder',
+      url: `mailto:${email}?subject=${encodeURIComponent(`Re: ${asunto}`)}`,
+    },
+    notaPie: 'Mensaje enviado desde el formulario de contacto de funadelan.org.',
+  });
 
   try {
     const resAviso = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -93,7 +100,7 @@ export const POST: APIRoute = async ({ request }) => {
         to: [{ email: destino }],
         replyTo: { email, name: nombre },
         subject: `📩 Contacto: ${asunto}`,
-        htmlContent: `<html><body>${htmlAviso}</body></html>`,
+        htmlContent: htmlAviso,
       }),
     });
     if (!resAviso.ok) {
@@ -107,17 +114,24 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   // 2. Acuse de recibo para el visitante (no bloquea si falla).
-  const htmlAcuse = `
-    <div style="font-family:Arial,sans-serif;max-width:520px;margin:auto">
-      <h1 style="font-family:Georgia,serif;color:#862303">¡Gracias por escribirnos! ✦</h1>
-      <p style="font-size:16px;line-height:1.7;color:#1c1c18">
-        Hola ${escapeHtml(nombre)}, recibimos tu mensaje y te responderemos pronto.
-      </p>
-      <p style="font-size:15px;color:#1c1c18;line-height:1.6;background:#fdf1ec;border-radius:8px;padding:12px">
-        <strong>Tu mensaje:</strong><br><span style="white-space:pre-wrap">${escapeHtml(mensaje)}</span>
-      </p>
-      <p style="font-size:14px;color:#6b7280">Fundación Amigos de los Ángeles · Portoviejo, Manabí, Ecuador</p>
-    </div>`;
+  const htmlAcuse = plantillaCorreo({
+    titulo: 'Recibimos tu mensaje',
+    etiqueta: 'Gracias por escribirnos',
+    preheader: 'Hemos recibido tu mensaje y te responderemos pronto.',
+    cuerpoHtml: [
+      parrafo(`Hola, ${escapeHtml(nombre)}:`),
+      parrafo(
+        'Gracias por escribir a la <strong>Fundación Amigos de los Ángeles</strong>. ' +
+          'Tu mensaje ya está con nosotros y te responderemos lo antes posible.',
+      ),
+      apunte('Esto fue lo que nos enviaste:'),
+      ficha([['Asunto', escapeHtml(asunto)], ['Mensaje', conSaltos(mensaje)]]),
+    ].join(''),
+    cta: { texto: 'Conocer la fundación', url: `${SITIO}/quienes-somos` },
+    notaPie:
+      'Este es un acuse automático del formulario de contacto de funadelan.org. ' +
+      'Puedes responder a este correo si quieres añadir algo.',
+  });
 
   try {
     await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -127,7 +141,8 @@ export const POST: APIRoute = async ({ request }) => {
         sender: { name: senderName, email: senderEmail },
         to: [{ email, name: nombre }],
         subject: 'Recibimos tu mensaje — FUNADELÁN',
-        htmlContent: `<html><body>${htmlAcuse}</body></html>`,
+        replyTo: { email: destino },
+        htmlContent: htmlAcuse,
       }),
     });
   } catch (e) {
