@@ -3,6 +3,7 @@ import PageLayout from '@/layouts/PageLayout.astro';
 import Icono from '@/components/Icono.astro';
 
 const breadcrumbs = [{ label: 'Quiénes somos', href: '/quienes-somos' }];
+const imagenesRestauradas = new Set(['02', '03', '06', '07', '08']);
 
 const derechos = [
   {
@@ -123,7 +124,7 @@ const derechos = [
 
             <div class="relative">
               <img
-                src={`/img/derechos-adulto-mayor/derecho-${d.numero}-principal.jpg`}
+                src={`/img/derechos-adulto-mayor/derecho-${d.numero}-principal${imagenesRestauradas.has(d.numero) ? '-restaurada.jpg' : '.jpg'}`}
                 alt={`Personas mayores: ${d.etiqueta.toLowerCase()}`}
                 width="900"
                 height="700"
@@ -151,7 +152,7 @@ const derechos = [
     <div class="cielo-estrellado pointer-events-none absolute inset-0 opacity-50" aria-hidden="true"></div>
     <div class="halo-dorado animate-halo pointer-events-none absolute left-1/2 top-0 h-72 w-72 -translate-x-1/2 -translate-y-1/3" aria-hidden="true"></div>
     <div class="relative">
-      <h2 class="font-display text-3xl font-semibold sm:text-4xl">Ayúdanos a defender estos derechos</h2>
+      <h2 class="font-display text-3xl font-semibold text-dorado-200 sm:text-4xl">Ayúdanos a defender estos derechos</h2>
       <p class="mx-auto mt-4 max-w-2xl text-lg text-celeste-100">
         Cada hora de voluntariado sostiene el acompañamiento a las personas mayores de Portoviejo.
       </p>
